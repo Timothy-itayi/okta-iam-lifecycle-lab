@@ -1,0 +1,8 @@
+"login","firstName","lastName","email","department","title","employeeNumber","managerId"
+"ava.nguyen@lanternfieldgoods.co.uk","Ava","Nguyen","ava.nguyen@lanternfieldgoods.co.uk","Sales","Sales Manager","EMP-1001",""
+"jonah.hale@lanternfieldgoods.co.uk","Jonah","Hale","jonah.hale@lanternfieldgoods.co.uk","Sales","Account Executive","EMP-1002","EMP-1001"
+"priya.shah@lanternfieldgoods.co.uk","Priya","Shah","priya.shah@lanternfieldgoods.co.uk","Sales","Account Executive","EMP-1003","EMP-1001"
+"marcus.bell@lanternfieldgoods.co.uk","Marcus","Bell","marcus.bell@lanternfieldgoods.co.uk","Operations","Operations Manager","EMP-1004",""
+"lena.ortiz@lanternfieldgoods.co.uk","Lena","Ortiz","lena.ortiz@lanternfieldgoods.co.uk","Operations","Shift Supervisor","EMP-1005","EMP-1004"
+"helen.cho@lanternfieldgoods.co.uk","Helen","Cho","helen.cho@lanternfieldgoods.co.uk","Finance","Finance Manager","EMP-1006",""
+"samir.adeyemi@lanternfieldgoods.co.uk","Samir","Adeyemi","samir.adeyemi@lanternfieldgoods.co.uk","Finance","Accounts Assistant","EMP-1007","EMP-1006"

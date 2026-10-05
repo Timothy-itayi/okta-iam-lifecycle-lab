@@ -48,3 +48,9 @@ The three conditions in this check:
 - The design note answers where every user slot and every flow goes. [docs/decisions/02-design.md](../decisions/02-design.md) is in `8c5e1c5`.
 
 Not in this check: `.gitignore` and `.env.example` are still uncommitted. A message to `ava.nguyen@lanternfieldgoods.co.uk` has not been shown arriving since the catch-all was turned on. The org nav says Free Trial Plan.
+
+## Phase 1
+
+- Task 1.1. Confirmed `title`, `employeeNumber`, `department`, and `managerId` on the Okta user profile. Custom attributes are `employmentStatus`, `startDate`, and `endDate`. Every HR field has an Okta attribute. Mapping table is in [docs/phases/01-foundation.md](../phases/01-foundation.md).
+- Task 1.2 step 1. Generated `hr/okta-import.csv` from `hr/employees.json` with `jq`. Seven rows. `login` is the email. `employeeNumber` is the HR `employeeId`. The three managers have an empty `managerId`.
+- Task 1.2 import. Okta imported 7 new users with 0 errors. The widget says 9 of 10. By 02:15 all seven staff and both admins are Active. Jonah Hale signed in to an empty end-user dashboard. Login, email, and title match the HR file. Notes are in [docs/phases/01-foundation.md](../phases/01-foundation.md).
