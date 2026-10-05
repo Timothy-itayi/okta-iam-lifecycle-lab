@@ -24,7 +24,7 @@ Expiry date and auto-renew were not recorded. Fill both in before teardown.
 
 ## Routing rules
 
-Checked 2026-10-06 00:34 +1100 in Cloudflare Email Routing. Screenshot: [evidence/00-email-routing-rules.png](../../evidence/00-email-routing-rules.png).
+Checked 2026-10-06 00:34 +1100 in Cloudflare Email Routing. Screenshot: [evidence/0.2-email-routing-rules.png](../../evidence/0.2-email-routing-rules.png).
 
 | Rule | Action | Status |
 | --- | --- | --- |

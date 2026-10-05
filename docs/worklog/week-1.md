@@ -20,4 +20,6 @@
   - Proved `test-env@lanternfieldgoods.co.uk` arrives in Gmail. `admin@`, `breakglass@`, and `it@` are Active. Catch-all is still Disabled and set to Drop, so task 0.2 is not done.
   - Activated the Okta org `trial-7464750` with `admin@lanternfieldgoods.co.uk` and enrolled Okta Verify. Recorded in [docs/decisions/01-org.md](../decisions/01-org.md).
   - The console says 30 days left on a free trial. The runbook asked for an Integrator Free Plan org, which does not expire. Plan type is unconfirmed.
-  - Did not follow Getting Started. No users imported and no app added.
+  - Did not import users. A SAML app named `testapp` was created afterwards. That is task 0.4, and it is not deleted yet.
+  - Task 0.3 dashboard screenshot filed as `evidence/0.3-admin-console-dashboard.png`.
+  - Created `breakglass@lanternfieldgoods.co.uk`, assigned Super Organization Administrator, and enrolled it in Okta Verify on the same phone as the daily admin. Break-glass then opened its own Admin Console. Decision and screenshots are in [docs/decisions/02-break-glass.md](../decisions/02-break-glass.md). Directory shows 2 active users. The left nav says Free Trial Plan.
