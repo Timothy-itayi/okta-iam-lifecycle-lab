@@ -11,3 +11,13 @@
   - Added `.gitignore` so `Okta-IAM-Lifecycle-Lab-Runbook.pdf` is not committed. Not committed yet.
   - `README.md` is still the Phase 0 blurb. It does not yet have the phase table, the learning-lab line, or the AI-assistance line from task 0.1 step 3.
   - Started this worklog (task 0.1 step 4). Not committed yet.
+
+## 2026-10-06, later the same night
+
+- Time spent: about 30 minutes, from the routing test at 00:25 to the Admin Console screenshot at 00:53
+- What was done:
+  - Registered `lanternfieldgoods.co.uk` on Cloudflare and turned on Email Routing to `timmytam10@gmail.com`. Address plan and the still-disabled catch-all are in [docs/decisions/00-domain.md](../decisions/00-domain.md).
+  - Proved `test-env@lanternfieldgoods.co.uk` arrives in Gmail. `admin@`, `breakglass@`, and `it@` are Active. Catch-all is still Disabled and set to Drop, so task 0.2 is not done.
+  - Activated the Okta org `trial-7464750` with `admin@lanternfieldgoods.co.uk` and enrolled Okta Verify. Recorded in [docs/decisions/01-org.md](../decisions/01-org.md).
+  - The console says 30 days left on a free trial. The runbook asked for an Integrator Free Plan org, which does not expire. Plan type is unconfirmed.
+  - Did not follow Getting Started. No users imported and no app added.
