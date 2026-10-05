@@ -76,8 +76,70 @@ Lena Ortiz signed in at 2026-10-06 02:50 and got an Okta Verify number challenge
 
 The factor list for that sign-in was Okta Verify code, Okta Verify push, and password. SMS and voice were not offered. Screenshot: [evidence/1.4-lena-factor-options.png](../../evidence/1.4-lena-factor-options.png).
 
-Password Security is [evidence/1.4-password-security.png](../../evidence/1.4-password-security.png). Lockout is 10 attempts and does not clear itself after 60 minutes. History is 4, not the runbook's 5. Minimum length 12 was not on that screen. "Expire the password after this many days: 0" expires a breached password. It is not the length rule.
+Password Security is [evidence/1.4-password-security.png](../../evidence/1.4-password-security.png). Lockout is 10 attempts and does not clear itself after 60 minutes. History on that screen is the last 4 passwords. Minimum length is 12. "Expire the password after this many days: 0" expires a breached password. It is not the length rule.
 
 At 02:58 the Email authenticator is set to **Recovery in password policy rules**. Screenshot: [evidence/1.4-email-recovery-only.png](../../evidence/1.4-email-recovery-only.png). The earlier shot, with Authentication and recovery selected, is [evidence/1.4-email-authenticator.png](../../evidence/1.4-email-authenticator.png). The account-management policy stays exempt, so an admin can still recover. Lena's sign-in after that change still offers only Okta Verify code, Okta Verify push, and password: [evidence/1.4-lena-factors-after-email-change.png](../../evidence/1.4-lena-factors-after-email-change.png).
 
 Minimum length is 12. The Password Security screen shows history of the last 4 passwords and lockout after 10 attempts.
+
+## 1.5 Global session policy
+
+Both policies are Active. Admins is priority 1. Staff is priority 2. Default Policy is priority 3. Screenshots: [evidence/1.5-admins-session-policy.png](../../evidence/1.5-admins-session-policy.png), [evidence/1.5-staff-session-policy.png](../../evidence/1.5-staff-session-policy.png).
+
+| Policy | Assigned to | Rule |
+| --- | --- | --- |
+| Admins | `ADM-Helpdesk`, `APP-Rostr-Admins` | MFA required. Active. |
+| Staff | `DEPT-Sales`, `DEPT-Operations`, `DEPT-Finance` | MFA required. Active. |
+
+The daily admin and break-glass are not in those groups, so they still match the Default Policy. `APP-Rostr-Admins` is on the Admins policy, so a future Rostr admin gets the shorter admin session.
+
+Marcus Bell, in `DEPT-Operations`, signed in with username, password, then an Okta Verify push. The browser showed 41. Screenshots: [evidence/1.5-marcus-username.png](../../evidence/1.5-marcus-username.png), [evidence/1.5-marcus-password.png](../../evidence/1.5-marcus-password.png), [evidence/1.5-marcus-factors.png](../../evidence/1.5-marcus-factors.png), [evidence/1.5-marcus-number-challenge.png](../../evidence/1.5-marcus-number-challenge.png). The admin sign-in also required MFA.
+
+### Why these numbers
+
+A Lanternfield shift is about 8 to 10 hours. Staff get a 12-hour session so one shift, plus handover, does not force a new sign-in in the middle of the floor. The idle timeout is 2 hours: long enough for a break away from the terminal, short enough that a terminal left after close does not stay open overnight. MFA is still required at the start of that session. A long session does not mean password only.
+
+Admins get a 2-hour session and a 30-minute idle timeout. An admin session can change users, groups, and policies, so a stolen or unattended console should die quickly. Thirty minutes is stepping away from the desk, not a lunch break. MFA is required because a password alone is not enough for that console.
+
+Admins sits above Staff. The help desk technician will be in a `DEPT-` group and in `ADM-Helpdesk`. Priority sends that person through the shorter admin session, not the 12-hour staff session.
+
+## 1.6 Help desk admin
+
+Helen Cho is the technician. She is a Help Desk Administrator, scoped to `DEPT-Sales`, `DEPT-Operations`, and `DEPT-Finance`, not the whole org. Administrators list: [evidence/1.6-administrators.png](../../evidence/1.6-administrators.png). Timothy Itayi and break-glass remain Super Administrators. Scope: [evidence/1.6-help-desk-scoped-to-dept-groups.png](../../evidence/1.6-help-desk-scoped-to-dept-groups.png). Assignment: [evidence/1.6-helen-help-desk-assignment.png](../../evidence/1.6-helen-help-desk-assignment.png).
+
+Signed in as Helen, Jonah Hale's profile shows **Reset or Remove password**: [evidence/1.6-helen-jonah-profile.png](../../evidence/1.6-helen-jonah-profile.png). Her admin nav shows Dashboard, Directory, and Settings. Applications and Security are not in that nav.
+
+Jonah's reset mail arrived at 03:34. The template names Timothy Itayi. The System Log actor for `user.account.reset_password` at that time is Helen Cho. See [docs/runbooks/mfa-reset.md](../runbooks/mfa-reset.md). Mail screenshot: [evidence/1.6-jonah-reset-email.png](../../evidence/1.6-jonah-reset-email.png). The reset dialog sent the email and signed him out: [evidence/1.6-reset-password-dialog.png](../../evidence/1.6-reset-password-dialog.png). Helen's view then shows one-time password mode: [evidence/1.6-helen-jonah-password-reset-state.png](../../evidence/1.6-helen-jonah-password-reset-state.png).
+
+Jonah set a new password. The page required 12 characters, a lower and upper case letter, a number, no part of the username, and not one of the last 4 passwords: [evidence/1.6-jonah-new-password.png](../../evidence/1.6-jonah-new-password.png). He then got Okta Verify number 72: [evidence/1.6-jonah-number-72.png](../../evidence/1.6-jonah-number-72.png). The mail to `jonah.hale@lanternfieldgoods.co.uk` arrived, so the catch-all delivered a staff address.
+
+## 1.7 MFA reset
+
+Scenario: Jonah Hale has a new phone and cannot pass Okta Verify. Helen Cho reset the factor at 03:46. Jonah was stopped on enrollment at 04:01, activated Okta Verify push again at 04:06, and signed in to the Dashboard at 04:07. The runbook is [docs/runbooks/mfa-reset.md](../runbooks/mfa-reset.md). The System Log rows are [evidence/1.7-jonah-factor-reset.csv](../../evidence/1.7-jonah-factor-reset.csv).
+
+The log UI did not show the reset while the search treated Jonah as the actor. The event is `user.mfa.factor.deactivate`, and the actor is Helen. A target-user export contains it. The enrollment QR and the device PIN are not stored.
+
+## 1.8 Entra to Okta
+
+| Entra | Okta |
+| --- | --- |
+| Dynamic group | Group rule |
+| Conditional Access | Authentication policies and global session policies |
+| Helpdesk Administrator | Help Desk Administrator |
+| Microsoft Graph | Okta Management API |
+| Enterprise app | App integration |
+| Sign-in logs | System Log |
+
+These are the objects already in this org.
+
+A group rule is the Okta object that fills a group from a profile value. Dept Sales, Dept Operations, and Dept Finance assign `DEPT-Sales`, `DEPT-Operations`, and `DEPT-Finance` when `user.department` equals that name. `APP-Rostr-Users` is filled from membership of any `DEPT-` group. See section 1.3.
+
+Conditional Access is one policy in Entra. Okta splits it. Global session policies Admins and Staff set the session length and the idle timeout. The factor challenge is an authentication policy. Jonah Hale's sign-in hit both: global session policy rule "MFA required", then Okta Verify. See section 1.5.
+
+Help Desk Administrator is the Okta role Helen Cho holds. It is constrained to the three `DEPT-` groups, so she can reset a password and an authenticator for those users and cannot open Applications or Security. See section 1.6.
+
+The Okta Management API is the HTTP API under `/api/v1`. Helen's authenticator reset is `user.mfa.factor.deactivate` against `/api/v1/users/{userId}/authenticatorEnrollments/{enrollmentId}`. See section 1.7.
+
+An app integration is the Okta application object. This phase did not assign one to staff. Jonah's Dashboard is empty. Rostr is Phase 2.
+
+System Log is the Okta record of sign-ins and of admin actions. Helen's factor reset is in it, and it is not a sign-in. The event type is `user.mfa.factor.deactivate`. See section 1.7.

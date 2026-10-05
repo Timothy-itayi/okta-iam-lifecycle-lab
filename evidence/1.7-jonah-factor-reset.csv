@@ -1,0 +1,11 @@
+timestamp_utc,timestamp_aest,event_type,result,actor,target,detail
+2026-10-05T16:34:28Z,2026-10-06 03:34 +11,user.account.reset_password,SUCCESS,Helen Cho,Jonah Hale,Password reset and session cleared
+2026-10-05T16:46:13Z,2026-10-06 03:46 +11,user.mfa.factor.deactivate,SUCCESS,Helen Cho,Jonah Hale,Reset Okta Verify push
+2026-10-05T16:46:13Z,2026-10-06 03:46 +11,user.mfa.factor.deactivate,SUCCESS,Helen Cho,Jonah Hale,Reset Okta Verify signed nonce
+2026-10-05T16:46:13Z,2026-10-06 03:46 +11,user.mfa.factor.deactivate,SUCCESS,Helen Cho,Jonah Hale,Reset Okta Verify soft token
+2026-10-05T16:46:13Z,2026-10-06 03:46 +11,device.user.remove,SUCCESS,Helen Cho,Jonah Hale,Previous device enrollment removed
+2026-10-05T17:01:19Z,2026-10-06 04:01 +11,policy.evaluate_sign_on,ENROLL,Jonah Hale,Okta Dashboard,Sign-in required a new Okta Verify enrollment
+2026-10-05T17:04:31Z,2026-10-06 04:04 +11,device.enrollment.create,SUCCESS,Jonah Hale,Gracie's MacBook Pro,New device enrolled
+2026-10-05T17:06:58Z,2026-10-06 04:06 +11,user.mfa.factor.activate,SUCCESS,Jonah Hale,Okta Verify,Push factor activated on the phone
+2026-10-05T17:07:31Z,2026-10-06 04:07 +11,user.authentication.auth_via_mfa,SUCCESS,Jonah Hale,Okta Verify,Push approved
+2026-10-05T17:07:35Z,2026-10-06 04:07 +11,user.authentication.sso,SUCCESS,Jonah Hale,Okta Dashboard,Signed in after re-enrollment

@@ -9,7 +9,7 @@
   - First commit: [cfa6e59](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/cfa6e59e6e91cc2fe43cd39e269dfc6e16a14007) (`Initial commit`). Second commit: [3634655](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/36346555092085c32b607293b877bb90b55ccbb1) (`init repo`).
   - Created `docs/phases`, `docs/decisions`, `docs/runbooks`, `docs/incidents`, `docs/worklog`, `evidence`, `hr`, `rostr`, and `scripts`. The `docs` folders were first created with a trailing comma in the name and then renamed.
   - Added `.gitignore` so `Okta-IAM-Lifecycle-Lab-Runbook.pdf` is not committed. Not committed yet.
-  - `README.md` is still the Phase 0 blurb. It does not yet have the phase table, the learning-lab line, or the AI-assistance line from task 0.1 step 3.
+  - At this point `README.md` was still the Phase 0 blurb. The phase table, the learning-lab line, and the AI-assistance line were added later the same night.
   - Started this worklog (task 0.1 step 4). Not committed yet.
 
 ## 2026-10-06, later the same night
@@ -56,3 +56,8 @@ Not in this check: `.gitignore` and `.env.example` are still uncommitted. A mess
 - Task 1.2 import. Okta imported 7 new users with 0 errors. The widget says 9 of 10. By 02:15 all seven staff and both admins are Active. Jonah Hale signed in to an empty end-user dashboard. Login, email, and title match the HR file. Notes are in [docs/phases/01-foundation.md](../phases/01-foundation.md).
 - Task 1.3. Six groups created. Department rules and the `APP-Rostr-Users` rule are Active. Counts are Sales 3, Operations 2, Finance 2, Rostr users 7. `APP-Rostr-Admins` and `ADM-Helpdesk` are empty on purpose.
 - Task 1.4. Lena Ortiz got an Okta Verify number challenge (75) at 02:50. That sign-in offered Okta Verify and password, not SMS. Email is recovery only. Minimum password length is 12. The Password Security screen shows history of 4 and lockout after 10.
+- Task 1.5. Global session policies Admins and Staff are Active, Admins first. Staff covers the three `DEPT-` groups. Admins covers `ADM-Helpdesk` and `APP-Rostr-Admins`. Marcus Bell got password then Okta Verify number 41. The admin sign-in required MFA. Session-length reasoning is in [docs/phases/01-foundation.md](../phases/01-foundation.md).
+- Task 1.6. Helen Cho is Help Desk Administrator, scoped to the three `DEPT-` groups. She can open Jonah Hale and sees password reset. The reset mail names Timothy Itayi; the System Log actor is Helen. Jonah's new password met the 12-character rule, then Okta Verify number 72. Helen's nav does not show Applications or Security.
+- Task 1.7. Helen reset Jonah Hale's Okta Verify at 03:46. He enrolled it again and signed in to the Dashboard at 04:07. Runbook is [docs/runbooks/mfa-reset.md](../runbooks/mfa-reset.md). The log export is the evidence, because a search with Jonah as the actor does not show Helen's reset.
+- Task 1.8. Entra-to-Okta table is in [docs/phases/01-foundation.md](../phases/01-foundation.md). Group rule, authentication and session policies, Help Desk Administrator, Management API, app integration, and System Log, each pointed at the object already built.
+- README. Replaced the Phase 0 blurb with the lab brief, a phase status table through Phase 1, and links to the repository folders.
