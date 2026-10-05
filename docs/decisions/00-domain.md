@@ -24,15 +24,15 @@ Expiry date and auto-renew were not recorded. Fill both in before teardown.
 
 ## Routing rules
 
-Checked 2026-10-06 00:34 +1100 in Cloudflare Email Routing. Screenshot: [evidence/0.2-email-routing-rules.png](../../evidence/0.2-email-routing-rules.png).
+Checked again 2026-10-06 01:17 +1100. Screenshot: [evidence/0.2-email-routing-catchall-active.png](../../evidence/0.2-email-routing-catchall-active.png). The earlier shot, with the catch-all Disabled and set to Drop, is [evidence/0.2-email-routing-rules.png](../../evidence/0.2-email-routing-rules.png).
 
 | Rule | Action | Status |
 | --- | --- | --- |
+| Catch-all | Send to `timmytam10@gmail.com` | Active |
 | `admin@lanternfieldgoods.co.uk` | Send to `timmytam10@gmail.com` | Active |
 | `breakglass@lanternfieldgoods.co.uk` | Send to `timmytam10@gmail.com` | Active |
 | `it@lanternfieldgoods.co.uk` | Send to `timmytam10@gmail.com` | Active |
 | `test-env@lanternfieldgoods.co.uk` | Send to `timmytam10@gmail.com` | Active |
-| Catch-all | Drop | Disabled |
 
 ## What was proved
 
@@ -41,6 +41,6 @@ Checked 2026-10-06 00:34 +1100 in Cloudflare Email Routing. Screenshot: [evidenc
 
 ## Still open
 
-The catch-all is off, and its action is Drop. A staff address such as `ava.nguyen@lanternfieldgoods.co.uk` will not arrive. Task 0.2 is not done until the catch-all action is Send to `timmytam10@gmail.com`, the rule is enabled, and both `admin@` and that invented staff address arrive in Gmail.
+The catch-all rule is on. A message to a staff address has not been shown arriving since that change. Task 0.2 still wants mail to `admin@lanternfieldgoods.co.uk` and to `ava.nguyen@lanternfieldgoods.co.uk` in Gmail. `ava.nguyen@` is now EMP-1001 in `hr/employees.json`, and the catch-all is what delivers the other six staff addresses too.
 
-Do not add a routing rule per employee. The HR file does not exist yet, and joiners need the same path.
+Do not add a routing rule per employee. Joiners need the same path.

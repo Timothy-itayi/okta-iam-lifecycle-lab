@@ -1,0 +1,86 @@
+[
+  {
+    "employeeId": "EMP-1001",
+    "firstName": "Ava",
+    "lastName": "Nguyen",
+    "email": "ava.nguyen@lanternfieldgoods.co.uk",
+    "department": "Sales",
+    "title": "Sales Manager",
+    "managerId": null,
+    "status": "active",
+    "startDate": "2022-03-14",
+    "endDate": null
+  },
+  {
+    "employeeId": "EMP-1002",
+    "firstName": "Jonah",
+    "lastName": "Hale",
+    "email": "jonah.hale@lanternfieldgoods.co.uk",
+    "department": "Sales",
+    "title": "Account Executive",
+    "managerId": "EMP-1001",
+    "status": "active",
+    "startDate": "2024-01-08",
+    "endDate": null
+  },
+  {
+    "employeeId": "EMP-1003",
+    "firstName": "Priya",
+    "lastName": "Shah",
+    "email": "priya.shah@lanternfieldgoods.co.uk",
+    "department": "Sales",
+    "title": "Account Executive",
+    "managerId": "EMP-1001",
+    "status": "active",
+    "startDate": "2025-06-02",
+    "endDate": null
+  },
+  {
+    "employeeId": "EMP-1004",
+    "firstName": "Marcus",
+    "lastName": "Bell",
+    "email": "marcus.bell@lanternfieldgoods.co.uk",
+    "department": "Operations",
+    "title": "Operations Manager",
+    "managerId": null,
+    "status": "active",
+    "startDate": "2021-11-01",
+    "endDate": null
+  },
+  {
+    "employeeId": "EMP-1005",
+    "firstName": "Lena",
+    "lastName": "Ortiz",
+    "email": "lena.ortiz@lanternfieldgoods.co.uk",
+    "department": "Operations",
+    "title": "Shift Supervisor",
+    "managerId": "EMP-1004",
+    "status": "active",
+    "startDate": "2023-09-18",
+    "endDate": null
+  },
+  {
+    "employeeId": "EMP-1006",
+    "firstName": "Helen",
+    "lastName": "Cho",
+    "email": "helen.cho@lanternfieldgoods.co.uk",
+    "department": "Finance",
+    "title": "Finance Manager",
+    "managerId": null,
+    "status": "active",
+    "startDate": "2020-04-27",
+    "endDate": null
+  },
+  {
+    "employeeId": "EMP-1007",
+    "firstName": "Samir",
+    "lastName": "Adeyemi",
+    "email": "samir.adeyemi@lanternfieldgoods.co.uk",
+    "department": "Finance",
+    "title": "Accounts Assistant",
+    "managerId": "EMP-1006",
+    "status": "active",
+    "startDate": "2024-11-11",
+    "endDate": null
+  }
+]
