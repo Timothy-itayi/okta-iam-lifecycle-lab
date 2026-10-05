@@ -25,6 +25,14 @@ Phase 0 and Phase 1 are done. Staff are in Okta, department groups fill from rul
 | 6 | Failure drills | 6 h | Not started | |
 | 7 | Write-up and teardown | 4 h | Not started | Milestone M3 |
 
+## Map of what exists
+
+![Diagram of the lab as built](docs/built-so-far.png)
+
+Solid nodes are files that exist. Dashed nodes are TBC. `hr/employees.json` is the source of truth. `hr/okta-import.csv` was generated from it and loaded once. [docs/decisions/02-break-glass.md](docs/decisions/02-break-glass.md) is on the map. [docs/decisions/01-org.md](docs/decisions/01-org.md) is the org. [docs/decisions/02-design.md](docs/decisions/02-design.md) is the access model.
+
+`scripts/`, the five Workflows, `rostr/`, [docs/incidents](docs/incidents), and the phase notes for phases 2 to 7 are marked TBC. That chain is the later design. It does not run. `hr-sync` is a script, not one of the five flows.
+
 ## What is in place
 
 - Domain and catch-all mail: [docs/decisions/00-domain.md](docs/decisions/00-domain.md).

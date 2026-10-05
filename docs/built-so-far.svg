@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+  <rect width="1280" height="900" fill="#f4eef8"/>
+  <text x="40" y="42" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f1a24">Built so far</text>
+  <text x="188" y="42" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#5c5366">Lanternfield Goods. Solid nodes exist. Dashed nodes are TBC.</text>
+
+  <rect x="32" y="64" width="430" height="228" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
+  <text x="52" y="92" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">IDENTITY INPUTS</text>
+  <rect x="52" y="108" width="390" height="68" rx="8" fill="#d7e8fb" stroke="#3d6f9c"/>
+  <text x="70" y="136" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#16324a">HR employee source</text>
+  <text x="70" y="158" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#16324a">hr/employees.json, source of truth</text>
+  <line x1="247" y1="176" x2="247" y2="198" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="241,198 253,198 247,208" fill="#3d6f9c"/>
+  <rect x="52" y="210" width="390" height="64" rx="8" fill="#d7e8fb" stroke="#3d6f9c"/>
+  <text x="70" y="236" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#16324a">One-time import</text>
+  <text x="70" y="256" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#16324a">hr/okta-import.csv</text>
+
+  <line x1="442" y1="242" x2="518" y2="242" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="518,236 518,248 530,242" fill="#3d6f9c"/>
+  <text x="448" y="232" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#3d6f9c">loads staff</text>
+
+  <rect x="532" y="196" width="250" height="92" rx="8" fill="#f8d7a8" stroke="#b86a1d" stroke-width="1.5"/>
+  <text x="550" y="232" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5c3308">Okta org</text>
+  <text x="550" y="256" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#5c3308">9 of 10 active users</text>
+  <text x="550" y="274" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">trial-7464750</text>
+
+  <line x1="900" y1="242" x2="794" y2="242" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="794,236 794,248 782,242" fill="#3d6f9c"/>
+  <text x="800" y="232" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#3d6f9c">administers</text>
+
+  <rect x="902" y="198" width="346" height="88" rx="44" fill="#d7e8fb" stroke="#3d6f9c"/>
+  <text x="978" y="234" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#16324a">IAM administrator</text>
+  <text x="968" y="258" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#16324a">admin@ and breakglass@</text>
+
+  <rect x="32" y="328" width="1216" height="268" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
+  <text x="52" y="356" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">RECORDS. THESE FILES EXIST</text>
+  <line x1="657" y1="288" x2="657" y2="328" stroke="#b86a1d" stroke-width="1.5"/>
+  <text x="668" y="316" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8a4e10">recorded by the notes below</text>
+
+  <rect x="52" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="68" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Domain setup</text>
+  <text x="68" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">00-domain.md, documents setup</text>
+
+  <rect x="348" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="364" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Org</text>
+  <text x="364" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">01-org.md, records the org</text>
+
+  <rect x="644" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="660" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Break-glass</text>
+  <text x="660" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-break-glass.md, second admin</text>
+
+  <rect x="940" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="956" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">IAM design</text>
+  <text x="956" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-design.md, guides design</text>
+
+  <rect x="52" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="68" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Okta foundation</text>
+  <text x="68" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">01-foundation.md, configuration</text>
+
+  <rect x="348" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="364" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Project worklog</text>
+  <text x="364" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">week-1.md, session record</text>
+
+  <rect x="644" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="660" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">MFA reset procedure</text>
+  <text x="660" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">mfa-reset.md, followed for the reset</text>
+
+  <rect x="940" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="956" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Admin evidence</text>
+  <text x="956" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">evidence/, tasks 0.2 to 1.7</text>
+
+  <rect x="32" y="620" width="1216" height="248" rx="12" fill="#ffffff" stroke="#8a8494" stroke-dasharray="7 5"/>
+  <text x="52" y="648" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">NOT BUILT. TBC</text>
+
+  <rect x="52" y="672" width="210" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="68" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">hr-sync</text>
+  <text x="68" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">scripts/  TBC</text>
+
+  <line x1="262" y1="711" x2="292" y2="711" stroke="#8a8494" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <polygon points="292,705 292,717 302,711" fill="#8a8494"/>
+
+  <rect x="308" y="672" width="210" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="324" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Okta Workflows</text>
+  <text x="324" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">five flows  TBC</text>
+
+  <line x1="518" y1="711" x2="548" y2="711" stroke="#8a8494" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <polygon points="548,705 548,717 558,711" fill="#8a8494"/>
+
+  <rect x="564" y="672" width="210" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="580" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Rostr</text>
+  <text x="580" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">rostr/  TBC</text>
+
+  <rect x="820" y="672" width="190" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="836" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Incidents</text>
+  <text x="836" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">docs/incidents/  TBC</text>
+
+  <rect x="1026" y="672" width="190" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="1042" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Phase notes 2-7</text>
+  <text x="1042" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">docs/phases/  TBC</text>
+
+  <text x="52" y="788" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">Dashed chain is the later design in 02-design.md. It does not run. hr-sync is not one of the five flows.</text>
+  <text x="52" y="812" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">02-design.md is the access model. 01-org.md is the org. Break-glass is its own note.</text>
+  <text x="52" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">week-1.md and 01-foundation.md both record the same org work.</text>
+</svg>
