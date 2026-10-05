@@ -23,5 +23,28 @@
   - Did not import users. A SAML app named `testapp` was created afterwards. That is task 0.4, and it is not deleted yet.
   - Task 0.3 dashboard screenshot filed as `evidence/0.3-admin-console-dashboard.png`.
   - Created `breakglass@lanternfieldgoods.co.uk`, assigned Super Organization Administrator, and enrolled it in Okta Verify on the same phone as the daily admin. Break-glass then opened its own Admin Console. Decision and screenshots are in [docs/decisions/02-break-glass.md](../decisions/02-break-glass.md). Directory shows 2 active users. The left nav says Free Trial Plan.
-  - Wrote `hr/employees.json`: 7 active staff, Sales 3, Operations 2, Finance 2, one manager in each department. `jq -r '.[] | .email'` printed 7 `@lanternfieldgoods.co.uk` addresses. Not committed yet. The runbook commit message is `HR: initial 7 staff`.
+  - Wrote `hr/employees.json`: 7 active staff, Sales 3, Operations 2, Finance 2, one manager in each department. `jq -r '.[] | .email'` printed 7 `@lanternfieldgoods.co.uk` addresses. Committed in [9cd2849](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/9cd2849) (`complete 0.5`). The runbook message was `HR: initial 7 staff`. That message was not used.
   - Wrote [docs/decisions/02-design.md](../decisions/02-design.md): 10 user slots, 5 flows, naming, the HR-to-Rostr path, and the out-of-scope list.
+  - Extended `.gitignore` with `.env`, `*.pem`, `*.key`, `logs/`, `evidence-raw/`, and `node_modules/`. Added `.env.example` with empty placeholders only.
+  - Task 0.7 step 5. Tool versions printed in the repo directory:
+
+    ```
+    cloudflared --version
+    cloudflared version 2026.9.3 (built 2026-09-24T15:31:10Z)
+    jq --version
+    jq-1.8.2
+    node -v
+    v24.4.1
+    ```
+
+    The runbook asked for Node 20. This machine printed v24.4.1. Docker Desktop and the SAML-tracer extension were not in this output.
+
+## Checkpoint, end of prep
+
+The three conditions in this check:
+
+- The org exists with two secured admins. `trial-7464750` has `admin@lanternfieldgoods.co.uk` and `breakglass@lanternfieldgoods.co.uk`. Both are Active, both are enrolled in Okta Verify, and break-glass reached its own Admin Console with Super Organization Administrator. Both factors are on the same phone.
+- The HR file is committed. `hr/employees.json` is in `9cd2849`.
+- The design note answers where every user slot and every flow goes. [docs/decisions/02-design.md](../decisions/02-design.md) is in `8c5e1c5`.
+
+Not in this check: `.gitignore` and `.env.example` are still uncommitted. A message to `ava.nguyen@lanternfieldgoods.co.uk` has not been shown arriving since the catch-all was turned on. The org nav says Free Trial Plan.

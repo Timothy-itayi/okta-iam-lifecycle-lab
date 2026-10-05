@@ -1,1 +1,7 @@
 /Okta-IAM-Lifecycle-Lab-Runbook.pdf
+.env
+*.pem
+*.key
+logs/
+evidence-raw/
+node_modules/
