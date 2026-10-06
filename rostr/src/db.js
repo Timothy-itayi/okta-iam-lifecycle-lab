@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
@@ -53,4 +54,23 @@ function insertUser(db, user) {
   });
 }
 
-module.exports = { openDatabase, listUsers, insertUser };
+function findUserByUserName(db, userName) {
+  return db.prepare('SELECT * FROM users WHERE userName = ?').get(userName);
+}
+
+// A new row gets a random id. SCIM will own ids and the active flag; sign-in never changes either.
+function upsertSignIn(db, user) {
+  db.prepare(`
+    INSERT INTO users (id, userName, givenName, familyName, email, department, lastLogin)
+    VALUES (@id, @userName, @givenName, @familyName, @email, @department, @lastLogin)
+    ON CONFLICT(userName) DO UPDATE SET
+      givenName = excluded.givenName,
+      familyName = excluded.familyName,
+      email = excluded.email,
+      department = excluded.department,
+      lastLogin = excluded.lastLogin
+  `).run({ id: crypto.randomUUID(), ...user });
+  return findUserByUserName(db, user.userName);
+}
+
+module.exports = { openDatabase, listUsers, insertUser, findUserByUserName, upsertSignIn };

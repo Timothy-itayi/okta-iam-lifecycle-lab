@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const { listUsers } = require('./db');
 const { recordSignIn } = require('./auth-log');
+const { mountSaml } = require('./saml');
+const { mountOidc, isRostrAdmin } = require('./oidc');
 
 const COLUMNS = [
   'id',
@@ -69,7 +71,7 @@ function signIn(req, authLogPath, event) {
   req.session.user = event.attributes || { user: event.user };
 }
 
-function createApp({ db, authLogPath, sessionSecret }) {
+function createApp({ db, authLogPath, sessionSecret, saml, oidc }) {
   if (!sessionSecret) {
     throw new Error('SESSION_SECRET is required');
   }
@@ -87,8 +89,20 @@ function createApp({ db, authLogPath, sessionSecret }) {
     res.type('html').send(renderMe(req.session.user));
   });
   app.get('/admin/users', (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).type('text/plain').send('Not signed in.');
+    }
+    if (!isRostrAdmin(req.session.user)) {
+      return res.status(403).type('text/plain').send('Not allowed.');
+    }
     res.type('html').send(renderUsers(listUsers(db)));
   });
+  if (saml) {
+    mountSaml(app, { db, authLogPath, saml });
+  }
+  if (oidc) {
+    mountOidc(app, { authLogPath, ...oidc });
+  }
   return app;
 }
 

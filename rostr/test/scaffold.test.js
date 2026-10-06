@@ -90,12 +90,8 @@ test('health, me, and admin users', async () => {
     assert.match(await me.text(), /Not signed in/);
 
     const users = await fetch(`${base}/admin/users`);
-    const body = await users.text();
-    assert.match(body, /userName/);
-    assert.match(body, /licensed/);
-    assert.match(body, /ada@example.com/);
-    assert.match(body, /&lt;Sales&gt;/);
-    assert.doesNotMatch(body, /<Sales>/);
+    assert.equal(users.status, 401);
+    assert.match(await users.text(), /Not signed in/);
   } finally {
     await new Promise((resolve, reject) => {
       server.close((error) => (error ? reject(error) : resolve()));
@@ -133,6 +129,9 @@ test('signIn writes the log and stores the attributes for /me', async () => {
     assert.equal(logged.user, 'ada@example.com');
     assert.equal(logged.outcome, 'success');
     assert.ok(logged.time);
+
+    const denied = await fetch(`${base}/admin/users`, { headers: { cookie: cookie.split(';')[0] } });
+    assert.equal(denied.status, 403);
   } finally {
     await new Promise((resolve, reject) => {
       server.close((error) => (error ? reject(error) : resolve()));
