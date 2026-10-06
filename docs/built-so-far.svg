@@ -1,103 +1,137 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
-  <rect width="1280" height="900" fill="#f4eef8"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="980" viewBox="0 0 1280 980">
+  <rect width="1280" height="980" fill="#f4eef8"/>
   <text x="40" y="42" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#1f1a24">Built so far</text>
   <text x="188" y="42" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#5c5366">Lanternfield Goods. Solid nodes exist. Dashed nodes are TBC.</text>
 
-  <rect x="32" y="64" width="430" height="228" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
-  <text x="52" y="92" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">IDENTITY INPUTS</text>
-  <rect x="52" y="108" width="390" height="68" rx="8" fill="#d7e8fb" stroke="#3d6f9c"/>
-  <text x="70" y="136" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#16324a">HR employee source</text>
-  <text x="70" y="158" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#16324a">hr/employees.json, source of truth</text>
-  <line x1="247" y1="176" x2="247" y2="198" stroke="#3d6f9c" stroke-width="1.5"/>
-  <polygon points="241,198 253,198 247,208" fill="#3d6f9c"/>
-  <rect x="52" y="210" width="390" height="64" rx="8" fill="#d7e8fb" stroke="#3d6f9c"/>
-  <text x="70" y="236" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#16324a">One-time import</text>
-  <text x="70" y="256" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#16324a">hr/okta-import.csv</text>
+  <rect x="32" y="64" width="1216" height="248" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
+  <text x="52" y="92" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">JML PATH. THIS CHAIN RUNS</text>
 
-  <line x1="442" y1="242" x2="518" y2="242" stroke="#3d6f9c" stroke-width="1.5"/>
-  <polygon points="518,236 518,248 530,242" fill="#3d6f9c"/>
-  <text x="448" y="232" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#3d6f9c">loads staff</text>
+  <rect x="52" y="112" width="176" height="92" rx="8" fill="#d7e8fb" stroke="#3d6f9c"/>
+  <text x="66" y="146" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#16324a">HR source</text>
+  <text x="66" y="168" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#16324a">hr/employees.json</text>
+  <text x="66" y="186" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#16324a">source of truth</text>
 
-  <rect x="532" y="196" width="250" height="92" rx="8" fill="#f8d7a8" stroke="#b86a1d" stroke-width="1.5"/>
-  <text x="550" y="232" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700" fill="#5c3308">Okta org</text>
-  <text x="550" y="256" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#5c3308">9 of 10 active users</text>
-  <text x="550" y="274" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">trial-7464750</text>
+  <line x1="228" y1="158" x2="250" y2="158" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="250,152 250,164 262,158" fill="#3d6f9c"/>
 
-  <line x1="900" y1="242" x2="794" y2="242" stroke="#3d6f9c" stroke-width="1.5"/>
-  <polygon points="794,236 794,248 782,242" fill="#3d6f9c"/>
-  <text x="800" y="232" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#3d6f9c">administers</text>
+  <rect x="264" y="112" width="176" height="92" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="278" y="146" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">hr-sync</text>
+  <text x="278" y="168" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">scripts/hr-sync</text>
+  <text x="278" y="186" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1d4a28">diff, classify, dry-run</text>
 
-  <rect x="902" y="198" width="346" height="88" rx="44" fill="#d7e8fb" stroke="#3d6f9c"/>
-  <text x="978" y="234" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#16324a">IAM administrator</text>
-  <text x="968" y="258" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#16324a">admin@ and breakglass@</text>
+  <line x1="440" y1="158" x2="462" y2="158" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="462,152 462,164 474,158" fill="#3d6f9c"/>
 
-  <rect x="32" y="328" width="1216" height="268" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
-  <text x="52" y="356" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">RECORDS. THESE FILES EXIST</text>
-  <line x1="657" y1="288" x2="657" y2="328" stroke="#b86a1d" stroke-width="1.5"/>
-  <text x="668" y="316" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#8a4e10">recorded by the notes below</text>
+  <rect x="476" y="112" width="200" height="92" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="490" y="146" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Okta Workflows</text>
+  <text x="490" y="168" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">Joiner, Mover, Leaver</text>
+  <text x="490" y="186" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1d4a28">three of five flows</text>
 
-  <rect x="52" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="68" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Domain setup</text>
-  <text x="68" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">00-domain.md, documents setup</text>
+  <line x1="676" y1="158" x2="698" y2="158" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="698,152 698,164 710,158" fill="#3d6f9c"/>
 
-  <rect x="348" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="364" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Org</text>
-  <text x="364" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">01-org.md, records the org</text>
+  <rect x="712" y="108" width="220" height="100" rx="8" fill="#f8d7a8" stroke="#b86a1d" stroke-width="1.5"/>
+  <text x="728" y="142" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5c3308">Okta org</text>
+  <text x="728" y="164" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">9 of 10 active users</text>
+  <text x="728" y="182" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">trial-7464750</text>
+  <text x="728" y="198" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c3308">groups, policies, System Log</text>
 
-  <rect x="644" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="660" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Break-glass</text>
-  <text x="660" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-break-glass.md, second admin</text>
+  <line x1="932" y1="158" x2="954" y2="158" stroke="#3d6f9c" stroke-width="1.5"/>
+  <polygon points="954,152 954,164 966,158" fill="#3d6f9c"/>
 
-  <rect x="940" y="376" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="956" y="404" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">IAM design</text>
-  <text x="956" y="426" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-design.md, guides design</text>
+  <rect x="968" y="112" width="256" height="92" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="982" y="146" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Rostr</text>
+  <text x="982" y="168" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">SAML, OIDC, SCIM</text>
+  <text x="982" y="186" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1d4a28">rostr.lanternfieldgoods.co.uk</text>
 
-  <rect x="52" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="68" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Okta foundation</text>
-  <text x="68" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">01-foundation.md, configuration</text>
+  <rect x="52" y="220" width="176" height="72" rx="8" fill="#d7e8fb" stroke="#3d6f9c"/>
+  <text x="66" y="248" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16324a">One-time import</text>
+  <text x="66" y="270" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#16324a">hr/okta-import.csv</text>
 
-  <rect x="348" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="364" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Project worklog</text>
-  <text x="364" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">week-1.md, session record</text>
+  <line x1="140" y1="204" x2="140" y2="220" stroke="#3d6f9c" stroke-width="1.2"/>
+  <polygon points="134,220 146,220 140,228" fill="#3d6f9c"/>
 
-  <rect x="644" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="660" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">MFA reset procedure</text>
-  <text x="660" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">mfa-reset.md, followed for the reset</text>
+  <rect x="968" y="220" width="256" height="72" rx="36" fill="#d7e8fb" stroke="#3d6f9c"/>
+  <text x="1004" y="250" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="700" fill="#16324a">IAM administrator</text>
+  <text x="1004" y="270" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#16324a">admin@ and breakglass@</text>
 
-  <rect x="940" y="468" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
-  <text x="956" y="496" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Admin evidence</text>
-  <text x="956" y="518" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">evidence/, tasks 0.2 to 1.7</text>
+  <line x1="968" y1="256" x2="834" y2="256" stroke="#3d6f9c" stroke-width="1.2"/>
+  <line x1="822" y1="208" x2="822" y2="256" stroke="#3d6f9c" stroke-width="1.2"/>
+  <polygon points="828,250 828,262 816,256" fill="#3d6f9c"/>
+  <text x="840" y="248" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#3d6f9c">administers</text>
 
-  <rect x="32" y="620" width="1216" height="248" rx="12" fill="#ffffff" stroke="#8a8494" stroke-dasharray="7 5"/>
-  <text x="52" y="648" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">NOT BUILT. TBC</text>
+  <rect x="32" y="332" width="1216" height="380" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
+  <text x="52" y="360" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">RECORDS. THESE FILES EXIST</text>
 
-  <rect x="52" y="672" width="210" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="68" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">hr-sync</text>
-  <text x="68" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">scripts/  TBC</text>
+  <rect x="52" y="380" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="68" y="408" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Domain setup</text>
+  <text x="68" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">00-domain.md</text>
 
-  <line x1="262" y1="711" x2="292" y2="711" stroke="#8a8494" stroke-width="1.4" stroke-dasharray="5 4"/>
-  <polygon points="292,705 292,717 302,711" fill="#8a8494"/>
+  <rect x="348" y="380" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="364" y="408" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Org</text>
+  <text x="364" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">01-org.md</text>
 
-  <rect x="308" y="672" width="210" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="324" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Okta Workflows</text>
-  <text x="324" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">five flows  TBC</text>
+  <rect x="644" y="380" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="660" y="408" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Break-glass</text>
+  <text x="660" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-break-glass.md</text>
 
-  <line x1="518" y1="711" x2="548" y2="711" stroke="#8a8494" stroke-width="1.4" stroke-dasharray="5 4"/>
-  <polygon points="548,705 548,717 558,711" fill="#8a8494"/>
+  <rect x="940" y="380" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="956" y="408" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">IAM design</text>
+  <text x="956" y="430" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-design.md</text>
 
-  <rect x="564" y="672" width="210" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="580" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Rostr</text>
-  <text x="580" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">rostr/  TBC</text>
+  <rect x="52" y="472" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="68" y="500" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Okta foundation</text>
+  <text x="68" y="522" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">01-foundation.md</text>
 
-  <rect x="820" y="672" width="190" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="836" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Incidents</text>
-  <text x="836" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">docs/incidents/  TBC</text>
+  <rect x="348" y="472" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="364" y="500" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">SaaS onboarding</text>
+  <text x="364" y="522" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">02-onboarding.md, SAML and OIDC</text>
 
-  <rect x="1026" y="672" width="190" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="1042" y="702" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Phase notes 2-7</text>
-  <text x="1042" y="724" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">docs/phases/  TBC</text>
+  <rect x="644" y="472" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="660" y="500" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">SCIM provisioning</text>
+  <text x="660" y="522" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">03-scim.md</text>
 
-  <text x="52" y="788" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">Dashed chain is the later design in 02-design.md. It does not run. hr-sync is not one of the five flows.</text>
-  <text x="52" y="812" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">02-design.md is the access model. 01-org.md is the org. Break-glass is its own note.</text>
-  <text x="52" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">week-1.md and 01-foundation.md both record the same org work.</text>
+  <rect x="940" y="472" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="956" y="500" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Joiner, mover, leaver</text>
+  <text x="956" y="522" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">04-jml.md</text>
+
+  <rect x="52" y="564" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="68" y="592" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Service identity</text>
+  <text x="68" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">scripts-identity.md, svc-jml-sync</text>
+
+  <rect x="348" y="564" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="364" y="592" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">MFA reset procedure</text>
+  <text x="364" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">mfa-reset.md</text>
+
+  <rect x="644" y="564" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="660" y="592" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Incidents</text>
+  <text x="660" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">00-duplicate-rostr-admin.md</text>
+
+  <rect x="940" y="564" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="956" y="592" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Evidence</text>
+  <text x="956" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">tasks 0.2 to 4.6</text>
+
+  <text x="52" y="668" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">week-1.md is the session log. saas-onboarding.md is the Rostr runbook. entitlements.js writes the 4.6 CSVs.</text>
+
+  <rect x="32" y="732" width="1216" height="220" rx="12" fill="#ffffff" stroke="#8a8494" stroke-dasharray="7 5"/>
+  <text x="52" y="760" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">NOT BUILT. TBC</text>
+
+  <rect x="52" y="784" width="270" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="68" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Access Request</text>
+  <text x="68" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">flow 4 of 5. Phase 5</text>
+
+  <rect x="346" y="784" width="270" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="362" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Stale-Access</text>
+  <text x="362" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">flow 5 of 5. Phase 5</text>
+
+  <rect x="640" y="784" width="270" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="656" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Phase notes 5-7</text>
+  <text x="656" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">governance, drills, teardown</text>
+
+  <rect x="934" y="784" width="282" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
+  <text x="950" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Phase 6 incidents</text>
+  <text x="950" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">six drills not started</text>
+
+  <text x="52" y="894" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">hr-sync is a script, not one of the five flows. Access Request joins at Okta from a ticket. Stale-Access is a later schedule, not this arrow.</text>
+  <text x="52" y="918" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">Samir Adeyemi is deactivated. Thomas Okeke is the joiner. Priya Shah moved to Operations. Active count is 9 of 10.</text>
 </svg>

@@ -29,9 +29,7 @@ Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department g
 
 ![Diagram of the lab as built](docs/built-so-far.png)
 
-Solid nodes are files that exist. Dashed nodes are TBC. `hr/employees.json` is the source of truth. `hr/okta-import.csv` was generated from it and loaded once. [docs/decisions/02-break-glass.md](docs/decisions/02-break-glass.md) is on the map. [docs/decisions/01-org.md](docs/decisions/01-org.md) is the org. [docs/decisions/02-design.md](docs/decisions/02-design.md) is the access model.
-
-The Rostr shell is in [rostr](rostr). `scripts/scim-tests.sh` is the SCIM test script. The phase notes for phases 5 to 7 are still TBC. Of the five Workflows, Joiner, Mover, and Leaver exist. Access Request and Stale-Access do not run. `hr-sync` is a script, not one of the five flows. The first incident record is the duplicate Rostr Admin app.
+Solid nodes exist. Dashed nodes are TBC. The top row is the running path: `hr/employees.json` into `scripts/hr-sync`, into the Joiner, Mover, and Leaver flows, into Okta, into Rostr over SAML, OIDC, and SCIM. `hr/okta-import.csv` was the one-time load. Access Request and Stale-Access are the two remaining flows. Phase notes 5 to 7 and the Phase 6 drills are not started. `hr-sync` is a script, not one of the five flows. The first incident record is the duplicate Rostr Admin app.
 
 ## What is in place
 
