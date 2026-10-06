@@ -82,5 +82,17 @@
     "status": "active",
     "startDate": "2024-11-11",
     "endDate": null
+  },
+  {
+    "employeeId": "EMP-1008",
+    "firstName": "Thomas",
+    "lastName": "Okeke",
+    "email": "thomas.okeke@lanternfieldgoods.co.uk",
+    "department": "Operations",
+    "title": "Operations Coordinator",
+    "managerId": "EMP-1004",
+    "status": "active",
+    "startDate": "2026-10-07",
+    "endDate": null
   }
 ]
