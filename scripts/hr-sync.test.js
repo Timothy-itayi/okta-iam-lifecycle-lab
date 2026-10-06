@@ -119,6 +119,22 @@ test('apply posts every event before writing the csv, and writes nothing if a ur
   assert.strictEqual(calls[1].body.reason, 'status');
 });
 
+test('a flow-specific token overrides the shared client token', async () => {
+  const events = [
+    { event: 'mover', employeeId: 'EMP-1003', fields: ['department'], employee: employee({ employeeId: 'EMP-1003' }) },
+  ];
+  const calls = [];
+  await hr.postEvents(events, 'REQ-0005', {
+    WORKFLOWS_MOVER_URL: 'https://example.invalid/mover',
+    WORKFLOWS_CLIENT_TOKEN: 'joiner-token',
+    WORKFLOWS_MOVER_TOKEN: 'mover-token',
+  }, async (url, options) => {
+    calls.push({ url, token: options.headers['x-api-client-token'] });
+    return { ok: true, status: 200 };
+  });
+  assert.deepStrictEqual(calls, [{ url: 'https://example.invalid/mover', token: 'mover-token' }]);
+});
+
 test('csv appends a header once', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hr-sync-csv-'));
   const file = path.join(dir, 'jml.csv');

@@ -15,6 +15,12 @@ const URL_ENV = {
   mover: 'WORKFLOWS_MOVER_URL',
   leaver: 'WORKFLOWS_LEAVER_URL',
 };
+// Each API Endpoint card has its own client token. The shared token is the fallback.
+const TOKEN_ENV = {
+  joiner: 'WORKFLOWS_JOINER_TOKEN',
+  mover: 'WORKFLOWS_MOVER_TOKEN',
+  leaver: 'WORKFLOWS_LEAVER_TOKEN',
+};
 
 function sydneyToday(now = new Date()) {
   return new Intl.DateTimeFormat('en-CA', {
@@ -199,9 +205,10 @@ function appendCsv(file, rows) {
 async function postEvents(events, ticket, env, fetchImpl) {
   const missing = [...new Set(events.map((event) => URL_ENV[event.event]).filter((name) => !env[name]))];
   if (missing.length) throw new Error(`Missing ${missing.join(', ')}`);
-  const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
-  if (env.WORKFLOWS_CLIENT_TOKEN) headers['x-api-client-token'] = env.WORKFLOWS_CLIENT_TOKEN;
   for (const event of events) {
+    const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
+    const token = env[TOKEN_ENV[event.event]] || env.WORKFLOWS_CLIENT_TOKEN;
+    if (token) headers['x-api-client-token'] = token;
     const response = await fetchImpl(env[URL_ENV[event.event]], {
       method: 'POST',
       headers,
