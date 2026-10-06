@@ -39,6 +39,16 @@ Checked again 2026-10-06 01:17 +1100. Screenshot: [evidence/0.2-email-routing-ca
 - `test-env@lanternfieldgoods.co.uk` was mailed from `timothy_itayi@icloud.com` at 2026-10-06 00:25 +1100 and arrived in Gmail.
 - `admin@lanternfieldgoods.co.uk` received Okta's activation mail. The org was activated with that address and Okta Verify was enrolled. See [01-org.md](01-org.md).
 
+## Tunnel
+
+Decision date: 2026-10-06
+
+Rostr's public name is `rostr.lanternfieldgoods.co.uk`. The tunnel is named `rostr`, id `52a3de6f-81d8-4452-93e5-a550ed263116`. Cloudflare added a CNAME for that hostname to the tunnel. The ingress rule sends that hostname to `http://localhost:3000`, which is the published Rostr container port.
+
+The quick-tunnel fallback (`cloudflared tunnel --url`) was not used. That URL changes on every restart and would force every Okta setting to be edited again. This domain already exists, so the stable hostname is the one Okta will be given.
+
+The tunnel credentials stay in `~/.cloudflared/`. They are not in this repository. The config file is `~/.cloudflared/config.yml`, also outside the repo.
+
 ## Still open
 
 The catch-all rule is on. A message to a staff address has not been shown arriving since that change. Task 0.2 still wants mail to `admin@lanternfieldgoods.co.uk` and to `ava.nguyen@lanternfieldgoods.co.uk` in Gmail. `ava.nguyen@` is now EMP-1001 in `hr/employees.json`, and the catch-all is what delivers the other six staff addresses too.

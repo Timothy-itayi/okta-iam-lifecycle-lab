@@ -1,0 +1,13 @@
+services:
+  rostr:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      ROSTR_DB_PATH: /data/rostr.sqlite
+      ROSTR_AUTH_LOG: /logs/rostr-auth.jsonl
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in rostr/.env}
+    volumes:
+      - ../logs:/logs
+      - ./data:/data
