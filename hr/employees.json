@@ -28,9 +28,9 @@
     "firstName": "Priya",
     "lastName": "Shah",
     "email": "priya.shah@lanternfieldgoods.co.uk",
-    "department": "Sales",
-    "title": "Account Executive",
-    "managerId": "EMP-1001",
+    "department": "Operations",
+    "title": "Operations Analyst",
+    "managerId": "EMP-1004",
     "status": "active",
     "startDate": "2025-06-02",
     "endDate": null
@@ -79,9 +79,9 @@
     "department": "Finance",
     "title": "Accounts Assistant",
     "managerId": "EMP-1006",
-    "status": "active",
+    "status": "terminated",
     "startDate": "2024-11-11",
-    "endDate": null
+    "endDate": "2026-10-07"
   },
   {
     "employeeId": "EMP-1008",
