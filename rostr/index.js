@@ -13,8 +13,22 @@ if (!sessionSecret) {
 const dbPath = process.env.ROSTR_DB_PATH || path.join(__dirname, 'data', 'rostr.sqlite');
 const authLogPath = process.env.ROSTR_AUTH_LOG || path.join(__dirname, '..', 'logs', 'rostr-auth.jsonl');
 const port = Number(process.env.PORT || 3000);
+const scimLogPath = process.env.ROSTR_SCIM_LOG || path.join(__dirname, '..', 'logs', 'scim.jsonl');
 const metadataUrl = process.env.OKTA_SAML_METADATA_URL;
 const baseUrl = (process.env.ROSTR_BASE_URL || '').replace(/\/+$/, '');
+
+function loadScim() {
+  const token = process.env.SCIM_TOKEN;
+  if (!token) {
+    console.warn('SCIM_TOKEN is not set. SCIM routes are off.');
+    return null;
+  }
+  if (token.length < 32) {
+    throw new Error('SCIM_TOKEN must be at least 32 characters');
+  }
+  console.log(`SCIM on /scim/v2, log ${scimLogPath}`);
+  return { token, logPath: scimLogPath, baseUrl: baseUrl ? `${baseUrl}/scim/v2` : null };
+}
 
 async function loadSaml() {
   if (!metadataUrl) {
@@ -54,8 +68,9 @@ async function loadOidc() {
 
 Promise.all([loadSaml(), loadOidc()])
   .then(([saml, oidc]) => {
+    const scim = loadScim();
     const db = openDatabase(dbPath);
-    const app = createApp({ db, authLogPath, sessionSecret, saml, oidc });
+    const app = createApp({ db, authLogPath, sessionSecret, saml, oidc, scim });
     app.listen(port, '0.0.0.0', () => {
       console.log(`Rostr listening on ${port}`);
     });

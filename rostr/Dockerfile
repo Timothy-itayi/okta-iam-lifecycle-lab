@@ -16,7 +16,8 @@ WORKDIR /app
 ENV NODE_ENV=production \
     PORT=3000 \
     ROSTR_DB_PATH=/data/rostr.sqlite \
-    ROSTR_AUTH_LOG=/logs/rostr-auth.jsonl
+    ROSTR_AUTH_LOG=/logs/rostr-auth.jsonl \
+    ROSTR_SCIM_LOG=/logs/scim.jsonl
 
 COPY --from=build /app /app
 RUN mkdir -p /data /logs && chown -R node:node /app /data /logs

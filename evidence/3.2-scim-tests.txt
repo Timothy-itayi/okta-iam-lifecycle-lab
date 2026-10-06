@@ -1,0 +1,28 @@
+SCIM tests 2026-10-06T08:26:11Z against http://127.0.0.1:3001/scim/v2
+Test user scim-test-1791275171@example.invalid
+
+PASS  A1   GET /Users with no Authorization header                      401
+PASS  A2   GET /Users with a wrong token                                401
+PASS  S1   GET /ServiceProviderConfig declares PATCH                    200
+PASS  U3a  filter userName eq for a user that is not there              200
+PASS  U4   POST /Users with the Okta create body                        201
+PASS  U4   Location header points at the new user                       201
+PASS  U3b  filter userName eq, same user in upper case                  200
+PASS  U1   GET /Users?startIndex=1&count=2, integer paging fields       200
+PASS  U2a  count=0 returns totalResults and no resources                200
+PASS  U2b  startIndex=0 is read as 1                                    200
+PASS  U5a  POST the same userName again                                 409
+PASS  U5b  POST the same userName in upper case                         409
+PASS  U6a  GET /Users/{id}                                              200
+PASS  U6b  GET /Users/{id} for an unknown id                            404
+PASS  U7a  PUT /Users/{id} with a title and department                  200
+PASS  U7b  PUT /Users/{id} for an unknown id                            404
+PASS  U7b  that PUT created no row                                      200
+PASS  U8a  PATCH replace without path, active false (Okta OIN form)     200
+PASS  U8a  GET after PATCH shows active false                           200
+PASS  U9   PATCH replace path active, value true                        200
+PASS  U8b  PUT with active false (Classic-experience form)              200
+PASS  U3c  unsupported filter userName co                               400
+PASS  L1   SCIM log has this run, no token, no password                 13 lines
+
+23 passed, 0 failed

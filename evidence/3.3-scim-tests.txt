@@ -1,0 +1,43 @@
+SCIM tests 2026-10-06T08:35:35Z against http://127.0.0.1:3001/scim/v2
+Test user scim-test-1791275735@example.invalid
+
+PASS  A1   GET /Users with no Authorization header                      401
+PASS  A2   GET /Users with a wrong token                                401
+PASS  S1   GET /ServiceProviderConfig declares PATCH                    200
+PASS  U3a  filter userName eq for a user that is not there              200
+PASS  U4   POST /Users with the Okta create body                        201
+PASS  U4   Location header points at the new user                       201
+PASS  U3b  filter userName eq, same user in upper case                  200
+PASS  U1   GET /Users?startIndex=1&count=2, integer paging fields       200
+PASS  U2a  count=0 returns totalResults and no resources                200
+PASS  U2b  startIndex=0 is read as 1                                    200
+PASS  U5a  POST the same userName again                                 409
+PASS  U5b  POST the same userName in upper case                         409
+PASS  U6a  GET /Users/{id}                                              200
+PASS  U6b  GET /Users/{id} for an unknown id                            404
+PASS  U7a  PUT /Users/{id} with a title and department                  200
+PASS  U7b  PUT /Users/{id} for an unknown id                            404
+PASS  U7b  that PUT created no row                                      200
+PASS  U8a  PATCH replace without path, active false (Okta OIN form)     200
+PASS  U8a  GET after PATCH shows active false                           200
+PASS  U9   PATCH replace path active, value true                        200
+PASS  U8b  PUT with active false (Classic-experience form)              200
+PASS  U3c  unsupported filter userName co                               400
+PASS  G1   GET /Groups?startIndex=1&count=100                           200
+PASS  G3   filter displayName eq before the group exists                200
+PASS  G2   POST /Groups with displayName and no members                 201
+PASS  G2   Location header points at the new group                      201
+PASS  G3   filter displayName eq finds the group                        200
+PASS  G4   GET /Groups/{id} returns the members list                    200
+PASS  G6a  PATCH add a member                                           200
+PASS  G6a  GET after add shows the member                               200
+PASS  G6b  PATCH remove members[value eq id]                            200
+PASS  G6c  PATCH replace members with one value                         200
+PASS  G5a  PATCH replace displayName, no path                           200
+PASS  G5b  PUT /Groups/{id} with displayName and members                200
+PASS  G7   DELETE /Groups/{id}                                          204
+PASS  G7   GET the deleted group                                        404
+PASS  G7   deleted group is not in the filter                           200
+PASS  L1   SCIM log has this run, no token, no password                 18 lines
+
+38 passed, 0 failed

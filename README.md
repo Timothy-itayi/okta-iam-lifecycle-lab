@@ -12,14 +12,14 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-Phase 0 and Phase 1 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. SCIM, Workflows, and the governance outputs are not built.
+Phase 0 and Phase 1 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Rostr has SCIM Users and Groups endpoints. Okta's connector test passed and the To App mappings are set. No staff profile has been pushed yet. Workflows and the governance outputs are not built.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |
 | 0 | Prep, domain, org, and design | 5 h | Done | [docs/decisions](docs/decisions) |
 | 1 | Okta foundation | 6 h | Done | [docs/phases/01-foundation.md](docs/phases/01-foundation.md) |
 | 2 | SaaS onboarding: SAML and OIDC | 8 h | In progress | [docs/phases/02-onboarding.md](docs/phases/02-onboarding.md) |
-| 3 | SCIM provisioning | 8 h | Not started | |
+| 3 | SCIM provisioning | 8 h | In progress | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
 | 4 | Joiner, mover, and leaver | 7 h | Not started | Milestone M2 |
 | 5 | Governance and audit evidence | 7.5 h | Not started | |
 | 6 | Failure drills | 6 h | Not started | |
@@ -47,12 +47,12 @@ The Rostr shell is in [rostr](rostr). `scripts/`, the five Workflows, and the ph
 | Path | Holds | Now |
 | --- | --- | --- |
 | [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design |
-| [docs/phases](docs/phases) | One note per phase | [01-foundation.md](docs/phases/01-foundation.md), [02-onboarding.md](docs/phases/02-onboarding.md) |
+| [docs/phases](docs/phases) | One note per phase | [01-foundation.md](docs/phases/01-foundation.md), [02-onboarding.md](docs/phases/02-onboarding.md), [03-scim.md](docs/phases/03-scim.md) |
 | [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md) |
 | [docs/incidents](docs/incidents) | Failure records | [00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md). Phase 6 drills are not started |
 | [docs/worklog](docs/worklog) | Session log | [week-1.md](docs/worklog/week-1.md) |
 | [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7 |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |
-| [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. `/admin/users` requires `APP-Rostr-Admins`. SCIM is not built |
-| `scripts/` | `hr-sync` and review exports | Empty until Phase 4 |
+| [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Okta is not connected to SCIM yet |
+| [scripts](scripts) | Test scripts, later `hr-sync` and review exports | [scim-tests.sh](scripts/scim-tests.sh). `hr-sync` is Phase 4 |
 | [.env.example](.env.example) | Placeholder names only | No secrets |

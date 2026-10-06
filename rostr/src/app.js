@@ -4,6 +4,7 @@ const { listUsers } = require('./db');
 const { recordSignIn } = require('./auth-log');
 const { mountSaml } = require('./saml');
 const { mountOidc, isRostrAdmin } = require('./oidc');
+const { createScimRouter } = require('./scim');
 
 const COLUMNS = [
   'id',
@@ -71,11 +72,14 @@ function signIn(req, authLogPath, event) {
   req.session.user = event.attributes || { user: event.user };
 }
 
-function createApp({ db, authLogPath, sessionSecret, saml, oidc }) {
+function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim }) {
   if (!sessionSecret) {
     throw new Error('SESSION_SECRET is required');
   }
   const app = express();
+  if (scim) {
+    app.use('/scim/v2', createScimRouter({ db, ...scim }));
+  }
   app.use(session({
     secret: sessionSecret,
     resave: false,
