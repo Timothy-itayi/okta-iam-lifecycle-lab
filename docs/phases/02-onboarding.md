@@ -161,6 +161,8 @@ The kept app is assigned to `APP-Rostr-Admins`: [evidence/2.7-group-assigned-ros
 
 The app's sign-on policy is "Any two factors": [evidence/2.7-rostr-admin-any-two-factors.png](../../evidence/2.7-rostr-admin-any-two-factors.png). It is not the SAML policy named Rostr.
 
+On 2026-10-06 the catch-all rule inside "Any two factors" had **Phishing resistant** set. That constraint was removed so the Okta Workflows app could be opened with password and Okta Verify push. **Require user interaction** stayed on, set to any interaction. The catch-all rule cannot be limited to a group, so Rostr Admin, which uses this same policy, no longer demands FastPass either. The SAML policy named Rostr was not changed.
+
 The default authorization server had no access policy for this client. Policy `Rostr Admin` is assigned to the Rostr Admin client. Its rule is named Authorization Code, priority 1, scopes All, Active: [evidence/2.7-access-policy-create.png](../../evidence/2.7-access-policy-create.png), [evidence/2.7-access-policy-rule.png](../../evidence/2.7-access-policy-rule.png). The description field contains the word `policy`.
 
 The `groups` claim on that server is included in the ID token. The filter is Starts with `APP-Rostr`. Token Preview at 17:18 used grant type Authorization Code, user Jonah Hale, and scope `openid`: [evidence/2.7-token-preview-id-token.png](../../evidence/2.7-token-preview-id-token.png).
