@@ -40,6 +40,7 @@ The Rostr shell is in [rostr](rostr). `scripts/`, the five Workflows, and the ph
 - User budget, five flows, and naming: [docs/decisions/02-design.md](docs/decisions/02-design.md).
 - Seven staff, group rules, session policies, help desk role, MFA reset, and the Entra-to-Okta names: [docs/phases/01-foundation.md](docs/phases/01-foundation.md).
 - Lost-phone reset: [docs/runbooks/mfa-reset.md](docs/runbooks/mfa-reset.md).
+- SaaS onboarding: [docs/runbooks/saas-onboarding.md](docs/runbooks/saas-onboarding.md).
 
 ## Repository
 
@@ -47,7 +48,7 @@ The Rostr shell is in [rostr](rostr). `scripts/`, the five Workflows, and the ph
 | --- | --- | --- |
 | [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design |
 | [docs/phases](docs/phases) | One note per phase | [01-foundation.md](docs/phases/01-foundation.md), [02-onboarding.md](docs/phases/02-onboarding.md) |
-| [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md) |
+| [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md) |
 | [docs/incidents](docs/incidents) | Failure records | [00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md). Phase 6 drills are not started |
 | [docs/worklog](docs/worklog) | Session log | [week-1.md](docs/worklog/week-1.md) |
 | [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7 |

@@ -141,7 +141,7 @@ Signing in as that account produced "You do not have permission to perform the r
 
 The System Log row for Timothy itayi at 15:59:44 is a failure, target Rostr. The event type is `app.generic.unauth_app_access_attempt`, displayed as "User attempted unauthorized access to app." It does not name the Rostr policy or the Catch-all Rule. That event type is the one Okta writes when it treats the user as not allowed to open the app. The screenshot of the log contains a source IP, so the image stays out of the repo.
 
-One account is the whole neither-group test. Remove the Individual row for `admin@` when the test is done. The access model is group assignment. Leaving the daily admin on the app keeps a person who is denied by policy, and it is the assignment the design said not to use.
+One account is the whole neither-group test. The Individual row for `admin@` was removed after it. The access model is group assignment. The SAML app stays assigned to `APP-Rostr-Users` only.
 
 ### Step 6
 
@@ -157,7 +157,7 @@ During this test `APP-Rostr-Admins` was empty, so the Rostr Admins rule matched 
 
 A second app, `Rostr Admin`, is the OIDC client for `/admin`. It is not the SAML app. Client ID `0oa18egjva6o5FpoP698` is in `rostr/.env` as `OIDC_CLIENT_ID`. The issuer there is `https://trial-7464750.okta.com/oauth2/default`. The client secret is in that same file and is not copied here. Two apps were created with this name. The one that was deleted is recorded in [docs/incidents/00-duplicate-rostr-admin.md](../incidents/00-duplicate-rostr-admin.md).
 
-The kept app is assigned to `APP-Rostr-Admins`: [evidence/2.7-group-assigned-rostr-admin.png](../../evidence/2.7-group-assigned-rostr-admin.png). Jonah Hale is in that group manually: [evidence/2.7-jonah-in-app-rostr-admins.png](../../evidence/2.7-jonah-in-app-rostr-admins.png). On the app he appears as type Group: [evidence/2.7-rostr-admin-assignment-group.png](../../evidence/2.7-rostr-admin-assignment-group.png). While he remains in the group, the SAML policy's Rostr Admins rule also applies to him.
+The kept app is assigned to `APP-Rostr-Admins`: [evidence/2.7-group-assigned-rostr-admin.png](../../evidence/2.7-group-assigned-rostr-admin.png). For the test, Jonah Hale was in that group manually: [evidence/2.7-jonah-in-app-rostr-admins.png](../../evidence/2.7-jonah-in-app-rostr-admins.png). On the app he appeared as type Group: [evidence/2.7-rostr-admin-assignment-group.png](../../evidence/2.7-rostr-admin-assignment-group.png). He was removed after the browser sign-in. The group is empty again. While he was in it, the SAML policy's Rostr Admins rule also applied to him.
 
 The app's sign-on policy is "Any two factors": [evidence/2.7-rostr-admin-any-two-factors.png](../../evidence/2.7-rostr-admin-any-two-factors.png). It is not the SAML policy named Rostr.
 
@@ -193,4 +193,10 @@ The Rostr log at `2026-10-06T06:35:49.607Z` is `protocol: oidc`, that `sub`, `ou
 
 `/admin/users` at 17:37 rendered the table: [evidence/2.7-oidc-admin-users.png](../../evidence/2.7-oidc-admin-users.png). The only row is Jonah Hale from the SAML sign-in. `lastLogin` is still `2026-10-06T05:20:26.829Z`. The OIDC sign-in did not change it. The page rendered because the session groups include `APP-Rostr-Admins`.
 
-Jonah is still a manual member of `APP-Rostr-Admins`. Take him out. While he is in that group, the SAML Rostr Admins rule applies to him as well, and that rule wants FastPass. The group is supposed to stay empty until an access request adds someone.
+Jonah Hale was removed from `APP-Rostr-Admins` after this sign-in. The group is empty until an access request adds someone. A browser that still has the 17:36 session keeps `APP-Rostr-Admins` in that cookie until the window is closed. The next `/oidc/login` as Jonah has no assignment.
+
+## 2.8 SaaS onboarding runbook
+
+The repeatable procedure is [docs/runbooks/saas-onboarding.md](../runbooks/saas-onboarding.md). It has the intake, the SAML and OIDC configuration tables from this note, the test plan, rollback, and handover.
+
+The runbook marks IdP-initiated SAML as not run. The two test assignments are closed: Jonah Hale is out of `APP-Rostr-Admins`, and the Individual assignment of `admin@` on the SAML app is removed. No business owner has accepted the app. The daily admin still holds the Okta configuration.
