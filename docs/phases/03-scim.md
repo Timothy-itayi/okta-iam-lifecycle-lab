@@ -307,3 +307,77 @@ To App sends Okta profile values to Rostr. The mapping list at 19:57 is the reco
 The 19:57 list also showed `userType`, mapped from `user.userType`. That row was removed after the screenshot. Rostr does not store `userType`. The phones, addresses, `displayName`, `locale`, `employeeNumber`, `costCenter`, `organization`, `division`, and `manager` rows from the 19:45 list are not on the 19:57 list either. The mappings that remain are the six in the table.
 
 Saving To App at 19:45 produced one more probe, `GET /Users?startIndex=1&count=2` at `2026-10-06T08:45:47.361Z`, status 200, the same Jonah Hale row. No `POST`, `PUT`, or `PATCH` follows it. Force Sync has not reached Rostr. The seven assigned staff have not been provisioned by this save.
+
+## 3.6 Validate the lifecycle
+
+The pairs are [evidence/03-scim/lifecycle-pairs.md](../../evidence/03-scim/lifecycle-pairs.md). Okta time in the Admin Console is +1100. `logs/scim.jsonl` is UTC. System Log screenshots are not in the repo. The event ids below were copied from them.
+
+Before any of this, at `09:10Z`, Rostr held one user, Jonah Hale's SAML row, and no groups. The log had no `POST`, `PUT`, or `PATCH` from Okta.
+
+### Create, update, deactivate
+
+`test.joiner@lanternfieldgoods.co.uk` was created in the directory and landed in `APP-Rostr-Users` through the group rules. Okta user id `00u18ep2sjmnGT1wk698`. Rostr id `14128da2-800f-4f81-959d-fa08c9d1db15`.
+
+| Action | Okta | Rostr |
+| --- | --- | --- |
+| Create | System Log row not captured | `09:13:57.688Z` `GET /Users?filter=userName eq "test.joiner@lanternfieldgoods.co.uk"` 200, empty. `09:13:57.937Z` `POST /Users` 201 in 30 ms |
+| Title set to Account Executive | System Log row not captured | `09:16:04.758Z` `GET` by id 200, then `09:16:04.973Z` `PUT` 200 in 16 ms. The row's `title` is `Account Executive` |
+| Deactivate | `Oct 06 20:18:32`, `user.lifecycle.deactivate` SUCCESS, event id `4f1c0ccf24870fe68372d5584b4dd737`. The next row is `Remove user's application` | `09:18:33.801Z` `GET` by id 200, then `09:18:33.996Z` `PUT` 200 in 10 ms with `"active": false`. The row is kept, `active` 0 |
+
+`20:18:32` +1100 is `09:18:32Z`. The `PUT` is `09:18:33.996Z`. Deactivation in the directory and the push to Rostr are inside two seconds, and they are two Okta events. Only the app removal produces SCIM traffic.
+
+Every write is a `PUT`. There is no `PATCH` from Okta anywhere in this phase. That answers the open question from 3.1: an App Integration Wizard app on the classic path reads the resource and writes it back whole. A server that implemented only `PATCH` would have failed the title change and the deactivation.
+
+The create body carried `externalId` `00u18ep2sjmnGT1wk698`, `groups: []`, and a `password`. Rostr stored none of them. The log lists those three keys as ignored, and the password value is `[redacted]`. `externalId` is how the two logs are tied together. It is the Target id on the System Log row.
+
+`department` is null on the test joiner, and none of their three bodies contains the enterprise extension. The other seven users, below, all carried it. The test joiner's Department value was not on the payload Okta sent. Not re-tested. The user is deactivated.
+
+### The seven staff were not in the Force Sync
+
+Force Sync from the To App tab sent nothing. The Assignments tab said, on each of the seven: "User was assigned this application before Provisioning was enabled and not provisioned in the downstream application. Click Provision User." They were assigned in phase 2, before this app had a SCIM connection. Force Sync updates accounts Okta has already provisioned. It does not create that backlog.
+
+Provision User, clicked at `09:27:00Z`, did. One `GET` filter per person, then:
+
+| Call | userName | title | department |
+| --- | --- | --- | --- |
+| POST 201 | ava.nguyen@ | Sales Manager | Sales |
+| POST 201 | priya.shah@ | Account Executive | Sales |
+| PUT 200 | jonah.hale@ | Account Executive | Sales |
+| POST 201 | marcus.bell@ | Operations Manager | Operations |
+| POST 201 | lena.ortiz@ | Shift Supervisor | Operations |
+| POST 201 | helen.cho@ | Finance Manager | Finance |
+| POST 201 | samir.adeyemi@ | Accounts Assistant | Finance |
+
+Each body includes `urn:ietf:params:scim:schemas:extension:enterprise:2.0:User`. The `department` mapping from 3.5 works. Jonah was not created a second time. The filter found `810dde51-dd11-41ac-afda-5400f831d908`, the row SAML wrote in 2.4, and the `PUT` wrote title and department onto it. That link is what 3.7 has to reconcile on purpose. Here it happened as a side effect of provisioning someone who had already signed in.
+
+### Group push
+
+Both groups were pushed by name. The Push Groups tab shows both **Active**: [evidence/03-scim/3.6-push-groups.png](../../evidence/03-scim/3.6-push-groups.png).
+
+| Group | System Log | SCIM | Rostr |
+| --- | --- | --- | --- |
+| `APP-Rostr-Users` | `20:30:04`, `application.provision.group_push.updated` SUCCESS, `gmr18eppKqmoNx85o698`. App group `AGr18eppkqj65d7qD698` | `09:30:03.997Z` filter, empty. `09:30:04.282Z` `POST` 201. `09:30:04.537Z` `GET`. `09:30:04.737Z` `PUT` 200 | `6305f001-33ef-42a8-9e17-0aef8a440ead`, 7 members: the staff above, by the ids from `09:27:01Z` |
+| `APP-Rostr-Admins`, first try | `20:30:13`, `application.provision.group.add` FAILURE, `gmr18epsy08FIJnug698` | No line | No row |
+| `APP-Rostr-Admins`, retry | `20:35:12`, `application.provision.group_push.updated` SUCCESS, `gmr18epw486tMqyqS698`. App group `AGr18epw4837PQuvb698` | `09:35:11.528Z` filter, empty. `09:35:11.814Z` `POST` 201. `09:35:12.044Z` `GET`. `09:35:12.233Z` `PUT` 200 | `6e95185e-5563-4d6c-9422-bf8723cf269f`, `members` `[]` |
+
+`20:30:04` +1100 is `09:30:04Z`, and the users-group `PUT` is `09:30:04.737Z`. `20:35:12` is `09:35:12Z`, and the admins `PUT` is `09:35:12.233Z`. Groups take the same shape as users. Okta looks up by `displayName`, creates, reads the id back, and `PUT`s the whole group. No `PATCH`.
+
+The admins group is empty because the Okta group is empty. Jonah was removed after 2.7. Okta sent `"members": []` on the `POST` and the `PUT`. Membership for the users group is the proof: seven ids, the same seven Rostr created at `09:27:01Z`.
+
+The `20:30:13` failure is a gateway error, not a Rostr response. The outcome text is `Bad Gateway. Errors reported by remote server: Invalid JSON: Unrecognized token 'error' ... line: 1, column: 6`. A SCIM error from this server starts with `{`. That token is Cloudflare's plain-text page, `error code: 502`, and column 6 is the space after `error`. The container did not restart. A probe at `09:33:54Z` got a normal SCIM 401 from the same host. The retry used the same calls as the users group and succeeded. No code change.
+
+Pushed groups still do not decide who can sign in. `/admin/users` reads the OIDC `groups` claim, not the SCIM `groups` table.
+
+## 3.7 Import and reconcile
+
+Import reads Rostr and compares each account with the Okta directory. The match key is `userName`, the unique identifier set in 3.4. The first import, at `09:39:06Z`, is not this task. The orphan row did not exist yet. Okta reported 7 scanned and 7 confirmed. Rostr had returned 8 resources. The one missing from the count is `test.joiner@lanternfieldgoods.co.uk`, `active: false`.
+
+The orphan was inserted straight into `/data/rostr.sqlite`, not through SCIM. Id `00000000-0000-4000-8000-000000000001`, `userName` `orphan.roster@example.invalid`, title `Former contractor`, `active` 1. It is in neither group. A list at `09:45:03Z` still has 8 resources and no orphan. The list at `09:45:39Z` has 9, and the orphan is one of them, `active: true`.
+
+Import Now then reported 8 scanned, 1 new, 7 unchanged, 0 removed, 0 groups: [evidence/03-scim/3.7-import-scanned.png](../../evidence/03-scim/3.7-import-scanned.png). Eight is the nine in the list without the inactive test joiner. The seven unchanged are the staff. Zero groups is Import Groups left off in 3.4. This import sent `GET /Users` only.
+
+The new row landed on the **NO** filter. Okta's proposed assignment was a new Okta user, same name and email: [evidence/03-scim/3.7-import-no-match.png](../../evidence/03-scim/3.7-import-no-match.png). That proposal was not confirmed. The confirm dialog is 0 Okta users created, 0 existing users assigned, 1 Rostr user ignored: [evidence/03-scim/3.7-import-confirm-ignore.png](../../evidence/03-scim/3.7-import-confirm-ignore.png). Afterwards the row reads "User is IGNORED in Okta": [evidence/03-scim/3.7-import-ignored.png](../../evidence/03-scim/3.7-import-ignored.png).
+
+The Rostr row is still there and still active. Ignore does not delete the app account. It tells Okta not to mint a directory user for it. Linking it to a staff member would have attached a fake account to a real person. Confirming the new user would have spent the spare joiner slot on someone who is not in `hr/employees.json`. The slot is still free. `test.joiner@` is deactivated and does not count.
+
+An orphan matters because deactivation cannot reach an account Okta does not know about. The test joiner is the other direction: Okta deactivated the user and the `PUT` set Rostr `active` to false. This row has no Okta user, so a leaver flow would not touch it, and the person it represents could keep using Rostr if Rostr ever trusted that row for sign-in. Sign-in today still requires an Okta session, so this particular row cannot log in. The audit problem is the same one. The app's account list and the directory have diverged, and the import is the check that shows it.
