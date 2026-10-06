@@ -12,7 +12,7 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-Phase 0, Phase 1, and Phase 3 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Okta provisions the Rostr app over SCIM. The seven staff are in Rostr with title and department. `APP-Rostr-Users` is pushed with those seven members, and `APP-Rostr-Admins` is pushed empty. A test joiner was created, retitled, and deactivated. An account inserted straight into Rostr was imported, matched nothing, and was ignored. It is still in the Rostr database. The joiner, mover, and leaver flows are not built.
+Phase 0, Phase 1, and Phase 3 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Okta provisions the Rostr app over SCIM. The seven staff are in Rostr with title and department. `APP-Rostr-Users` is pushed with those seven members, and `APP-Rostr-Admins` is pushed empty. A test joiner was created, retitled, and deactivated. An account inserted straight into Rostr was imported, matched nothing, and was ignored. It is still in the Rostr database. `svc-jml-sync` can take a client-credentials token with the three API scopes, and that token can read the System Log. The joiner, mover, and leaver flows are not built.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ Phase 0, Phase 1, and Phase 3 are done. Staff are in Okta, department groups fil
 | 1 | Okta foundation | 6 h | Done | [docs/phases/01-foundation.md](docs/phases/01-foundation.md) |
 | 2 | SaaS onboarding: SAML and OIDC | 8 h | In progress | [docs/phases/02-onboarding.md](docs/phases/02-onboarding.md) |
 | 3 | SCIM provisioning | 8 h | Done | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
-| 4 | Joiner, mover, and leaver | 7 h | In progress | [docs/decisions/02-design.md](docs/decisions/02-design.md) |
+| 4 | Joiner, mover, and leaver | 7 h | In progress | [docs/decisions/scripts-identity.md](docs/decisions/scripts-identity.md) |
 | 5 | Governance and audit evidence | 7.5 h | Not started | |
 | 6 | Failure drills | 6 h | Not started | |
 | 7 | Write-up and teardown | 4 h | Not started | Milestone M3 |
@@ -46,12 +46,12 @@ The Rostr shell is in [rostr](rostr). `scripts/scim-tests.sh` is the SCIM test s
 
 | Path | Holds | Now |
 | --- | --- | --- |
-| [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design |
+| [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design, service identity |
 | [docs/phases](docs/phases) | One note per phase | [01-foundation.md](docs/phases/01-foundation.md), [02-onboarding.md](docs/phases/02-onboarding.md), [03-scim.md](docs/phases/03-scim.md) |
 | [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md) |
 | [docs/incidents](docs/incidents) | Failure records | [00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md). Phase 6 drills are not started |
 | [docs/worklog](docs/worklog) | Session log | [week-1.md](docs/worklog/week-1.md) |
-| [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, and 3.2 through 3.7 |
+| [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, 3.2 through 3.7, and 4.1 |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |
 | [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Okta pushes users and the two `APP-Rostr` groups |
 | [scripts](scripts) | Test scripts, later `hr-sync` and review exports | [scim-tests.sh](scripts/scim-tests.sh). `hr-sync` is Phase 4 |
