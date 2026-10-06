@@ -1,0 +1,7 @@
+ticket REQ-0002
+mode dry-run
+mover EMP-1002 title
+mover EMP-1003 managerId
+leaver EMP-1005 status
+leaver EMP-1007 endDate
+joiner EMP-1008

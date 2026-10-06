@@ -81,3 +81,16 @@ Not in this check: `.gitignore` and `.env.example` are still uncommitted. A mess
 - Task 3.6. Create, title change, and deactivate for `test.joiner@` are `POST` then two `PUT`s. Deactivate is `user.lifecycle.deactivate` `4f1c0ccf24870fe68372d5584b4dd737` at 20:18:32, and the `PUT` with `active: false` at `09:18:33.996Z`. The System Log rows for the create and the title change were not captured. Force Sync did nothing for the seven staff, because they were assigned before provisioning existed. Provision User created six and `PUT` Jonah's existing SAML row, with department set. `APP-Rostr-Users` pushed with those seven members. `APP-Rostr-Admins` failed once on a Cloudflare 502 that never reached Rostr, then pushed empty. Okta sent `PUT`, not `PATCH`, for users and groups. Pairs are [evidence/03-scim/lifecycle-pairs.md](../../evidence/03-scim/lifecycle-pairs.md).
 - Task 3.7. `orphan.roster@example.invalid` was inserted into Rostr's database, active, in no group. The import at `09:45:39Z` returned 9 users. Okta scanned 8, called 1 new, and left 7 unchanged. The inactive test joiner was in the list and not in the scan count. Okta proposed a new Okta user. That was ignored: 0 created, 0 linked, 1 ignored. The Rostr row remains. The reconciliation note is in [docs/phases/03-scim.md](../phases/03-scim.md).
 - Task 4.1. API service app client id `0oa18eu8qpmkJBqdg698`. Public key `svc-jml-sync-1` is in Okta. The private key is outside the repo. Scopes granted are `okta.users.manage`, `okta.groups.manage`, and `okta.logs.read`. Custom role `jml-sync` is bound to resource set `jml-sync`. The org requires DPoP, including a nonce. The token response listed exactly those three scopes, type `DPoP`, one hour. `GET /api/v1/users` and `/groups` returned 200. `GET /api/v1/logs` returned 403 until Report Administrator was added beside `jml-sync`. The same call then returned 200. Record is [docs/decisions/scripts-identity.md](../decisions/scripts-identity.md).
+- Task 4.2. `scripts/hr-sync` diffs `hr/employees.json` against `HEAD~1`. A new id is a joiner. A change of department, title, or `managerId` is a mover. `status` terminated, or an `endDate` on or before today in Sydney, is a leaver, and that wins over a mover on the same person. Someone already a leaver in the previous commit is not listed again. Dry-run is the default, requires `REQ-####`, and does not write `logs/jml.csv`. `--apply` posts to the Workflows URLs already named in `.env.example` and then appends the csv. Eight tests passed. Against this repo the dry-run is `no changes`. A throwaway repo with one test commit printed:
+
+```
+ticket REQ-0002
+mode dry-run
+mover EMP-1002 title
+mover EMP-1003 managerId
+leaver EMP-1005 status
+leaver EMP-1007 endDate
+joiner EMP-1008
+```
+
+  Output file: [evidence/4.2-hr-sync-dry-run.txt](../../evidence/4.2-hr-sync-dry-run.txt). That commit is not in this repo.

@@ -12,7 +12,7 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-Phase 0, Phase 1, and Phase 3 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Okta provisions the Rostr app over SCIM. The seven staff are in Rostr with title and department. `APP-Rostr-Users` is pushed with those seven members, and `APP-Rostr-Admins` is pushed empty. A test joiner was created, retitled, and deactivated. An account inserted straight into Rostr was imported, matched nothing, and was ignored. It is still in the Rostr database. `svc-jml-sync` can take a client-credentials token with the three API scopes, and that token can read the System Log. The joiner, mover, and leaver flows are not built.
+Phase 0, Phase 1, and Phase 3 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Okta provisions the Rostr app over SCIM. The seven staff are in Rostr with title and department. `APP-Rostr-Users` is pushed with those seven members, and `APP-Rostr-Admins` is pushed empty. A test joiner was created, retitled, and deactivated. An account inserted straight into Rostr was imported, matched nothing, and was ignored. It is still in the Rostr database. `svc-jml-sync` can take a client-credentials token with the three API scopes, and that token can read the System Log. `scripts/hr-sync` classifies a joiner, mover, or leaver from the HR file and dry-runs unless `--apply` is passed. The three Workflows are not built.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |
@@ -54,5 +54,5 @@ The Rostr shell is in [rostr](rostr). `scripts/scim-tests.sh` is the SCIM test s
 | [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, 3.2 through 3.7, and 4.1 |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |
 | [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Okta pushes users and the two `APP-Rostr` groups |
-| [scripts](scripts) | Test scripts, later `hr-sync` and review exports | [scim-tests.sh](scripts/scim-tests.sh). `hr-sync` is Phase 4 |
+| [scripts](scripts) | Test scripts, `hr-sync`, and later review exports | [scim-tests.sh](scripts/scim-tests.sh), [hr-sync](scripts/hr-sync) |
 | [.env.example](.env.example) | Placeholder names only | No secrets |

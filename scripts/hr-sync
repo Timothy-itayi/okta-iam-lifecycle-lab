@@ -1,0 +1,265 @@
+#!/usr/bin/env node
+// Diff hr/employees.json against the previous commit and classify joiner, mover, leaver.
+// Dry-run is the default. --apply posts each event and appends logs/jml.csv.
+
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { execFileSync } = require('child_process');
+
+const MOVER_FIELDS = ['department', 'title', 'managerId'];
+const TICKET = /^REQ-\d{4}$/;
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const URL_ENV = {
+  joiner: 'WORKFLOWS_JOINER_URL',
+  mover: 'WORKFLOWS_MOVER_URL',
+  leaver: 'WORKFLOWS_LEAVER_URL',
+};
+
+function sydneyToday(now = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Australia/Sydney',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now);
+}
+
+function parseTicket(value) {
+  if (typeof value !== 'string' || !TICKET.test(value)) {
+    throw new Error('Ticket must match REQ-####');
+  }
+  return value;
+}
+
+function indexEmployees(list, label) {
+  if (!Array.isArray(list)) throw new Error(`${label} must be a JSON array`);
+  const byId = new Map();
+  for (const employee of list) {
+    if (!employee || typeof employee !== 'object' || Array.isArray(employee)) {
+      throw new Error(`${label} contains a row that is not an object`);
+    }
+    const employeeId = typeof employee.employeeId === 'string' ? employee.employeeId.trim() : '';
+    if (!employeeId) throw new Error(`${label} contains a row with no employeeId`);
+    if (byId.has(employeeId)) throw new Error(`${label} contains duplicate employeeId ${employeeId}`);
+    if (employee.endDate != null && employee.endDate !== '' && !ISO_DATE.test(employee.endDate)) {
+      throw new Error(`${employeeId} endDate must be YYYY-MM-DD`);
+    }
+    byId.set(employeeId, employee);
+  }
+  return byId;
+}
+
+function isLeaver(employee, today) {
+  if (!employee) return false;
+  const status = String(employee.status || '').trim().toLowerCase();
+  if (status === 'terminated') return true;
+  return Boolean(employee.endDate) && employee.endDate <= today;
+}
+
+function leaverReason(employee) {
+  const status = String(employee.status || '').trim().toLowerCase();
+  if (status === 'terminated') return 'status';
+  return 'endDate';
+}
+
+function changedFields(prior, employee) {
+  return MOVER_FIELDS.filter((field) => (prior[field] ?? null) !== (employee[field] ?? null));
+}
+
+function classify(previousList, currentList, today) {
+  const previous = indexEmployees(previousList, 'Previous file');
+  const current = indexEmployees(currentList, 'Current file');
+  const events = [];
+  for (const employeeId of [...current.keys()].sort()) {
+    const employee = current.get(employeeId);
+    const prior = previous.get(employeeId);
+    if (isLeaver(employee, today)) {
+      if (!isLeaver(prior, today)) {
+        events.push({ event: 'leaver', employeeId, reason: leaverReason(employee), employee });
+      }
+      continue;
+    }
+    if (!prior) {
+      events.push({ event: 'joiner', employeeId, employee });
+      continue;
+    }
+    const fields = changedFields(prior, employee);
+    if (fields.length) events.push({ event: 'mover', employeeId, fields, employee });
+  }
+  const missing = [...previous.keys()].filter((employeeId) => !current.has(employeeId)).sort();
+  return { events, missing };
+}
+
+function formatEvent(event) {
+  if (event.event === 'joiner') return `joiner ${event.employeeId}`;
+  if (event.event === 'leaver') return `leaver ${event.employeeId} ${event.reason}`;
+  return `mover ${event.employeeId} ${event.fields.join(',')}`;
+}
+
+function formatPlan(ticket, mode, events) {
+  const lines = [`ticket ${ticket}`, `mode ${mode}`];
+  if (!events.length) lines.push('no changes');
+  for (const event of events) lines.push(formatEvent(event));
+  return lines.join('\n');
+}
+
+function parseArgs(argv) {
+  let ticket = null;
+  let apply = false;
+  let dryRun = false;
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === '--ticket') {
+      ticket = argv[index + 1];
+      if (ticket === undefined) throw new Error('Ticket must match REQ-####');
+      index += 1;
+    } else if (arg === '--apply') {
+      apply = true;
+    } else if (arg === '--dry-run') {
+      dryRun = true;
+    } else {
+      throw new Error(`Unknown argument ${arg}`);
+    }
+  }
+  if (apply && dryRun) throw new Error('Pass either --apply or --dry-run');
+  return { ticket: parseTicket(ticket), apply };
+}
+
+function repoRoot(cwd) {
+  return execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd, encoding: 'utf8' }).trim();
+}
+
+function readJsonFromGit(root, rev, file) {
+  try {
+    const text = execFileSync('git', ['show', `${rev}:${file}`], { cwd: root, encoding: 'utf8' });
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Cannot read ${rev}:${file}: ${error.message.split('\n')[0]}`);
+  }
+}
+
+function readJsonFile(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+function loadEnvFile(file) {
+  if (!fs.existsSync(file)) return;
+  const text = fs.readFileSync(file, 'utf8');
+  for (const line of text.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eq = trimmed.indexOf('=');
+    if (eq <= 0) continue;
+    const key = trimmed.slice(0, eq).trim();
+    let value = trimmed.slice(eq + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    if (process.env[key] === undefined && value !== '') process.env[key] = value;
+  }
+}
+
+function eventBody(event, ticket) {
+  const source = event.employee;
+  return {
+    ticket,
+    event: event.event,
+    employeeId: event.employeeId,
+    firstName: source.firstName ?? null,
+    lastName: source.lastName ?? null,
+    email: source.email ?? null,
+    department: source.department ?? null,
+    title: source.title ?? null,
+    managerId: source.managerId ?? null,
+    status: source.status ?? null,
+    endDate: source.endDate ?? null,
+    reason: event.reason ?? null,
+    fields: event.fields ?? null,
+  };
+}
+
+function csvCell(value) {
+  const text = String(value ?? '');
+  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
+
+function appendCsv(file, rows) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const headerNeeded = !fs.existsSync(file) || fs.statSync(file).size === 0;
+  const lines = [];
+  if (headerNeeded) lines.push('time,ticket,event,employee,admin');
+  for (const row of rows) {
+    lines.push([row.time, row.ticket, row.event, row.employee, row.admin].map(csvCell).join(','));
+  }
+  fs.appendFileSync(file, `${lines.join('\n')}\n`);
+}
+
+async function postEvents(events, ticket, env, fetchImpl) {
+  const missing = [...new Set(events.map((event) => URL_ENV[event.event]).filter((name) => !env[name]))];
+  if (missing.length) throw new Error(`Missing ${missing.join(', ')}`);
+  const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
+  if (env.WORKFLOWS_CLIENT_TOKEN) headers['x-api-client-token'] = env.WORKFLOWS_CLIENT_TOKEN;
+  for (const event of events) {
+    const response = await fetchImpl(env[URL_ENV[event.event]], {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(eventBody(event, ticket)),
+    });
+    if (!response.ok) {
+      throw new Error(`${event.event} ${event.employeeId} returned HTTP ${response.status}`);
+    }
+  }
+}
+
+async function main(argv, io = {}) {
+  const stdout = io.stdout || ((line) => console.log(line));
+  const stderr = io.stderr || ((line) => console.error(line));
+  const cwd = io.cwd || process.cwd();
+  const fetchImpl = io.fetchImpl || fetch;
+  const args = parseArgs(argv);
+  const root = repoRoot(cwd);
+  loadEnvFile(path.join(root, '.env'));
+  const today = sydneyToday();
+  const previous = readJsonFromGit(root, 'HEAD~1', 'hr/employees.json');
+  const current = readJsonFile(path.join(root, 'hr', 'employees.json'));
+  const { events, missing } = classify(previous, current, today);
+  stdout(formatPlan(args.ticket, args.apply ? 'apply' : 'dry-run', events));
+  for (const employeeId of missing) stderr(`missing from current file: ${employeeId}`);
+  if (!args.apply) return 0;
+  await postEvents(events, args.ticket, process.env, fetchImpl);
+  const admin = process.env.JML_ADMIN || os.userInfo().username;
+  const time = new Date().toISOString();
+  appendCsv(path.join(root, 'logs', 'jml.csv'), events.map((event) => ({
+    time,
+    ticket: args.ticket,
+    event: event.event,
+    employee: event.employeeId,
+    admin,
+  })));
+  return 0;
+}
+
+if (require.main === module) {
+  main(process.argv.slice(2)).then(
+    (code) => process.exit(code),
+    (error) => {
+      console.error(error.message);
+      process.exit(1);
+    },
+  );
+}
+
+module.exports = {
+  classify,
+  parseArgs,
+  parseTicket,
+  formatPlan,
+  formatEvent,
+  appendCsv,
+  postEvents,
+  loadEnvFile,
+  sydneyToday,
+  main,
+};
