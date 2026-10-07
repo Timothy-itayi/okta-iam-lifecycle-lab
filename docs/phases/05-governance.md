@@ -1,6 +1,6 @@
 # Phase 5 — Governance
 
-osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. The one-hour remove has not fired. Stale-Access is not started.
+osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. The one-hour remove has not fired. Access review REQ-0002 applied at 13:43. Stale-Access is not started.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
 
@@ -39,7 +39,27 @@ Group membership was not enough to open the OIDC app until Rostr Admin was assig
 
 OIDC does not write `lastLogin`. Lena's row stayed empty. Jonah Hale's SAML time `2026-10-06T05:20:26.829Z` is unchanged. Samir Adeyemi and `test.joiner` are `active` no. Orphan Roster is still in the table.
 
-The ticket stays Open until she is removed. Wait For is one hour from the successful POST, so revoke is due around 14:06. Then: System Log `group.user_membership.remove`, `/admin/users` 403 as Lena, Internal Note on `357784`, Close.
+The ticket stays Open until she is removed. The 13:06 POST already triggered the flow with `REQ-0001`. Do not POST again. Wait For is one hour from that call, so revoke is due around 14:06.
+
+## 5.2 Close-out (not done)
+
+Done when grant-after-approval and automatic remove show in all three records: ticket `357784`, Workflows History for the 13:06 run, System Log add and remove.
+
+The flow is **Not saving data**, same as Leaver. History will have the execution row and not the card outputs. That row's URL is still the run link. Copy it from Workflows → this flow → History. The 13:06 run should still be in progress until Wait For ends.
+
+After ~14:06, in this order:
+
+1. System Log: `group.user_membership.add` at 13:06:18 (already shot) and `group.user_membership.remove` for Lena / `APP-Rostr-Admins`. Same actor as the add.
+2. Directory: Lena not in `APP-Rostr-Admins`. Rostr sqlite and SCIM should drop her from that group.
+3. New private window, `/oidc/login` as Lena, then `/admin/users`. Expect 403 (`Not allowed.`) if she can still sign in, or Okta refusing the app if group assignment is the only grant.
+4. osTicket `357784`, Internal Note, then Close. Note text: `REQ-0001` granted 13:06, removed automatically after one hour, paste the History run URL. Do not Close before the remove event exists.
+5. Save: History (completed run), System Log remove, ticket Closed with that note.
+
+| Evidence still needed | File |
+| --- | --- |
+| Workflows History, this run | `evidence/5.2-flow-history.png` |
+| `group.user_membership.remove` | `evidence/5.2-system-log-group-remove.png` |
+| Ticket Closed, note has the run link | `evidence/5.2-ticket-closed.png` |
 
 `APP-Rostr-Admins` group id `00g18dk6nvdMFQAgi698`. Close uses a dummy API Connector connection named `unused-close` with auth None, because Workflows stuffed Close under API Connector.
 
@@ -59,3 +79,31 @@ Do not copy a `00u` from Directory. Read User's input is labelled **User or Logi
 ![Access Request flow, right: Add, Close, Wait For, Remove](../../evidence/5.2-access-request-flow-right.png)
 
 The invoke URL is `WORKFLOWS_ACCESS_REQUEST_URL`. The client token is `WORKFLOWS_ACCESS_REQUEST_TOKEN`, this flow's token, not the Joiner token. Neither value is in Git. Fulfilment is a POST to that endpoint, not `hr-sync`.
+
+## 5.3 Access review
+
+The runbook lists this as 5.2. This repo already used 5.2 for Access Request.
+
+`scripts/access-review` is a script, not a flow. It reads every Rostr sqlite user, joins HR for manager, Okta for groups, and the System Log for last `user.authentication.sso` against the SAML Rostr app `0oa18eddmjpNG4dNI698` or the OIDC app `0oa18egjva6o5FpoP698`. It writes one CSV per manager with an empty `decision` column.
+
+```
+node scripts/access-review export --out evidence/5.3
+node scripts/access-review apply --in evidence/5.3 --ticket REQ-0002
+node scripts/access-review apply --in evidence/5.3 --ticket REQ-0002 --apply
+```
+
+Dry-run is the default. `--apply` removes the user from `APP-Rostr-Users` and `APP-Rostr-Admins` only. `svc-jml-sync` has no `okta.apps.manage`, so it cannot unassign the app. It does not touch `DEPT-` groups. The `DEPT-*` → `APP-Rostr-Users` rule would put an **active** staff member back. The two Revoke rows were leftover memberships on deprovisioned accounts, so the deletes stuck.
+
+Export at 13:42: 10 Rostr rows, 5 files. Last Rostr SSO: Jonah Hale `2026-10-06T06:35:49.117Z`, Lena Ortiz `2026-10-07T02:19:24.525Z`. Everyone else empty. Assignment source is `group` where `APP-Rostr-*` is present, `none` for Orphan Roster (no Okta user).
+
+| File | Who decides | Rows | Decision |
+| --- | --- | --- | --- |
+| [ava-nguyen.csv](../../evidence/5.3/ava-nguyen.csv) | Ava Nguyen | Jonah Hale | Keep |
+| [marcus-bell.csv](../../evidence/5.3/marcus-bell.csv) | Marcus Bell | Lena, Priya, Thomas | Keep |
+| [helen-cho.csv](../../evidence/5.3/helen-cho.csv) | Helen Cho | Samir Adeyemi | Revoke |
+| [no-manager.csv](../../evidence/5.3/no-manager.csv) | Department heads | Ava, Helen, Marcus | Keep |
+| [unmanaged.csv](../../evidence/5.3/unmanaged.csv) | Not in HR | Orphan Roster Keep, `test.joiner` Revoke | mixed |
+
+Lena stayed Keep. Her `APP-Rostr-Admins` grant is the in-flight Access Request.
+
+Apply REQ-0002 at `2026-10-07T02:43:27.024Z` (13:43 +1100). Both deletes HTTP 204. Log: [evidence/5.3/revocation.csv](../../evidence/5.3/revocation.csv). A second dry-run then reported `(no APP-Rostr group)` for both. Rostr sqlite still listed Samir in `APP-Rostr-Users` immediately after; group push is not the review's apply path.

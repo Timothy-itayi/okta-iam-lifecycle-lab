@@ -125,29 +125,33 @@ async function accessToken(org, privateKey, fetchImpl) {
 
 function oktaClient({ org, token, privateKey, nonce, fetchImpl }) {
   const state = { nonce };
-  return {
-    async get(url) {
-      const target = url.startsWith('http') ? url : `${org}${url}`;
-      for (let attempt = 0; attempt < 5; attempt += 1) {
-        const response = await fetchImpl(target, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `DPoP ${token}`,
-            DPoP: dpopProof({
-              privateKey, method: 'GET', url: target, nonce: state.nonce, accessToken: token,
-            }),
-          },
-        });
-        state.nonce = response.headers.get('dpop-nonce') || state.nonce;
-        if (response.status === 429) {
-          await sleep((Number(response.headers.get('retry-after')) || 1) * 1000);
-          continue;
-        }
-        if (response.status === 401 && attempt < 4 && response.headers.get('dpop-nonce')) continue;
-        return response;
+  async function request(method, url) {
+    const target = url.startsWith('http') ? url : `${org}${url}`;
+    const verb = method.toUpperCase();
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const response = await fetchImpl(target, {
+        method: verb,
+        headers: {
+          Accept: 'application/json',
+          Authorization: `DPoP ${token}`,
+          DPoP: dpopProof({
+            privateKey, method: verb, url: target, nonce: state.nonce, accessToken: token,
+          }),
+        },
+      });
+      state.nonce = response.headers.get('dpop-nonce') || state.nonce;
+      if (response.status === 429) {
+        await sleep((Number(response.headers.get('retry-after')) || 1) * 1000);
+        continue;
       }
-      throw new Error(`GET failed after retries: ${target.split('?')[0]}`);
-    },
+      if (response.status === 401 && attempt < 4 && response.headers.get('dpop-nonce')) continue;
+      return response;
+    }
+    throw new Error(`${verb} failed after retries: ${target.split('?')[0]}`);
+  }
+  return {
+    get: (url) => request('GET', url),
+    del: (url) => request('DELETE', url),
   };
 }
 

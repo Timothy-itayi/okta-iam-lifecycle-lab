@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5 osTicket and Access Request flow | 2026-10-07 11:46 → 13:11 | 1 h 25 min |
-| **Worked** | | **15 h 49 min** |
+| Morning, Phase 5 osTicket, Access Request, access review | 2026-10-07 11:46 → 13:43 | 1 h 57 min |
+| **Worked** | | **16 h 21 min** |
 
 ## Phase 0 — Prep
 
@@ -275,7 +275,7 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 1 h 37 min, 11:46 to 13:23. Staff login through OIDC `/admin/users`. Revoke still waiting.
+About 1 h 57 min, 11:46 to 13:43. Staff login through OIDC `/admin/users`. Access review (runbook 5.2) complete, REQ-0002 applied. Access Request Wait For still due around 14:06.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
@@ -283,6 +283,8 @@ About 1 h 37 min, 11:46 to 13:23. Staff login through OIDC `/admin/users`. Revok
 | 5.1 Help topic, ticket, approval | 12:15 → 12:28 | 13 min |
 | 5.2 Access Request flow and grant | 12:31 → 13:11 | 40 min |
 | 5.2 OIDC as Lena | 13:11 → 13:23 | 12 min |
+| 5.2 Rostr Admin group assignment | 13:23 → 13:31 | 8 min |
+| 5.3 Access review | 13:35 → 13:43 | 8 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -310,4 +312,17 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - 13:07: Lena in the group, Active, Managed Manually. [evidence/5.2-lena-in-app-rostr-admins.png](../../evidence/5.2-lena-in-app-rostr-admins.png).
 - First OIDC attempt was a 400 from Okta, not a missing Express route. `/oidc/login` 302s. Group membership was already in Okta, Rostr, and SCIM. Lena was not assigned to the Rostr Admin OIDC app. An Individual assignment unblocked sign-in. That assignment is still the wrong grant: the app should be assigned to `APP-Rostr-Admins` only.
 - 13:19: incognito `/oidc/login` as Lena. `/me` `aud` `0oa18egjva6o5FpoP698`, `sub` `00u18dk3t6entw6Kv698`, `groups` `APP-Rostr-Users, APP-Rostr-Admins`. [evidence/5.2-lena-oidc-me.png](../../evidence/5.2-lena-oidc-me.png).
-- 13:23: `/admin/users` rendered. Lena `lastLogin` empty (OIDC does not write it). [evidence/5.2-lena-admin-users.png](../../evidence/5.2-lena-admin-users.png). Ticket `357784` still Open. Revoke due around 14:06.
+- 13:23: `/admin/users` rendered. Lena `lastLogin` empty (OIDC does not write it). [evidence/5.2-lena-admin-users.png](../../evidence/5.2-lena-admin-users.png).
+
+### 5.2 Rostr Admin group assignment — 13:23 to 13:31, 8 min
+
+- Rostr Admin Assignments → Groups: `APP-Rostr-Admins` at priority 1. [evidence/5.2-rostr-admin-group-assignment.png](../../evidence/5.2-rostr-admin-group-assignment.png). People Individual of Lena is the leftover grant; drop that row if it is still type Individual. Do not unassign the group.
+- Ticket `357784` still Open. The 13:06 POST is the trigger; do not invoke again. Wait For due around 14:06. Close-out is add + remove in System Log, flow History for that run, Internal Note with the run link, then Close.
+
+### 5.3 Access review — 13:35 to 13:43, 8 min
+
+- `scripts/access-review`: Rostr sqlite users, HR manager, Okta groups, System Log `user.authentication.sso` for both Rostr apps. One CSV per manager. Revoke deletes `APP-Rostr-Users` / `APP-Rostr-Admins` only. Dry-run default.
+- First user lookup used `/users/{email}` and Okta returned HTTP 400 on `%40`. Switched to `profile.login eq "..."`.
+- Export 13:42: 10 rows, 5 files in [evidence/5.3](../../evidence/5.3). Jonah last SSO `2026-10-06T06:35:49.117Z`. Lena `2026-10-07T02:19:24.525Z`.
+- Acting as each manager: Keep everyone still employed, including Lena. Revoke Samir Adeyemi and `test.joiner` leftover `APP-Rostr-Users`. Orphan Roster Keep (no Okta user).
+- Dry-run REQ-0002, then `--apply` at `02:43:27Z`, both HTTP 204. [evidence/5.3/revocation.csv](../../evidence/5.3/revocation.csv). Second dry-run: no `APP-Rostr` group on either. Record: [docs/phases/05-governance.md](../phases/05-governance.md).
