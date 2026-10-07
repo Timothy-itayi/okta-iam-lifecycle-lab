@@ -11,6 +11,7 @@ const {
   listBalanceChanges,
   listLeaveByDepartment,
   listLeaveEvents,
+  listFlaggedRequestIds,
   listLeaveInRange,
   listShiftsByEmail,
   listShiftsInRange,
@@ -287,14 +288,16 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const rows = listLeaveByDepartment(db, me.department);
     const waiting = rows.filter((row) => row.status === 'with_admin');
     const decided = rows.filter((row) => row.status !== 'with_admin' && row.status !== 'submitted');
-    const view = req.query.view === 'decided' ? 'decided' : 'waiting';
+    const flaggedIds = new Set(listFlaggedRequestIds(db, me.department));
+    const flagged = rows.filter((row) => flaggedIds.has(row.id));
+    const view = req.query.view === 'decided' || req.query.view === 'flagged' ? req.query.view : 'waiting';
     const names = {};
     for (const row of rows) names[row.email] = personNameFor(row.email);
     render(req, res, me, {
       title: 'Team requests',
       context: `${me.department || 'Your department'} · leave waiting for your decision`,
       current: '/admin/leave',
-      body: queue.queueBody({ waiting, decided, view, names }),
+      body: queue.queueBody({ waiting, decided, flagged, view, names }),
     });
   });
 

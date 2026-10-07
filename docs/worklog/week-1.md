@@ -37,7 +37,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Account menu | 2026-10-08 06:11 → 06:12 | 1 min |
 | Account menu labels | 2026-10-08 06:17 → 06:20 | 3 min |
 | Header spacing and decision activity | 2026-10-08 06:24 → 06:27 | 3 min |
-| **Worked** | | **23 h 10 min** |
+| Flagged tab | 2026-10-08 06:39 → 06:43 | 4 min |
+| **Worked** | | **23 h 14 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -615,3 +616,8 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Each fact on the page header has a line under the label. The group and role borders share one height and the same padding, so they sit on the value line instead of crowding the letters.
 - The decision page lists the activity for the approver: who sent it, the manager's move, the policy check, and Jev's review. Staff still do not see the policy or Jev lines.
 - Stylesheets are `?v=11`. Container rebuilt, which drops in-memory sessions.
+
+### Flagged tab — 06:39 to 06:43, 4 min
+
+- Team requests has Waiting, Decided, and Flagged. Flagged lists department requests that have a `jev_flags` row. The request stays on Waiting or Decided. A flag still does not change the status.
+- Container rebuilt, which drops in-memory sessions. Record: [docs/leave/10-grid.md](../leave/10-grid.md).

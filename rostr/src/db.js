@@ -294,6 +294,16 @@ function latestJevFlag(db, requestId) {
   return db.prepare('SELECT * FROM jev_flags WHERE request_id = ? ORDER BY id DESC LIMIT 1').get(requestId);
 }
 
+function listFlaggedRequestIds(db, department) {
+  if (!department) return [];
+  return db.prepare(`
+    SELECT DISTINCT jev_flags.request_id AS id
+    FROM jev_flags
+    JOIN leave_requests ON leave_requests.id = jev_flags.request_id
+    WHERE leave_requests.department = ? COLLATE NOCASE
+  `).all(department).map((row) => row.id);
+}
+
 function nextLeaveRef(db) {
   const row = db.prepare('SELECT COALESCE(MAX(id), 0) + 1 AS next FROM leave_requests').get();
   return `LV-${String(row.next).padStart(4, '0')}`;
@@ -481,6 +491,7 @@ module.exports = {
   listLeaveInRange,
   insertJevFlag,
   latestJevFlag,
+  listFlaggedRequestIds,
   nextLeaveRef,
   insertLeaveRequest,
   findLeaveRequestByRef,

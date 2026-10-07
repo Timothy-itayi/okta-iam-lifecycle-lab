@@ -282,6 +282,10 @@ test('Marcus opens the waiting request, and a deny without a note does not decid
     const saved = await postForm(base, '/admin/leave/LV-0001/flag', marcus, { suggested: 'deny', note: 'The reason is a wedding, not a cover problem.' });
     assert.equal(saved.status, 303);
     assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'with_admin');
+    const flaggedList = await (await fetch(`${base}/admin/leave?view=flagged`, { headers: { cookie: marcus } })).text();
+    assert.match(flaggedList, /Flagged <span class="tab-count">\(1\)<\/span>/);
+    assert.match(flaggedList, /href="\/admin\/leave\/LV-0001"/);
+    assert.equal((await fetch(`${base}/admin/leave?view=flagged`, { headers: { cookie: priya } })).status, 403);
     const after = await (await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: marcus } })).text();
     assert.match(after, /Flagged. You said Jev should have suggested Deny/);
     assert.match(after, /still waiting/);

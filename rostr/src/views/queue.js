@@ -34,18 +34,21 @@ function policyCell(row) {
   return `${icon(mark)}<span>${escapeHtml(outcomeText(row.policy_outcome))}</span>`;
 }
 
-function queueBody({ waiting, decided, view, names }) {
-  const rows = view === 'decided' ? decided : waiting;
+function queueBody({ waiting, decided, flagged = [], view, names }) {
+  const rows = view === 'decided' ? decided : view === 'flagged' ? flagged : waiting;
   const tab = (id, label, count) => {
     const active = view === id;
     return `<a href="/admin/leave?view=${id}"${active ? ' aria-current="page"' : ''}>${label} <span class="tab-count">(${count})</span></a>`;
   };
   const empty = view === 'decided'
     ? 'Nothing decided yet.'
-    : 'Nothing waiting. New requests from your department will appear here.';
+    : view === 'flagged'
+      ? 'Nothing flagged. A flag does not decide the request.'
+      : 'Nothing waiting. New requests from your department will appear here.';
+  const caption = view === 'decided' ? 'Decided requests' : view === 'flagged' ? 'Flagged requests' : 'Requests waiting for you';
   const body = rows.length
     ? `<div class="table-wrap"><table>
-        <caption class="visually-hidden">${view === 'decided' ? 'Decided requests' : 'Requests waiting for you'}</caption>
+        <caption class="visually-hidden">${caption}</caption>
         <thead><tr><th scope="col">Person</th><th scope="col">Dates</th><th scope="col">Days</th><th scope="col">Type</th><th scope="col">Jev</th><th scope="col">Policy</th></tr></thead>
         <tbody>${rows.map((row) => `<tr>
           <th scope="row"><a href="/admin/leave/${escapeHtml(row.ref)}">${personCell(names[row.email])}</a></th>
@@ -57,7 +60,7 @@ function queueBody({ waiting, decided, view, names }) {
         </tr>`).join('')}</tbody>
       </table></div>`
     : `<p class="empty-copy">${empty}</p>`;
-  return `<nav class="filter-tabs" aria-label="Queue">${tab('waiting', 'Waiting', waiting.length)}${tab('decided', 'Decided', decided.length)}</nav>
+  return `<nav class="filter-tabs" aria-label="Queue">${tab('waiting', 'Waiting', waiting.length)}${tab('decided', 'Decided', decided.length)}${tab('flagged', 'Flagged', flagged.length)}</nav>
     <section class="panel table-panel">${body}</section>`;
 }
 
