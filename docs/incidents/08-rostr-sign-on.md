@@ -34,7 +34,11 @@ The next attempt still failed. At 02:59:02 the event is `user.authentication.aut
 
 [evidence/leave/priya-me.png](../../evidence/leave/priya-me.png)
 
-The SAML success path still redirects to `/me`. Opening `/` with that session, which is what sends staff to `/leave`, was not captured. Marcus and Helen have not signed in on this policy.
+The SAML success path still redirects to `/me`. At 03:09 she opened `https://rostr.lanternfieldgoods.co.uk/leave`. The staff shell shows Priya Shah, Operations, badge Staff, and the placeholder "Your requests will be listed here." The address bar is `/leave`, so this shot does not prove the redirect from `/`.
+
+[evidence/leave/priya-leave.png](../../evidence/leave/priya-leave.png)
+
+Marcus and Helen have not signed in on this policy.
 
 The System Log shots for both failures contain a source IP and stay out of the repo.
 
