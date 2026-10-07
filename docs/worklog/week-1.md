@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5 osTicket and Access Request flow | 2026-10-07 11:46 → 12:51 | 1 h 5 min |
-| **Worked** | | **15 h 29 min** |
+| Morning, Phase 5 osTicket and Access Request flow | 2026-10-07 11:46 → 12:58 | 1 h 12 min |
+| **Worked** | | **15 h 36 min** |
 
 ## Phase 0 — Prep
 
@@ -275,13 +275,13 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 1 h 5 min, 11:46 to 12:51. Staff login, help topic, Lena's ticket, approval note, Access Request flow ON. Not invoked.
+About 1 h 12 min, 11:46 to 12:58. Staff login, help topic, Lena's ticket, approval note, Access Request flow ON with Read User ID mapped. Not invoked.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
 | 5.1 osTicket staff login | 11:46 → 12:15 | 29 min |
 | 5.1 Help topic, ticket, approval | 12:15 → 12:28 | 13 min |
-| 5.2 Access Request flow | 12:31 → 12:51 | 20 min |
+| 5.2 Access Request flow | 12:31 → 12:58 | 27 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -303,6 +303,6 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 ### 5.2 Access Request flow — 12:31 to 12:51, 20 min
 
 - `JML` folder, Access Request Flow, ON, Not saving data. Cards: API Endpoint (`email`, `ticket`), Read User, Add User to Group `00g18dk6nvdMFQAgi698`, Close on dummy connection `unused-close` auth None, Wait For 1 hour, Remove User from Group. Close search only offered the API Connector card; New Connection with auth None was required to drop it on the canvas.
-- Add and Remove User ID are mapped from body `email`, not from Read User `ID`. Fix that before invoke.
-- Invoke URL in local `.env` as `WORKFLOWS_ACCESS_REQUEST_URL`. Token is this flow's client token. `.env` is not committed. [evidence/5.2-access-request-flow-left.png](../../evidence/5.2-access-request-flow-left.png), [evidence/5.2-access-request-flow-right.png](../../evidence/5.2-access-request-flow-right.png).
-- Not done: POST for Lena, group membership, OIDC `/admin/users`, revoke after one hour, close ticket `357784`.
+- 12:57: Add and Remove **User ID** dragged from Read User System Properties **ID**, not from body `email`. Group id stays the pasted `00g…`. [evidence/5.2-access-request-flow-left.png](../../evidence/5.2-access-request-flow-left.png), [evidence/5.2-access-request-flow-right.png](../../evidence/5.2-access-request-flow-right.png).
+- Invoke URL in local `.env` as `WORKFLOWS_ACCESS_REQUEST_URL`. Token is this flow's client token. `.env` is not committed.
+- Not done: POST for Lena, group membership, OIDC `/admin/users`, revoke after one hour, close ticket `357784`. `hr-sync` is not the trigger.

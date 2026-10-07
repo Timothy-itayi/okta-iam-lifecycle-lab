@@ -31,15 +31,15 @@ Saved, Flow ON, **Not saving data**. It adds the user to `APP-Rostr-Admins`, ret
 | --- | --- |
 | API Endpoint | Body `email`, `ticket`. |
 | Read User | `User or Login` = body `email`. |
-| Add User to Group | Group id above. User ID is mapped from body `email`, not from Read User's `ID` output. |
+| Add User to Group | Group id above. User ID = Read User **ID** (System Properties). |
 | Close | Status 200, empty body. Lets the caller return before the wait. |
 | Wait For | Delay 1, unit hour. |
-| Remove User from Group | Same group id. User ID again from body `email`. |
+| Remove User from Group | Same group id. User ID = Read User **ID**. |
+
+Do not copy a `00u` from Directory. Read User's input is labelled **User or Login**, so body `email` is legal there. Add and Remove are labelled **User ID**. Drag the **ID** output under Read User System Properties onto those two fields. A first canvas had body `email` on Add/Remove User ID; that is the wrong pill.
 
 ![Access Request flow, left: Endpoint, Read User, Add User to Group, Close, Wait For](../../evidence/5.2-access-request-flow-left.png)
 
 ![Access Request flow, right: Add, Close, Wait For, Remove](../../evidence/5.2-access-request-flow-right.png)
 
-The invoke URL is `WORKFLOWS_ACCESS_REQUEST_URL`. The client token is `WORKFLOWS_ACCESS_REQUEST_TOKEN`, this flow's token, not the Joiner token. Neither value is in Git.
-
-Before the first POST, drag Read User's output **ID** onto Add and Remove **User ID**. The group API wants a `00u` id. Email worked on Read User because that field is labelled User or Login. Add and Remove are labelled User ID. If the first POST fails, that mapping is why.
+The invoke URL is `WORKFLOWS_ACCESS_REQUEST_URL`. The client token is `WORKFLOWS_ACCESS_REQUEST_TOKEN`, this flow's token, not the Joiner token. Neither value is in Git. Fulfilment is a POST to that endpoint, not `hr-sync`.
