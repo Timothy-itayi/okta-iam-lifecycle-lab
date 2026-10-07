@@ -317,11 +317,13 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - First OIDC attempt was a 400 from Okta, not a missing Express route. `/oidc/login` 302s. Group membership was already in Okta, Rostr, and SCIM. Lena was not assigned to the Rostr Admin OIDC app. An Individual assignment unblocked sign-in. That assignment is still the wrong grant: the app should be assigned to `APP-Rostr-Admins` only.
 - 13:19: incognito `/oidc/login` as Lena. `/me` `aud` `0oa18egjva6o5FpoP698`, `sub` `00u18dk3t6entw6Kv698`, `groups` `APP-Rostr-Users, APP-Rostr-Admins`. [evidence/5.2-lena-oidc-me.png](../../evidence/5.2-lena-oidc-me.png).
 - 13:23: `/admin/users` rendered. Lena `lastLogin` empty (OIDC does not write it). [evidence/5.2-lena-admin-users.png](../../evidence/5.2-lena-admin-users.png).
+- [3bcd8d3](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/3bcd8d3d85aaa39251d0c942e523cb59105857d9) (`Record Lena's APP-Rostr-Admins grant from REQ-0001`) at 13:12.
 
 ### 5.2 Rostr Admin group assignment — 13:23 to 13:31, 8 min
 
 - Rostr Admin Assignments → Groups: `APP-Rostr-Admins` at priority 1. [evidence/5.2-rostr-admin-group-assignment.png](../../evidence/5.2-rostr-admin-group-assignment.png). People Individual of Lena is the leftover grant; drop that row if it is still type Individual. Do not unassign the group.
 - Ticket `357784` still Open. The 13:06 POST is the trigger; do not invoke again. Wait For due around 14:06. Close-out is add + remove in System Log, flow History for that run, Internal Note with the run link, then Close.
+- [f2ce849](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/f2ce84998c7e1413dba12d1713d6851818fed6f4) (`update governance`) at 13:31. OIDC screenshots and the group assignment.
 
 ### 5.3 Access review — 13:35 to 13:43, 8 min
 
@@ -330,10 +332,12 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - Export 13:42: 10 rows, 5 files in [evidence/5.3](../../evidence/5.3). Jonah last SSO `2026-10-06T06:35:49.117Z`. Lena `2026-10-07T02:19:24.525Z`.
 - Acting as each manager: Keep everyone still employed, including Lena. Revoke Samir Adeyemi and `test.joiner` leftover `APP-Rostr-Users`. Orphan Roster Keep (no Okta user).
 - Dry-run REQ-0002, then `--apply` at `02:43:27Z`, both HTTP 204. [evidence/5.3/revocation.csv](../../evidence/5.3/revocation.csv). Second dry-run: no `APP-Rostr` group on either. Record: [docs/phases/05-governance.md](../phases/05-governance.md).
+- [b77be14](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/b77be14c30b222056e5e40c5d6751e904d76ff13) (`Record the access-review script and REQ-0002 recertification.`) at 13:47.
 
 ### 5.4 Stale-Access — 13:46 to 13:49, 3 min
 
 - `scripts/stale-access plant` backdated Jonah Hale `lastLogin` `2026-10-06T05:20:26.829Z` → `2026-08-22T05:20:26.829Z`, `licensed` 1 on Jonah and Orphan Roster. Report: [evidence/05-governance/stale-access.md](../../evidence/05-governance/stale-access.md). Jonah is the stale reclaim. Does not touch HR or deactivate. Access Request Wait For still due around 14:06.
+- [8a067e2](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/8a067e2eb874898460cd5a762dd5eebf2da2d7ed) (`complete phase 5.2`) at 13:51. The message says 5.2. The files are Stale-Access.
 
 ### 5.5 OAuth review — 13:52 to 14:01, 9 min
 
@@ -341,6 +345,7 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - **Fix:** Granted `okta.apps.manage` on `svc-jml-sync` and assigned Application Administrator. Token then included `okta.apps.manage`. `/api/v1/apps` 200.
 - Plant created `legacy-report-tool` `0oa18g5mzseAfusVa698`. `POST /apps/{id}/grants` 403. Super Administrator at 14:05 did not fix it: token still omitted `okta.appGrants.manage`. Role and scope are separate.
 - **Fix 2:** Granted `okta.appGrants.manage` and `okta.appGrants.read`. `GET /grants` 200. Planted four manage scopes. Found: [evidence/5.5/oauth-review-found.md](../../evidence/5.5/oauth-review-found.md). Revoke `--apply`: four grant DELETE 204, deactivate 200. After: [evidence/5.5/oauth-review.md](../../evidence/5.5/oauth-review.md). Take Super Admin off `svc-jml-sync`. Runbook: [docs/runbooks/oauth-review.md](../runbooks/oauth-review.md).
+- [e14d47d](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/e14d47d53cf7f9ef21a96ee3f46c42e6c0254964) (`complete phase 5.4 Access Reviews`) at 14:15. The message says access reviews. The files are the OAuth review.
 
 ### 5.6 Audit pack — 14:15 to 14:36, 21 min
 
@@ -349,7 +354,8 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - **Fix:** Killed every `audit-log-export` process, waited out the window, capped pages, stopped on an empty page. One run at 15:00: 27 lifecycle, 29 group, 46 app, 61 MFA. Lena's `APP-Rostr-Admins` remove is `2026-10-07T03:06:20Z`.
 - Copied access-review CSVs, access-request records, stale-access findings, oauth-review tables into `evidence/audit-pack/` subdirs.
 - Wrote `evidence/audit-pack/README.md`: index of every file, mapped to SOC 2 CC6.1–CC6.3 and ISO 27001:2022 A.5.15–A.5.18, A.8.2, A.8.5.
-- Record: [docs/phases/05-governance.md](../phases/05-governance.md).
+- [3a860f5](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/3a860f537b8e1a650e4fac6f6a29d3509558b4d6) (`audit pack and OIG mapping (5.5-5.6)`) at 14:38. Pack index, copied reviews, and the first `oig-mapping.md`. System Log JSONL was not in this commit. The export was still on 429.
+- [733cbe2](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/733cbe274df2a55f9441f7e0edab040a32f55376) (`Export the audit-pack System Log and index it to the controls.`) at 15:01. 27 lifecycle, 29 group, 46 app, 61 MFA. Lena's remove is in the group file.
 
 ### 5.6 OIG mapping — 14:15 to 15:02
 
@@ -359,6 +365,7 @@ Runbook 5.6. The audit pack is runbook 5.5. This log already used 5.5 for the OA
 - Wrote [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md): lab process, how OIG does it, what OIG adds, who approved whose access, what to learn first on the job.
 - 15:02: checkpoint updated for the 14:06 remove. Marcus Bell approved Lena's hour. Workflows is the System Log actor on the add and the remove. Ticket `357784` is still Open.
 - Trial does not have OIG. The note is not a compliance claim. [docs/decisions/02-design.md](../decisions/02-design.md) now points at it.
+- [090572e](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/090572e48027110aee6ca24482d3f30b1bab4310) (`Close the OIG mapping as runbook 5.6.`) at 15:03.
 
 ### Access Request close-out (remove only)
 
