@@ -2,7 +2,7 @@
 
 Times are Australia/Sydney (+1100). Duration is from the first clock we have for that task to the last. A stretch with no commit and no evidence is a break.
 
-Two working days. Night of 5–6 October, then the afternoon and night of 6 October into 7 October.
+Two working days, then a third sitting on the morning of 7 October. Night of 5–6 October, afternoon and night of 6 October into 7 October, morning of 7 October.
 
 | Session | Clock | Duration |
 | --- | --- | --- |
@@ -11,7 +11,9 @@ Two working days. Night of 5–6 October, then the afternoon and night of 6 Octo
 | Afternoon, Phase 2 and 3 | 14:27 → 20:53 | 6 h 26 min |
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
-| **Worked** | | **14 h 24 min** |
+| Break | 02:23 → 11:46 | 9 h 23 min |
+| Morning, Phase 5.1 osTicket login | 2026-10-07 11:46 → 12:15 | 29 min |
+| **Worked** | | **14 h 53 min** |
 
 ## Phase 0 — Prep
 
@@ -268,3 +270,24 @@ About 3 h 15 min, 23:08 to 02:23.
 - `before.csv` taken while Priya was in Sales and Samir was `ACTIVE`. `after.csv` shows Priya in `DEPT-Operations` and Samir `DEPROVISIONED` with no Rostr app row. No individual assignment appeared.
 - [2c34ea4](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/2c34ea4) (`finish phase 4`) at 02:19. [854abf0](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/854abf0) (`update readme`) at 02:23.
 - Record: [docs/phases/04-jml.md](../phases/04-jml.md), [evidence/04-jml/comparison.md](../../evidence/04-jml/comparison.md).
+
+Break until 11:46.
+
+## Phase 5 — Governance (started)
+
+About 29 min, 11:46 to 12:15. Only staff login. Access Request topic, ticket, and flow are not done.
+
+| Task | Clock | Duration |
+| --- | --- | --- |
+| 5.1 osTicket staff login | 11:46 → 12:15 | 29 min |
+
+Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
+
+### 5.1 osTicket staff login — 11:46 to 12:15, 29 min
+
+- osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, containers `itops-osticket` and `itops-mariadb`. Compose lives in the itops repo, not `rostr/`. The volume is from 29 September (`osTicket Installed!` ticket `829363`).
+- `/scp` returned Access denied for the email in the install log and for `OST_ADMIN_PASSWD`. First guess was the old homelab mismatch: MariaDB password vs what osTicket claimed. `docker exec … mariadb -uroot` without `-p` failed (`using password: NO`). Logs showed `root@localhost` denied at `00:47Z` (11:47 +1100). Those lines were the exec, not the app. osTicket uses user `osticket` to host `mariadb`. No `osticket@` denials.
+- `ost_staff` staff_id 1 was active and admin. `username` was `md5(admin@homelab.internal)`, not the email the installer printed. Renamed it to `admin`. Login still failed: `passwd` did not match what was typed. osTicket 1.18 wants bcrypt cost 8, not `MD5()` in SQL. `OST_ADMIN_PASSWD` is applied at first install only.
+- Reset: hash generated in `itops-osticket` with PHP `password_hash` cost 8, written to `ost_staff.passwd`, `backend` NULL, `change_passwd` 0. Logged in at `/scp/login.php` as `admin`.
+- 12:15: Welcome Admin, Tickets tab. [evidence/5.1-osticket-staff-login.png](../../evidence/5.1-osticket-staff-login.png). Incident: [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md).
+- Not done: Access Request help topic, Lena's ticket, manager approval, the Access Request flow.

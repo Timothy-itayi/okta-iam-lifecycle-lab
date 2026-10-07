@@ -12,7 +12,7 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Okta provisions the Rostr app over SCIM. The seven staff are in Rostr with title and department. `APP-Rostr-Users` is pushed with those seven members, and `APP-Rostr-Admins` is pushed empty. A test joiner was created, retitled, and deactivated. An account inserted straight into Rostr was imported, matched nothing, and was ignored. It is still in the Rostr database. `svc-jml-sync` can take a client-credentials token with the three API scopes, and that token can read the System Log. `scripts/hr-sync` classifies a joiner, mover, or leaver from the HR file and dry-runs unless `--apply` is passed. The Joiner flow created Thomas Okeke; group rules put him in `DEPT-Operations` and `APP-Rostr-Users`; SCIM created him in Rostr. The Mover flow moved Priya Shah to Operations and SCIM updated her title and department. The Leaver flow deactivated Samir Adeyemi; SCIM set him inactive in Rostr; a second run left him deactivated. Access Request and Stale-Access are not built.
+Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department groups fill from rules, Okta Verify is required, and a help desk admin can reset a lost phone without changing apps or policies. Rostr answers `/health` from the container on port 3000. Jonah Hale has signed in over SAML and over OIDC. `/admin/users` requires `APP-Rostr-Admins`. Okta provisions the Rostr app over SCIM. The seven staff are in Rostr with title and department. `APP-Rostr-Users` is pushed with those seven members, and `APP-Rostr-Admins` is pushed empty. A test joiner was created, retitled, and deactivated. An account inserted straight into Rostr was imported, matched nothing, and was ignored. It is still in the Rostr database. `svc-jml-sync` can take a client-credentials token with the three API scopes, and that token can read the System Log. `scripts/hr-sync` classifies a joiner, mover, or leaver from the HR file and dry-runs unless `--apply` is passed. The Joiner flow created Thomas Okeke; group rules put him in `DEPT-Operations` and `APP-Rostr-Users`; SCIM created him in Rostr. The Mover flow moved Priya Shah to Operations and SCIM updated her title and department. The Leaver flow deactivated Samir Adeyemi; SCIM set him inactive in Rostr; a second run left him deactivated. osTicket staff login on `/scp` works (leftover itops install from 29 September; bcrypt reset recorded as an incident). Access Request and Stale-Access are not built.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |
@@ -21,7 +21,7 @@ Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department g
 | 2 | SaaS onboarding: SAML and OIDC | 8 h | In progress | [docs/phases/02-onboarding.md](docs/phases/02-onboarding.md) |
 | 3 | SCIM provisioning | 8 h | Done | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
 | 4 | Joiner, mover, and leaver | 7 h | Done | [docs/phases/04-jml.md](docs/phases/04-jml.md) |
-| 5 | Governance and audit evidence | 7.5 h | Not started | |
+| 5 | Governance and audit evidence | 7.5 h | Started | Staff `/scp` login only. Incident: [docs/incidents/01-osticket-staff-login.md](docs/incidents/01-osticket-staff-login.md) |
 | 6 | Failure drills | 6 h | Not started | |
 | 7 | Write-up and teardown | 4 h | Not started | Milestone M3 |
 
@@ -48,9 +48,9 @@ Solid nodes exist. Dashed nodes are TBC. The top row is the running path: `hr/em
 | [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design, service identity |
 | [docs/phases](docs/phases) | One note per phase | [01-foundation.md](docs/phases/01-foundation.md), [02-onboarding.md](docs/phases/02-onboarding.md), [03-scim.md](docs/phases/03-scim.md), [04-jml.md](docs/phases/04-jml.md) |
 | [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md) |
-| [docs/incidents](docs/incidents) | Failure records | [00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md). Phase 6 drills are not started |
+| [docs/incidents](docs/incidents) | Failure records | [00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md), [01-osticket-staff-login.md](docs/incidents/01-osticket-staff-login.md). Phase 6 drills are not started |
 | [docs/worklog](docs/worklog) | Session log | [week-1.md](docs/worklog/week-1.md) |
-| [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, 3.2 through 3.7, and 4.1 through 4.6 |
+| [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, 3.2 through 3.7, 4.1 through 4.6, and 5.1 staff login |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |
 | [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Okta pushes users and the two `APP-Rostr` groups |
 | [scripts](scripts) | Test scripts, `hr-sync`, and later review exports | [scim-tests.sh](scripts/scim-tests.sh), [hr-sync](scripts/hr-sync), [entitlements.js](scripts/entitlements.js) |
