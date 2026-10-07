@@ -10,3 +10,4 @@ resvg-tmp/
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
+/rostr-leave-jev-report.pdf
