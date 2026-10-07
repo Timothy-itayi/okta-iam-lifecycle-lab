@@ -37,6 +37,10 @@ Priya, Jonah, and Lena stay in `APP-Rostr-Users` through the department rules. T
 
 `TYPESAFE_API_KEY` is set in `rostr/.env`. The value is 108 characters. It is not printed here. The name, with an empty value, is already in `rostr/.env.example`.
 
-## Not checked yet
+## Sign-in check
 
-`/me` as Priya Shah on 8 October shows `APP-Rostr-Users`, department Operations, role staff. [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md). `/me` as Helen, expecting `APP-Rostr-HR`, and `/me` as Marcus, expecting `APP-Rostr-Admins`, are still open. The claim filter covers the new group name. A sign-in is the check that Okta puts it in the token.
+`/me` as Priya Shah shows `APP-Rostr-Users`. [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md).
+
+`/me` as Marcus Bell at 03:11 shows `APP-Rostr-Users, APP-Rostr-Admins`, department Operations, role admin, `lastLogin` `2026-10-07T16:11:13.471Z`. [evidence/leave/marcus-me.png](../../evidence/leave/marcus-me.png).
+
+`/me` as Helen Cho at 03:12 shows `APP-Rostr-Users, APP-Rostr-HR`, department Finance, `lastLogin` `2026-10-07T16:12:37.768Z`. [evidence/leave/helen-me.png](../../evidence/leave/helen-me.png). The `role` line on that page says staff. `roleFromGroups` in `rostr/src/saml.js` only returns admin or staff. It was written before `APP-Rostr-HR` existed. The hub does not use that string. `roleOf` sees `APP-Rostr-HR` and sends her to `/hr/leave`.

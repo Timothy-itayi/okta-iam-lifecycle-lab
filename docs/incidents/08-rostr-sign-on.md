@@ -38,7 +38,7 @@ The SAML success path still redirects to `/me`. At 03:09 she opened `https://ros
 
 [evidence/leave/priya-leave.png](../../evidence/leave/priya-leave.png)
 
-Marcus and Helen have not signed in on this policy.
+Marcus Bell reached `/me` at 03:11 (`APP-Rostr-Users, APP-Rostr-Admins`, role admin) and the admin hub. Helen Cho reached `/me` at 03:12 (`APP-Rostr-Users, APP-Rostr-HR`) and the HR hub. The same policy let both through. Her `/me` role line still says staff. That string is not what the hub uses. [docs/leave/03-shell.md](../leave/03-shell.md).
 
 The System Log shots for both failures contain a source IP and stay out of the repo.
 

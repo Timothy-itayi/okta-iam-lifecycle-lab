@@ -20,8 +20,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stretch phase 1, Okta groups and the TypeSafe key | 2026-10-08 01:38 → 02:11 | 33 min |
 | Stretch phase 2, leave data model | 2026-10-08 02:19 → 02:30 | 11 min |
 | Stretch phase 3, hub shell | 2026-10-08 02:30 → 02:50 | 20 min |
-| Rostr sign-in: FastPass, then a stale password | 2026-10-08 02:50 → 03:09 | 19 min |
-| **Worked** | | **20 h 56 min** |
+| Rostr sign-in: FastPass, then a stale password | 2026-10-08 02:50 → 03:15 | 25 min |
+| **Worked** | | **21 h 2 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -487,11 +487,13 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - One layout, `rostr/public/app.css`, and a flash message that shows once. Forms are not on the page yet.
 - Rostr tests 44 passed. Live sign-in as Priya, Marcus, and Helen is not done. Record: [docs/leave/03-shell.md](../leave/03-shell.md).
 
-### Sign-in — 02:50 to 03:09, 19 min
+### Sign-in — 02:50 to 03:15, 25 min
 
 - Priya Shah on the SAML URL was `policy.evaluate_sign_on` DENY at 02:48:10. Rule Rostr Users required FastPass. The widget said she could not sign in. The catch-all did not match her. An earlier row the same evening was `admin@`, not Priya.
 - Phishing resistant was cleared on Rostr Users and Rostr Admins. Both cards then listed Okta Verify push, TOTP, and FastPass. The catch-all stayed Denied.
 - 02:59:02 was `user.authentication.auth_via_mfa`, `INVALID_CREDENTIALS`, on her Password enrollment. The directory password had been reset earlier. It was reset again. The new value is not recorded.
 - `/me` at 03:04: Operations, `APP-Rostr-Users`, role staff, `lastLogin` `2026-10-07T16:04:21.200Z`. [evidence/leave/priya-me.png](../../evidence/leave/priya-me.png).
-- `/leave` at 03:09: Priya Shah, Operations, badge Staff, placeholder copy. [evidence/leave/priya-leave.png](../../evidence/leave/priya-leave.png). The address bar is `/leave`, so the redirect from `/` is still not in a shot. Marcus and Helen have not signed in.
+- `/leave` at 03:09: Priya Shah, Operations, badge Staff, placeholder copy. [evidence/leave/priya-leave.png](../../evidence/leave/priya-leave.png). The address bar is `/leave`, so the redirect from `/` is still not in a shot.
+- Marcus Bell at 03:11: `/me` groups `APP-Rostr-Users, APP-Rostr-Admins`, role admin, `lastLogin` `2026-10-07T16:11:13.471Z`. Admin hub shows Operations and badge Admin. [evidence/leave/marcus-me.png](../../evidence/leave/marcus-me.png), [evidence/leave/marcus-admin-leave.png](../../evidence/leave/marcus-admin-leave.png).
+- Helen Cho at 03:12: `/me` groups `APP-Rostr-Users, APP-Rostr-HR`, department Finance, `lastLogin` `2026-10-07T16:12:37.768Z`. The role line says staff. `roleFromGroups` has no HR case. The HR hub badge is HR. [evidence/leave/helen-me.png](../../evidence/leave/helen-me.png), [evidence/leave/helen-hr-leave.png](../../evidence/leave/helen-hr-leave.png).
 - Record: [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md).
