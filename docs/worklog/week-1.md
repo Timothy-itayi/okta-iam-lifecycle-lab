@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5.1 osTicket login | 2026-10-07 11:46 → 12:15 | 29 min |
-| **Worked** | | **14 h 53 min** |
+| Morning, Phase 5 osTicket and Access Request flow | 2026-10-07 11:46 → 12:51 | 1 h 5 min |
+| **Worked** | | **15 h 29 min** |
 
 ## Phase 0 — Prep
 
@@ -275,11 +275,13 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 29 min, 11:46 to 12:15. Only staff login. Access Request topic, ticket, and flow are not done.
+About 1 h 5 min, 11:46 to 12:51. Staff login, help topic, Lena's ticket, approval note, Access Request flow ON. Not invoked.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
 | 5.1 osTicket staff login | 11:46 → 12:15 | 29 min |
+| 5.1 Help topic, ticket, approval | 12:15 → 12:28 | 13 min |
+| 5.2 Access Request flow | 12:31 → 12:51 | 20 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -290,4 +292,17 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - `ost_staff` staff_id 1 was active and admin. `username` was `md5(admin@homelab.internal)`, not the email the installer printed. Renamed it to `admin`. Login still failed: `passwd` did not match what was typed. osTicket 1.18 wants bcrypt cost 8, not `MD5()` in SQL. `OST_ADMIN_PASSWD` is applied at first install only.
 - Reset: hash generated in `itops-osticket` with PHP `password_hash` cost 8, written to `ost_staff.passwd`, `backend` NULL, `change_passwd` 0. Logged in at `/scp/login.php` as `admin`.
 - 12:15: Welcome Admin, Tickets tab. [evidence/5.1-osticket-staff-login.png](../../evidence/5.1-osticket-staff-login.png). Incident: [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md).
-- Not done: Access Request help topic, Lena's ticket, manager approval, the Access Request flow.
+
+### 5.1 Help topic, ticket, approval — 12:15 to 12:28, 13 min
+
+- Admin Panel → Manage → Help Topics. `Access Request`, Active, Public, Support. Created 1:24 UTC. [evidence/5.1-osticket-help-topics.png](../../evidence/5.1-osticket-help-topics.png).
+- Guest form as Lena. Open ticket `357784`, subject `REQ-0001 APP-Rostr-Admins`, From Lena Ortiz. [evidence/5.1-osticket-ticket-list.png](../../evidence/5.1-osticket-ticket-list.png).
+- Internal Note, not Reply: Marcus Bell EMP-1004 approved. Mail is not configured. Ticket stayed Open. [evidence/5.1-osticket-approval.png](../../evidence/5.1-osticket-approval.png).
+- Record: [docs/phases/05-governance.md](../phases/05-governance.md).
+
+### 5.2 Access Request flow — 12:31 to 12:51, 20 min
+
+- `JML` folder, Access Request Flow, ON, Not saving data. Cards: API Endpoint (`email`, `ticket`), Read User, Add User to Group `00g18dk6nvdMFQAgi698`, Close on dummy connection `unused-close` auth None, Wait For 1 hour, Remove User from Group. Close search only offered the API Connector card; New Connection with auth None was required to drop it on the canvas.
+- Add and Remove User ID are mapped from body `email`, not from Read User `ID`. Fix that before invoke.
+- Invoke URL in local `.env` as `WORKFLOWS_ACCESS_REQUEST_URL`. Token is this flow's client token. `.env` is not committed. [evidence/5.2-access-request-flow-left.png](../../evidence/5.2-access-request-flow-left.png), [evidence/5.2-access-request-flow-right.png](../../evidence/5.2-access-request-flow-right.png).
+- Not done: POST for Lena, group membership, OIDC `/admin/users`, revoke after one hour, close ticket `357784`.
