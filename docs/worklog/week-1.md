@@ -402,3 +402,4 @@ About 35 min, 16:59 to 17:34. Rostr was already up. Local and public `/health` w
 - Jonah `/oidc/login` reached `/me` with a blank `groups` line. `/admin/users` was not allowed. Auth log `2026-10-07T06:31:17.124Z` was still `outcome` `success`. [evidence/6.3-me-groups-empty.png](../../evidence/6.3-me-groups-empty.png).
 - Filter restored to `APP-Rostr`. New private window. `/me` showed `APP-Rostr-Users, APP-Rostr-Admins`. Auth log `2026-10-07T06:34:02.105Z`. [evidence/6.3-me-groups-restored.png](../../evidence/6.3-me-groups-restored.png).
 - Record: [docs/incidents/04-groups-claim.md](../incidents/04-groups-claim.md). Jonah is still in `APP-Rostr-Admins` until he is removed after this record.
+- [1cfc9c8](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/1cfc9c8dc1e2f6d0a9f19e739e4b8063c7201c3f) (`Record the missing groups claim drill.`) at 17:35.
