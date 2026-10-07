@@ -29,7 +29,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stretch phase 6, Jev review | 2026-10-08 04:39 → 04:45 | 6 min |
 | Confirmation window instead of the toast | 2026-10-08 04:49 → 04:53 | 4 min |
 | Manager queue, request chain, tab mark | 2026-10-08 05:09 → 05:17 | 8 min |
-| **Worked** | | **22 h 38 min** |
+| Marcus approves LV-0002 | 2026-10-08 05:19 → 05:20 | 1 min |
+| **Worked** | | **22 h 39 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -559,4 +560,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - The active mark was drawn at the top of the tab, so it sat on the date line. It now sits under the tab for the page you are on. Buttons stay without an underline.
 - My leave shows each request as a card with its reference and the Sent / Manager / HR / Done chain. The card opens the detail page.
 - Team requests lists the department. Waiting is still with the manager. The decision page shows Jev and the policy check. Approve sends it to HR. Deny needs a note. A manager cannot decide their own request.
-- Rostr tests 73 passed. Checked in a local browser as Priya and as Marcus. Stylesheets are `?v=5`. Container rebuilt, which drops in-memory sessions. LV-0002 is still `with_admin`. The week grid, the Jev flag, and Helen's decision are not built. Record: [docs/leave/07-queue.md](../leave/07-queue.md).
+- Rostr tests 73 passed. Checked in a local browser as Priya and as Marcus. Stylesheets are `?v=5`. Container rebuilt, which drops in-memory sessions. The week grid, the Jev flag, and Helen's decision are not built. Record: [docs/leave/07-queue.md](../leave/07-queue.md).
+
+### Marcus approves LV-0002 — 05:19 to 05:20, 1 min
+
+- Priya sent LV-0002 at 05:04. Two annual days, 22–23 October, reason "R&R". Policy `within_policy` approve. Jev approve, confidence 1, urgency 1.79 of 5. `agree` is 1.
+- Marcus approved it at 05:19. The window said "Sent to HR". Status is `with_hr`. Event `to_hr` at `2026-10-07T18:19:08.463Z`, actor Marcus.
+- [evidence/leave/07-marcus-lv0002-sent.png](../../evidence/leave/07-marcus-lv0002-sent.png), [evidence/leave/07-marcus-lv0002-decision.png](../../evidence/leave/07-marcus-lv0002-decision.png).

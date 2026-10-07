@@ -16,4 +16,10 @@ The decision page shows the reason, the balance and notice, Jev's stored recomme
 
 The week grid and the "flag Jev" form from the design spec are not on this page. Helen's HR desk is still the placeholder.
 
-Priya's LV-0002 was already `with_admin` when this was built. It stays in the database. Marcus sees it after he signs in again.
+## Live
+
+Priya Shah sent LV-0002 at 05:04 Sydney on 8 October 2026. Annual leave, Thursday 22 to Friday 23 October, two working days, reason "R&R". The policy check was `within_policy` / approve. Jev returned approve at confidence 1, urgency 1.79 of 5. They agree.
+
+Marcus Bell opened it from Team requests and approved it at 05:19. The window said "Sent to HR" and "Approved. LV-0002 is with HR." The row is now `with_hr`. The event actor is `marcus.bell@lanternfieldgoods.co.uk`, action `to_hr`, at `2026-10-07T18:19:08.463Z`.
+
+[evidence/leave/07-marcus-lv0002-sent.png](../../evidence/leave/07-marcus-lv0002-sent.png), [evidence/leave/07-marcus-lv0002-decision.png](../../evidence/leave/07-marcus-lv0002-decision.png).
