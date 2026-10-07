@@ -8,4 +8,6 @@ Open requests are what reduce the balance the form and the policy check use. App
 
 Jev is on. The key is in `rostr/.env` and in the container. It is not in Git. `JEV_MIN_CONFIDENCE` is 0.7. To take Jev down later, set `TYPESAFE_API_KEY=wrong`, recreate the container from `rostr/`, and put the real key back when the drill is recorded. Do not commit `.env`.
 
-The report calls the first drill incident 08. This repo already uses incident 08 for the FastPass sign-in. The drill write-ups will not overwrite that file.
+The report calls the first drill incident 08. This repo already uses [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md) for the FastPass sign-in. The leave drill is [docs/incidents/08-jev-talked-into-it.md](../incidents/08-jev-talked-into-it.md). It does not replace that file.
+
+LV-0003 is with Marcus. Jev and the policy check both denied. The next three drills are set up for live shots: [09](../incidents/09-wrong-department.md) the department filter is off, [10](../incidents/10-leaver-open-request.md) a SCIM deactivation cancels open leave, [11](../incidents/11-hr-group-claim.md) the SAML group filter is still `APP-Rostr` and has to be changed by hand.

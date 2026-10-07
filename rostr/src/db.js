@@ -295,7 +295,7 @@ function latestJevFlag(db, requestId) {
 }
 
 function listFlaggedRequestIds(db, department) {
-  if (!department) return [];
+  if (!department) return db.prepare('SELECT DISTINCT request_id AS id FROM jev_flags').all().map((row) => row.id);
   return db.prepare(`
     SELECT DISTINCT jev_flags.request_id AS id
     FROM jev_flags

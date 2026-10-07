@@ -18,6 +18,7 @@ services:
       HR_FILE: /app/hr/employees.json
       TYPESAFE_API_KEY: ${TYPESAFE_API_KEY:-}
       JEV_MIN_CONFIDENCE: ${JEV_MIN_CONFIDENCE:-0.7}
+      ROSTR_CROSS_DEPARTMENT: ${ROSTR_CROSS_DEPARTMENT:-}
     volumes:
       - ../logs:/logs
       - ./data:/data

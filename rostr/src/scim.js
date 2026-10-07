@@ -18,6 +18,7 @@ const {
   replaceGroup,
   deleteGroup,
 } = require('./db');
+const { cancelOpenLeave } = require('./leave');
 
 const SCHEMA = {
   user: 'urn:ietf:params:scim:schemas:core:2.0:User',
@@ -532,6 +533,7 @@ function createScimRouter({ db, token, logPath, baseUrl }) {
     const input = fromResource(req.body, res.locals.scimIgnored);
     assertUnique(db, input.userName, existing.id);
     const row = updateProvisionedUser(db, existing.id, { ...input, active: input.active ?? Boolean(existing.active) });
+    if (existing.active && !row.active) cancelOpenLeave(db, row.userName);
     send(res, 200, toResource(row, base(req)));
   });
 
@@ -541,6 +543,7 @@ function createScimRouter({ db, token, logPath, baseUrl }) {
     const user = applyPatch(existing, req.body, res.locals.scimIgnored);
     assertUnique(db, user.userName, existing.id);
     const row = updateProvisionedUser(db, existing.id, user);
+    if (existing.active && !row.active) cancelOpenLeave(db, row.userName);
     send(res, 200, toResource(row, base(req)));
   });
 

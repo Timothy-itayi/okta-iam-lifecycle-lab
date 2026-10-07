@@ -230,6 +230,22 @@ function cancelLeaveRequest(db, { ref, email, at = new Date().toISOString() }) {
   return findLeaveRequestByRef(db, ref);
 }
 
+function cancelOpenLeave(db, email, at = new Date().toISOString()) {
+  const open = listLeaveRequestsByEmail(db, email).filter((request) => OPEN.has(request.status));
+  for (const request of open) {
+    const next = transition(request, 'cancel', 'scim');
+    updateLeaveStatus(db, request.id, next.status);
+    insertLeaveEvent(db, {
+      request_id: request.id,
+      at,
+      actor: 'scim',
+      action: 'cancel',
+      note: 'Deactivated in Rostr',
+    });
+  }
+  return open.map((request) => request.ref);
+}
+
 function myRequests(db, email) {
   return listLeaveRequestsByEmail(db, email);
 }
@@ -312,5 +328,6 @@ module.exports = {
   cancelLeaveRequest,
   decideLeaveRequest,
   hrDecideLeave,
+  cancelOpenLeave,
   myRequests,
 };

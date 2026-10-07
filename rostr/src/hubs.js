@@ -285,10 +285,11 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
 
   app.get('/admin/leave', requireAdmin, (req, res) => {
     const me = viewer(req);
-    const rows = listLeaveByDepartment(db, me.department);
+    const crossDepartment = process.env.ROSTR_CROSS_DEPARTMENT === '1';
+    const rows = crossDepartment ? listAllLeave(db) : listLeaveByDepartment(db, me.department);
     const waiting = rows.filter((row) => row.status === 'with_admin');
     const decided = rows.filter((row) => row.status !== 'with_admin' && row.status !== 'submitted');
-    const flaggedIds = new Set(listFlaggedRequestIds(db, me.department));
+    const flaggedIds = new Set(listFlaggedRequestIds(db, crossDepartment ? null : me.department));
     const flagged = rows.filter((row) => flaggedIds.has(row.id));
     const view = req.query.view === 'decided' || req.query.view === 'flagged' ? req.query.view : 'waiting';
     const names = {};
@@ -304,7 +305,8 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
   function teamRequest(req, res, me) {
     const ref = String(req.params.ref || '');
     const request = REF.test(ref) ? findLeaveRequestByRef(db, ref) : null;
-    const same = request && String(request.department || '').toLowerCase() === String(me.department || '').toLowerCase();
+    const crossDepartment = process.env.ROSTR_CROSS_DEPARTMENT === '1';
+    const same = request && (crossDepartment || String(request.department || '').toLowerCase() === String(me.department || '').toLowerCase());
     if (!request || !same) {
       render(req, res, me, { title: 'Request not found', current: '/admin/leave', body: '<section class="panel empty"><p>That request is not in your department.</p><a class="btn secondary" href="/admin/leave">Back to team requests</a></section>' }, 404);
       return null;

@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { openDatabase, upsertSignIn } = require('../src/db');
+const { openDatabase, upsertSignIn, insertLeaveRequest, findLeaveRequestByRef, listLeaveEvents } = require('../src/db');
 const { createApp } = require('../src/app');
 const { parseFilter, SCHEMA } = require('../src/scim');
 
@@ -269,6 +269,33 @@ test('deactivate and reactivate by Okta PATCH, by path, and by PUT', async () =>
     const put = await call('PUT', `/Users/${created.id}`, { ...created, active: false });
     assert.equal(put.body.active, false);
     assert.equal(put.body.name.givenName, 'Test');
+  });
+});
+
+test('deactivating a user cancels their open leave', async () => {
+  await withScim(async ({ call, db }) => {
+    const created = (await call('POST', '/Users', OKTA_CREATE)).body;
+    const request = insertLeaveRequest(db, {
+      ref: 'LV-0099',
+      email: 'test.user@okta.local',
+      department: 'Operations',
+      leave_type: 'annual',
+      start_day: '2026-10-26',
+      end_day: '2026-10-30',
+      days: 5,
+      reason: 'Open while active',
+      status: 'with_admin',
+      created_at: '2026-10-08T00:00:00.000Z',
+    });
+    const off = await call('PATCH', `/Users/${created.id}`, {
+      schemas: [SCHEMA.patchOp],
+      Operations: [{ op: 'replace', path: 'active', value: false }],
+    });
+    assert.equal(off.status, 200);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0099').status, 'cancelled');
+    const events = listLeaveEvents(db, request.id);
+    assert.equal(events.at(-1).actor, 'scim');
+    assert.equal(events.at(-1).action, 'cancel');
   });
 });
 
