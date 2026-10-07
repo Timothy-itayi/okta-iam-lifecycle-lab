@@ -1,4 +1,4 @@
-const { escapeHtml, listRange, plural, sydneyShort } = require('./format');
+const { escapeHtml, shortRange, plural, sydneyShort } = require('./format');
 const { icon } = require('./icons');
 const { TYPE_LABEL } = require('../leave');
 const { jevWell, policyWell, agreement } = require('./queue');
@@ -40,7 +40,7 @@ function hrQueueBody({ rows, view, dept, names }) {
     ? 'Nothing is waiting for HR.'
     : 'Nothing in this list.';
   const body = shown.length
-    ? `<div class="table-wrap"><table>
+    ? `<div class="table-wrap"><table class="hr-queue">
         <caption class="visually-hidden">Leave for HR</caption>
         <thead><tr>
           <th scope="col">Person</th><th scope="col">Department</th><th scope="col">Dates</th>
@@ -49,7 +49,7 @@ function hrQueueBody({ rows, view, dept, names }) {
         <tbody>${shown.map((row) => `<tr>
           <th scope="row"><a href="/hr/leave/${escapeHtml(row.ref)}">${escapeHtml(names[row.email] || row.email)}</a></th>
           <td>${escapeHtml(row.department || '')}</td>
-          <td class="num">${listRange(row.start_day, row.end_day)}</td>
+          <td class="num">${shortRange(row.start_day, row.end_day)}</td>
           <td class="num days-col">${row.days}</td>
           <td class="signal">${managerLabel(row, names)}</td>
           <td class="signal">${jevCell(row)}</td>

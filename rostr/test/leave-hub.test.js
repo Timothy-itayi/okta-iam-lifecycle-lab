@@ -293,11 +293,18 @@ test('Helen decides the request Marcus sent and records a balance change', async
     assert.equal((await fetch(`${base}/hr/leave`, { headers: { cookie: marcus } })).status, 403);
 
     const helen = await sessionFor(base, PEOPLE.helen);
+    const own = await postForm(base, '/leave', helen, {
+      leave_type: 'personal', start_day: '2026-10-26', end_day: '2026-10-26', reason: 'School concert.',
+    });
+    assert.equal(own.status, 303);
     const queue = await (await fetch(`${base}/hr/leave`, { headers: { cookie: helen } })).text();
     assert.match(queue, /Priya Shah/);
     assert.match(queue, /href="\/hr\/leave\/LV-0001"/);
     assert.match(queue, /Marcus Bell/);
     assert.match(queue, /Export changes/);
+    assert.match(queue, /aria-label="2 waiting"/);
+    assert.match(queue, /Waiting <span class="tab-count">\(2\)<\/span>/);
+    assert.match(queue, /20–22 Oct/);
 
     const page = await (await fetch(`${base}/hr/leave/LV-0001`, { headers: { cookie: helen } })).text();
     assert.match(page, /Approved by Marcus Bell/);
@@ -328,10 +335,6 @@ test('Helen decides the request Marcus sent and records a balance change', async
     const detail = await (await fetch(`${base}/leave/LV-0001`, { headers: { cookie: priya } })).text();
     assert.match(detail, /HR approved it/);
 
-    const own = await postForm(base, '/leave', helen, {
-      leave_type: 'personal', start_day: '2026-10-26', end_day: '2026-10-26', reason: 'School concert.',
-    });
-    assert.equal(own.status, 303);
     assert.equal(findLeaveRequestByRef(db, 'LV-0002').status, 'with_hr');
     const ownPage = await (await fetch(`${base}/hr/leave/LV-0002`, { headers: { cookie: helen } })).text();
     assert.match(ownPage, /can&#39;t approve your own leave|can't approve your own leave/);

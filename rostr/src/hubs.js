@@ -64,7 +64,7 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     }
     let waiting = 0;
     if (role === 'admin') waiting = countLeaveWaiting(db, 'with_admin', { department, excludeEmail: email });
-    if (role === 'hr') waiting = countLeaveWaiting(db, 'with_hr', { excludeEmail: email });
+    if (role === 'hr') waiting = countLeaveWaiting(db, 'with_hr');
     const groups = [...groupNames(user, db)].sort();
     return { user: { ...user, department }, role, email, department, jobTitle, groups, nav: { waiting } };
   }

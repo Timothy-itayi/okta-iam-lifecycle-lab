@@ -31,7 +31,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Manager queue, request chain, tab mark | 2026-10-08 05:09 → 05:17 | 8 min |
 | Marcus approves LV-0002 | 2026-10-08 05:19 → 05:20 | 1 min |
 | HR queue | 2026-10-08 05:23 → 05:31 | 8 min |
-| **Worked** | | **22 h 47 min** |
+| HR queue rows | 2026-10-08 05:35 → 05:42 | 7 min |
+| **Worked** | | **22 h 54 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -575,3 +576,9 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - `GET /hr/export` lists unexported changes. The JSON download returns the same rows twice. `exported` stays 0.
 - Helen's own LV-0001 stays on the waiting list with no buttons. The header count leaves it out. LV-0002 is still waiting for her. The week grid, the Jev flag, and the script that applies the download are not built.
 - Rostr tests 74 passed. Checked in a local browser as Helen: queue, decision, approve window, export, and her own request. Stylesheets are `?v=6`. Container rebuilt, which drops in-memory sessions. Record: [docs/leave/08-hr.md](../leave/08-hr.md).
+
+### HR queue rows — 05:35 to 05:42, 7 min
+
+- The All leave table wrapped names and "Approve · 100%" onto a second line, and the section tab said 1 while Waiting said 2. Dates in that table are now `22–23 Oct`. The row stays one line. The tab count matches Waiting, including Helen's own request.
+- Helen approved LV-0002 at 05:33. Balance change is 2 annual days for Priya, not yet written to the HR file.
+- Rostr tests 74 passed. Checked the queue in a local browser at 1200 px wide. Stylesheets are `?v=7`. Container rebuilt, which drops in-memory sessions.

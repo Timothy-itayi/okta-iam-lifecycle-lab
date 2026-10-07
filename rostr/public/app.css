@@ -408,13 +408,14 @@ input[type="date"]:focus-visible, textarea:focus-visible { outline: var(--border
 .well-jev { background: var(--rs-jev-bg); border-color: var(--rs-jev-line); }
 .well-manager { background: var(--rs-info-bg); border-color: var(--color-blue-500); }
 .banner-caution { padding: 12px 16px; border-radius: var(--border-solid-border-radius); background: var(--rs-wait-bg); color: var(--rs-wait); }
-.queue-tools { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+.queue-tools { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
 .queue-tools .filter-tabs { margin-bottom: 0; }
-.dept-filter { display: grid; gap: 4px; font-size: .875rem; font-weight: 600; }
+.dept-filter { display: flex; align-items: center; gap: 8px; font-size: .875rem; font-weight: 600; }
 .dept-filter select {
-  min-height: 40px; min-width: 180px; padding: 0 12px; border: var(--border-solid-border-width) solid var(--rs-line-strong);
+  min-height: 40px; min-width: 160px; padding: 0 12px; border: var(--border-solid-border-width) solid var(--rs-line-strong);
   border-radius: var(--border-solid-border-radius); background: var(--rs-surface); color: var(--rs-ink); font: inherit;
 }
+.hr-queue th, .hr-queue td { white-space: nowrap; padding-left: 12px; padding-right: 12px; }
 .export-action { margin-top: 16px; }
 .well-muted { background: var(--color-gray-100); }
 .confidence { height: 6px; border-radius: 999px; background: var(--color-gray-300); overflow: hidden; }
