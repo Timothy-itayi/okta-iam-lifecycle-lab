@@ -155,6 +155,8 @@ Marcus Bell at 16:26:33 was denied the same way. The actor is Okta System. The e
 
 During this test `APP-Rostr-Admins` was empty, so the Rostr Admins rule matched nobody. Jonah is the staff sign-in that reached `/me`. Helen and Marcus are staff the policy refused because their enrolled factors did not satisfy it. `admin@` was refused before Rostr. Jonah was added to `APP-Rostr-Admins` later, for task 2.7.
 
+On 8 October the same deny hit Priya Shah. Phishing resistant was cleared on Rostr Users and on Rostr Admins. Both cards then listed Okta Verify push, TOTP, and FastPass as additional factor types. Her next failure was the directory password, which had been reset earlier. The record is [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md). The table above is the policy as saved on 6 October.
+
 ## 2.7 OIDC app
 
 A second app, `Rostr Admin`, is the OIDC client for `/admin`. It is not the SAML app. Client ID `0oa18egjva6o5FpoP698` is in `rostr/.env` as `OIDC_CLIENT_ID`. The issuer there is `https://trial-7464750.okta.com/oauth2/default`. The client secret is in that same file and is not copied here. Two apps were created with this name. The one that was deleted is recorded in [docs/incidents/00-duplicate-rostr-admin.md](../incidents/00-duplicate-rostr-admin.md).
@@ -163,7 +165,7 @@ The kept app is assigned to `APP-Rostr-Admins`: [evidence/2.7-group-assigned-ros
 
 The app's sign-on policy is "Any two factors": [evidence/2.7-rostr-admin-any-two-factors.png](../../evidence/2.7-rostr-admin-any-two-factors.png). It is not the SAML policy named Rostr.
 
-On 2026-10-06 the catch-all rule inside "Any two factors" had **Phishing resistant** set. That constraint was removed so the Okta Workflows app could be opened with password and Okta Verify push. **Require user interaction** stayed on, set to any interaction. The catch-all rule cannot be limited to a group, so Rostr Admin, which uses this same policy, no longer demands FastPass either. The SAML policy named Rostr was not changed.
+On 2026-10-06 the catch-all rule inside "Any two factors" had **Phishing resistant** set. That constraint was removed so the Okta Workflows app could be opened with password and Okta Verify push. **Require user interaction** stayed on, set to any interaction. The catch-all rule cannot be limited to a group, so Rostr Admin, which uses this same policy, no longer demands FastPass either. The SAML policy named Rostr was not changed that day. It was changed on 8 October. [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md).
 
 The default authorization server had no access policy for this client. Policy `Rostr Admin` is assigned to the Rostr Admin client. Its rule is named Authorization Code, priority 1, scopes All, Active: [evidence/2.7-access-policy-create.png](../../evidence/2.7-access-policy-create.png), [evidence/2.7-access-policy-rule.png](../../evidence/2.7-access-policy-rule.png). The description field contains the word `policy`.
 

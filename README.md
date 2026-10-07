@@ -26,7 +26,7 @@ A staff member will sign in to Rostr and ask for leave. [Jev](docs/decisions/jev
 | `APP-Rostr-Admins` | Marcus Bell, Ava Nguyen | Pending requests in their department |
 | `APP-Rostr-HR` | Helen Cho | Final sign-off for every department |
 
-Phase 1 is done: those groups, the existing `groups` claim (it already matches `APP-Rostr-HR`), and the TypeSafe key in `rostr/.env`. The value is not in Git. [docs/leave/01-okta.md](docs/leave/01-okta.md). Phase 2 stores leave balances in the HR file and the request tables in Rostr. [docs/leave/02-data.md](docs/leave/02-data.md). Phase 3 routes a signed-in person to one hub from their Okta groups. [docs/leave/03-shell.md](docs/leave/03-shell.md). The leave forms are not built. Phases that need a live Okta sign-in have to land before the trial ends around 4 November 2026.
+Phase 1 is done: those groups, the existing `groups` claim (it already matches `APP-Rostr-HR`), and the TypeSafe key in `rostr/.env`. The value is not in Git. [docs/leave/01-okta.md](docs/leave/01-okta.md). Phase 2 stores leave balances in the HR file and the request tables in Rostr. [docs/leave/02-data.md](docs/leave/02-data.md). Phase 3 routes a signed-in person to one hub from their Okta groups. [docs/leave/03-shell.md](docs/leave/03-shell.md). Priya Shah can open the SAML app. The sign-on policy had required FastPass, and her directory password had already been reset. [docs/incidents/08-rostr-sign-on.md](docs/incidents/08-rostr-sign-on.md). The leave forms are not built. Phases that need a live Okta sign-in have to land before the trial ends around 4 November 2026.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |
@@ -90,7 +90,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 9. [docs/phases/04-jml.md](docs/phases/04-jml.md)
 10. [docs/phases/05-governance.md](docs/phases/05-governance.md)
 11. [docs/decisions/oig-mapping.md](docs/decisions/oig-mapping.md)
-12. [docs/incidents/00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md)
+12. [docs/incidents/00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md) through [docs/incidents/08-rostr-sign-on.md](docs/incidents/08-rostr-sign-on.md)
 13. [docs/report.md](docs/report.md)
 14. [docs/interview-stories.md](docs/interview-stories.md)
 
@@ -104,7 +104,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 - SaaS onboarding: [docs/runbooks/saas-onboarding.md](docs/runbooks/saas-onboarding.md).
 - Joiner, mover, and leaver: [docs/phases/04-jml.md](docs/phases/04-jml.md).
 - Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is Closed: [docs/phases/05-governance.md](docs/phases/05-governance.md).
-- Six failure drills: [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md).
+- Six failure drills: [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md). A later sign-in failure is [docs/incidents/08-rostr-sign-on.md](docs/incidents/08-rostr-sign-on.md).
 - Lab report: [docs/report.md](docs/report.md). The PDF export is [okta-iam-lifecycle-lab-report.pdf](okta-iam-lifecycle-lab-report.pdf).
 - Three practice accounts: [docs/interview-stories.md](docs/interview-stories.md). The PDF export is [okta-iam-interview-stories.pdf](okta-iam-interview-stories.pdf).
 
@@ -115,7 +115,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 | [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design, service identity, OIG mapping |
 | [docs/phases](docs/phases) | One note per phase | [01](docs/phases/01-foundation.md) through [05](docs/phases/05-governance.md) |
 | [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md), [oauth-review.md](docs/runbooks/oauth-review.md) |
-| [docs/incidents](docs/incidents) | Failure records | [00](docs/incidents/00-duplicate-rostr-admin.md) through [07](docs/incidents/07-leaver-downstream.md) |
+| [docs/incidents](docs/incidents) | Failure records | [00](docs/incidents/00-duplicate-rostr-admin.md) through [08](docs/incidents/08-rostr-sign-on.md) |
 | [docs/worklog](docs/worklog) | Session log | [week-1.md](docs/worklog/week-1.md) |
 | [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 6.6, plus the audit pack |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |

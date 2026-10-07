@@ -20,7 +20,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stretch phase 1, Okta groups and the TypeSafe key | 2026-10-08 01:38 → 02:11 | 33 min |
 | Stretch phase 2, leave data model | 2026-10-08 02:19 → 02:30 | 11 min |
 | Stretch phase 3, hub shell | 2026-10-08 02:30 → 02:50 | 20 min |
-| **Worked** | | **20 h 37 min** |
+| Rostr sign-in: FastPass, then a stale password | 2026-10-08 02:50 → 03:05 | 15 min |
+| **Worked** | | **20 h 52 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -485,3 +486,11 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Groups come from the session and from SCIM membership when the session has an email. An inactive Rostr row is 403. `/health` stays open.
 - One layout, `rostr/public/app.css`, and a flash message that shows once. Forms are not on the page yet.
 - Rostr tests 44 passed. Live sign-in as Priya, Marcus, and Helen is not done. Record: [docs/leave/03-shell.md](../leave/03-shell.md).
+
+### Sign-in — 02:50 to 03:05, 15 min
+
+- Priya Shah on the SAML URL was `policy.evaluate_sign_on` DENY at 02:48:10. Rule Rostr Users required FastPass. The widget said she could not sign in. The catch-all did not match her. An earlier row the same evening was `admin@`, not Priya.
+- Phishing resistant was cleared on Rostr Users and Rostr Admins. Both cards then listed Okta Verify push, TOTP, and FastPass. The catch-all stayed Denied.
+- 02:59:02 was `user.authentication.auth_via_mfa`, `INVALID_CREDENTIALS`, on her Password enrollment. The directory password had been reset earlier. It was reset again. The new value is not recorded.
+- `/me` at 03:04: Operations, `APP-Rostr-Users`, role staff, `lastLogin` `2026-10-07T16:04:21.200Z`. [evidence/leave/priya-me.png](../../evidence/leave/priya-me.png). Opening `/` was not captured. Marcus and Helen have not signed in.
+- Record: [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md).

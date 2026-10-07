@@ -103,6 +103,8 @@ Stale-Access is a script rather than the fifth Workflow. The flow budget was alr
 
 The 6.1 success sign-in overwrote Jonah's planted stale `lastLogin`. The Phase 5 stale-access report no longer matches the database. [docs/incidents/02-saml-acs.md](incidents/02-saml-acs.md).
 
+On 8 October, after this write-up, Priya Shah could not open the SAML app. The Rostr policy still required FastPass, and the password Okta held had already been reset. [docs/incidents/08-rostr-sign-on.md](incidents/08-rostr-sign-on.md). That is not one of the six drills.
+
 ## Outcome
 
 | The lab is done when | State on 2026-10-07 |

@@ -39,4 +39,4 @@ Priya, Jonah, and Lena stay in `APP-Rostr-Users` through the department rules. T
 
 ## Not checked yet
 
-`/me` as Helen, expecting `APP-Rostr-HR`, and `/me` as Marcus, expecting `APP-Rostr-Admins`. The claim filter covers the new group name. A sign-in is the check that Okta puts it in the token.
+`/me` as Priya Shah on 8 October shows `APP-Rostr-Users`, department Operations, role staff. [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md). `/me` as Helen, expecting `APP-Rostr-HR`, and `/me` as Marcus, expecting `APP-Rostr-Admins`, are still open. The claim filter covers the new group name. A sign-in is the check that Okta puts it in the token.

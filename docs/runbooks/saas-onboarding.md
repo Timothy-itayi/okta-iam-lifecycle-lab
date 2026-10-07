@@ -70,11 +70,11 @@ Rostr's SAML policy is named Rostr, id `rst18ee9qwjUUSrHZ698`, assigned to the S
 
 | Priority | Rule | Who | Access | Re-authentication |
 | --- | --- | --- | --- | --- |
-| 1 | Rostr Admins | `APP-Rostr-Admins` | Possession. Okta lists Okta Verify FastPass. Phishing resistant, user interaction required. | Every sign-in |
-| 2 | Rostr Users | `APP-Rostr-Users` | Password and Okta Verify FastPass. Same two constraints. | Password every 2 hours. The other factor every 1 hour |
-| 3 | Catch-all Rule | Anyone else | Denied | |
+| 1 | Rostr Admins | `APP-Rostr-Admins` | Password, plus Okta Verify push, TOTP, or FastPass. Phishing resistant was cleared on 8 October. | Was every sign-in while the rule was possession only. Re-check the card before relying on that interval. |
+| 2 | Rostr Users | `APP-Rostr-Users` | Password, plus Okta Verify push, TOTP, or FastPass. | Password every 2 hours. The other factor every 1 hour. |
+| 3 | Catch-all Rule | Anyone else | Denied. Leave it enabled. | |
 
-A person in both groups matches priority 1. Both allow rules are stricter than the factors people have enrolled. Helen Cho and Marcus Bell were denied for that reason. For the next app, require a factor this org has enrolled, or expect the same deny.
+A person in both groups matches priority 1. Until 8 October both allow rules required a phishing-resistant factor, which this org satisfies only with FastPass. Helen Cho and Marcus Bell were denied for that on 6 October, and Priya Shah on 8 October. The change is [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md). For the next app, require a factor this org has enrolled. Push with a number challenge is that factor. The catch-all is not the deny a member of `APP-Rostr-Users` hits.
 
 ## Configuration record
 
@@ -121,7 +121,7 @@ Run these in a private window. A pass is a Rostr log line plus the page below, o
 | IdP-initiated SAML | From the Okta dashboard, open the Rostr chiclet. | `/me` as above. The log has no `InResponseTo` failure. | Not run. The SP accepts a response that has no `InResponseTo`. Task 2.5, the annotated assertion, is also not done. |
 | Policy allow | Same user as the SP-initiated test, after the app sign-in policy exists. | Okta completes sign-in and Rostr logs success. | Jonah at 16:20 reached `/me` after the policy existed. The prompt itself was not captured. |
 | Policy deny, neither group | One account that is in neither app group. Assign that account as an Individual for the test, sign in, then remove the Individual row. | Okta shows "You do not have permission to perform the requested action." Rostr has no log line. The earlier page, before assignment, is "User is not assigned to this application." | Passed for `admin@` at 16:00. The System Log at 15:59:44 is `app.generic.unauth_app_access_attempt`. That event does not name the Catch-all Rule. The Individual row was removed after the test. |
-| Policy deny, factor | A user in `APP-Rostr-Users` whose enrolled factors cannot meet the rule. | System Log `policy.evaluate_sign_on` DENY, or `application.policy.sign_on.deny_access`. On that second event, outcome SUCCESS means Okta recorded the denial. Rostr has no log line. | Helen Cho at 16:18:31. Marcus Bell at 16:26:33. Both have Okta Verify push. The rule asks for FastPass. |
+| Policy deny, factor | A user in `APP-Rostr-Users` whose enrolled factors cannot meet the rule. | System Log `policy.evaluate_sign_on` DENY, or `application.policy.sign_on.deny_access`. On that second event, outcome SUCCESS means Okta recorded the denial. Rostr has no log line. | Helen Cho at 16:18:31. Marcus Bell at 16:26:33. Priya Shah at 02:48 on 8 October. All three have Okta Verify push. The rule asked for FastPass until that constraint was cleared the same morning. [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md). |
 | OIDC claim check | Put the tester in `APP-Rostr-Admins`. Open `https://rostr.lanternfieldgoods.co.uk/oidc/login`. | `/me` shows `iss`, `aud` equal to the client id, `sub`, `exp`, and `groups` containing `APP-Rostr-Admins`. The log is `protocol: oidc`, the `sub`, `outcome: success`. `/admin/users` then renders. | Passed. `/me` at 17:36, `/admin/users` at 17:37. `sub` `00u18dk3t4h0G1k9I698`. `aud` `0oa18egjva6o5FpoP698`. Log `2026-10-06T06:35:49.607Z`. `exp` `1791272149` is one hour later. The users-table `lastLogin` stayed `2026-10-06T05:20:26.829Z`. |
 | Admin gate | Call `/admin/users` with no session, then with a staff session that lacks `APP-Rostr-Admins`. | 401, then 403. | Not run in a browser. The unit tests cover both. |
 
