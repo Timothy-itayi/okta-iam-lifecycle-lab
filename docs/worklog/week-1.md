@@ -14,8 +14,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 02:23 → 11:46 | 9 h 23 min |
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
 | Break | 15:02 → 16:59 | 1 h 57 min |
-| Afternoon, drills 6.1 to 6.5 | 2026-10-07 16:59 → 18:17 | 1 h 18 min |
-| **Worked** | | **18 h 58 min** |
+| Afternoon, drills 6.1 to 6.6 | 2026-10-07 16:59 → 18:26 | 1 h 27 min |
+| **Worked** | | **19 h 7 min** |
 
 ## Phase 0 — Prep
 
@@ -373,9 +373,9 @@ Runbook 5.6. The audit pack is runbook 5.5. This log already used 5.5 for the OA
 
 Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is `2026-10-07T03:06:20.435Z` in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Ticket `357784` is still Open. Still needed: Workflows History URL on the ticket, Internal Note, Close, and the three screenshots.
 
-## Phase 6 — Failure drills (started)
+## Phase 6 — Failure drills
 
-About 1 h 18 min, 16:59 to 18:17. Rostr was already up. Local and public `/health` were 200. 6.4 and 6.5 are closed.
+About 1 h 27 min, 16:59 to 18:26. Rostr was already up. Local and public `/health` were 200. The six drills are closed.
 
 ### 6.1 SAML ACS mismatch — 16:59 to 17:12, 13 min
 
@@ -420,3 +420,10 @@ About 1 h 18 min, 16:59 to 18:17. Rostr was already up. Local and public `/healt
 - `--apply` `REQ-0007` returned HTTP 504 after 61 seconds. No `logs/jml.csv` row. Profile was already `Operations`. `DEPT-Sales` gone, `DEPT-Operations` and `APP-Rostr-Users` from rules, `APP-Rostr-Admins` still `individual`. SCIM user `PUT` `07:14:40.069Z`, department `Operations`, Rostr id `810dde51-dd11-41ac-afda-5400f831d908`. Before: [evidence/06-mover-residue.csv](../../evidence/06-mover-residue.csv).
 - Removed from `APP-Rostr-Admins` only. Members API empty. Second export has no admin row: [evidence/06-mover-residue-after.csv](../../evidence/06-mover-residue-after.csv). Group `PUT` `07:17:38.677Z` sent `members` `[]`. [evidence/6.5-jonah-removed.png](../../evidence/6.5-jonah-removed.png). He stays Operations.
 - Record: [docs/incidents/06-mover-residue.md](../incidents/06-mover-residue.md).
+
+### 6.6 Leaver leaves Rostr active — 18:21 to 18:26, 5 min
+
+- Rostr SAML app, To App: Deactivate Users unticked. Create Users and Update User Attributes left on. [evidence/6.6-deactivate-users-off.png](../../evidence/6.6-deactivate-users-off.png). Save probed `GET /Users?count=2` at `07:20:59.640Z`.
+- [fdacc1d](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/fdacc1d) sets only Thomas Okeke, EMP-1008, to `terminated` with `endDate` `2026-10-07`. Dry-run: `leaver EMP-1008 status`. `--apply` `REQ-0008` returned in about 4 seconds. `logs/jml.csv` `07:22:37.812Z`. Okta `DEPROVISIONED`, user `00u18f077u3WXcjuY698`. Still in `DEPT-Operations` and `APP-Rostr-Users`. No Okta SCIM write. Rostr id `bd5b32ef-eccb-4b1a-af38-fdae04c82da1` stayed `active` true.
+- Deactivate Users ticked again. Save probe `07:24:54.705Z`. Activated him. `PUT` `07:25:13.946Z` `active` true. Deactivated again. `PUT` `07:26:41.087Z` `active` false, title and department kept. Okta `DEPROVISIONED`. He was not deleted.
+- Record: [docs/incidents/07-leaver-downstream.md](../incidents/07-leaver-downstream.md).
