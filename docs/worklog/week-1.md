@@ -27,7 +27,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Profile, photo, and identity row | 2026-10-08 04:09 → 04:14 | 5 min |
 | Stretch phase 5, policy engine | 2026-10-08 04:25 → 04:38 | 13 min |
 | Stretch phase 6, Jev review | 2026-10-08 04:39 → 04:45 | 6 min |
-| **Worked** | | **22 h 26 min** |
+| Confirmation window instead of the toast | 2026-10-08 04:49 → 04:53 | 4 min |
+| **Worked** | | **22 h 30 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -543,5 +544,11 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 
 - After the request is saved, `reviewLeave` stores the policy outcome and asks Jev. It does not move the request again. Priya's three days against two left is a policy deny (`insufficient_balance`, and short notice). Jev's answer is stored beside it. `agree` is null when Jev did not answer.
 - The written reason is a state field. Question instructions do not contain it. Urgency is the SDK score plus one, so 1 is "can wait" and 5 is "same-day emergency". Below 0.7 the recommendation is stored and `jevIsSure` is false. The admin screen that hides it is not built.
-- A 401, 422, 429, 529, timeout, or missing key leaves the Jev columns empty, writes that code on the event, and still returns the toast. The response body is not logged. Staff activity does not list the policy or Jev rows.
+- A 401, 422, 429, 529, timeout, or missing key leaves the Jev columns empty, writes that code on the event, and still opens the confirmation window. The response body is not logged. Staff activity does not list the policy or Jev rows.
 - Rostr tests 72 passed. The suite stubs the client and does not call TypeSafe. A live request through Okta is not done. Record: [docs/leave/06-jev.md](../leave/06-jev.md). Decision: [docs/decisions/jev-02-decision-model.md](../decisions/jev-02-decision-model.md).
+
+### Confirmation window — 04:49 to 04:53, 4 min
+
+- The key was already in the container, 108 characters, and startup already logged `Jev on`. A connectivity call from that container returned `jev-1.13.0`. There was no missing key to repair.
+- After send, `/leave` opens a window: "This is being resolved" and who has the request. OK closes it. A reload does not show it again. The request row stays. Cancel uses the same window. Stylesheets are `?v=4`.
+- Rostr tests 72 passed. Checked in a local browser as Priya: send, window, OK, reload. Container rebuilt, which drops in-memory sessions. A live request through Okta is not done.

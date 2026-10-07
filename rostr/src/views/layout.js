@@ -4,7 +4,7 @@ const { icon } = require('./icons');
 const ROLE_CHIP = { staff: 'Staff', admin: 'Manager', hr: 'HR' };
 // Helen's browser cached the /app.css 404 from before public/ was in the image.
 // Cloudflare rewrites the cache header to 4 hours, so the URL has to change.
-const ASSET_VERSION = '3';
+const ASSET_VERSION = '4';
 
 function asset(path) {
   return `${path}?v=${ASSET_VERSION}`;
@@ -78,21 +78,25 @@ function tabsFor(role, current, nav = {}) {
   return `<ul>${items.map((item) => tab(item, current)).join('')}</ul>`;
 }
 
-function toastHtml(flash) {
+function promptHtml(flash) {
   if (!flash) return '';
   const message = typeof flash === 'string' ? { text: flash } : flash;
-  const tone = message.tone || 'ok';
-  const view = message.href ? ` <a href="${escapeHtml(message.href)}">View</a>` : '';
-  const stay = tone === 'bad' ? 'true' : 'false';
-  return `<div class="toast toast-${tone}" role="status">
-    <p>${escapeHtml(message.text)}${view}</p>
-    <button type="button" class="toast-close" aria-label="Dismiss">${icon('x')}</button>
-  </div>
+  const title = message.title || 'Notice';
+  const view = message.href ? `<a class="btn secondary" href="${escapeHtml(message.href)}">View request</a>` : '';
+  return `<dialog class="prompt" open aria-labelledby="prompt-title">
+    <h2 id="prompt-title">${escapeHtml(title)}</h2>
+    <p>${escapeHtml(message.text)}</p>
+    <div class="prompt-actions">
+      ${view}
+      <button type="button" class="btn primary" data-prompt-close autofocus>OK</button>
+    </div>
+  </dialog>
   <script>
-    var toast = document.querySelector('.toast');
-    if (toast) {
-      toast.querySelector('.toast-close').addEventListener('click', function () { toast.classList.add('gone'); });
-      if (!${stay}) setTimeout(function () { toast.classList.add('gone'); }, 5000);
+    var prompt = document.querySelector('.prompt');
+    if (prompt && typeof prompt.showModal === 'function') {
+      if (prompt.open) prompt.close();
+      prompt.showModal();
+      prompt.querySelector('[data-prompt-close]').addEventListener('click', function () { prompt.close(); });
     }
   </script>`;
 }
@@ -186,7 +190,7 @@ function page({ title, context, action, user, role, jobTitle, groups, body, flas
       ${body}
     </div>
   </main>
-  ${toastHtml(flash)}
+  ${promptHtml(flash)}
   ${photoScript()}
 </body>
 </html>`;

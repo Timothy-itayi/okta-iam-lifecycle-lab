@@ -188,7 +188,11 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
       const { request, approvers } = createLeaveRequest(db, { email: me.email, department, value: result.value });
       await reviewLeave(db, hr, request, { today: state.today, client: jev });
       const to = approvers.length ? approvers.map(displayName).join(' or ') : 'HR';
-      req.session.flash = { text: `Request ${request.ref} sent to ${to}`, href: `/leave/${request.ref}` };
+      req.session.flash = {
+        title: 'This is being resolved',
+        text: `${request.ref} is with ${to}.`,
+        href: `/leave/${request.ref}`,
+      };
       req.session.save(() => res.redirect(303, '/leave'));
     } catch (error) {
       next(error);
@@ -227,9 +231,16 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     if (!request) return;
     try {
       cancelLeaveRequest(db, { ref: request.ref, email: me.email });
-      req.session.flash = { text: `Request ${request.ref} cancelled`, href: `/leave/${request.ref}` };
+      req.session.flash = {
+        title: 'Request cancelled',
+        text: `Request ${request.ref} cancelled`,
+        href: `/leave/${request.ref}`,
+      };
     } catch (error) {
-      req.session.flash = { text: `Request ${request.ref} is already decided, so it cannot be cancelled.`, tone: 'bad' };
+      req.session.flash = {
+        title: 'Already decided',
+        text: `Request ${request.ref} is already decided, so it cannot be cancelled.`,
+      };
     }
     req.session.save(() => res.redirect(303, '/leave'));
   });

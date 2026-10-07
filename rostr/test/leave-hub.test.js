@@ -66,7 +66,7 @@ test('balance and notice are warnings, not errors', () => {
   assert.match(stacked.notices[0], /1 day more than your annual balance after the 2 already requested/);
 });
 
-test('Priya sends a request: it goes to Marcus, shows in her list, and toasts once', async () => {
+test('Priya sends a request: it goes to Marcus, shows in her list, and the window appears once', async () => {
   const { app, db } = appWithSession();
   const { server, base } = listen(app);
   try {
@@ -99,13 +99,16 @@ test('Priya sends a request: it goes to Marcus, shows in her list, and toasts on
     assert.equal(review.agree, null);
 
     const list = await (await fetch(`${base}/leave`, { headers: { cookie } })).text();
-    assert.match(list, /Request LV-0001 sent to Marcus Bell/);
+    assert.match(list, /<dialog class="prompt" open/);
+    assert.match(list, /This is being resolved/);
+    assert.match(list, /LV-0001 is with Marcus Bell/);
+    assert.doesNotMatch(list, /class="toast/);
     assert.match(list, /Annual leave/);
     assert.match(list, /Tue 20 – Thu 22 Oct/);
     assert.match(list, /3 days/);
     assert.match(list, /With manager/);
     const again = await (await fetch(`${base}/leave`, { headers: { cookie } })).text();
-    assert.doesNotMatch(again, /sent to Marcus Bell/);
+    assert.doesNotMatch(again, /This is being resolved/);
 
     const detail = await (await fetch(`${base}/leave/LV-0001`, { headers: { cookie } })).text();
     assert.match(detail, /LV-0001 · Annual leave/);

@@ -68,12 +68,14 @@ async function loadOidc() {
 }
 
 function loadJev() {
-  if (!process.env.TYPESAFE_API_KEY) {
+  const apiKey = process.env.TYPESAFE_API_KEY;
+  if (!apiKey) {
     console.warn('TYPESAFE_API_KEY is not set. Leave reviews will record the policy check only.');
     return null;
   }
   const { TypeSafeClient } = require('@typesafe-ai/sdk');
   const client = new TypeSafeClient({
+    apiKey,
     timeout: 5000,
     retry: { maxRetries: 0 },
     defaultModel: 'jev-latest',

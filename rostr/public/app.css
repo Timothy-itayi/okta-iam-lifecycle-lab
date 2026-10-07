@@ -343,7 +343,22 @@ input[type="date"]:focus-visible, textarea:focus-visible { outline: var(--border
 .confirm { border-color: var(--color-red-500); }
 .confirm p { margin-bottom: var(--spacing-sm); color: var(--rs-ink-muted); }
 
-/* Toast */
+/* Confirmation window. The inline .notice above is a form warning, not this. */
+
+.prompt {
+  width: min(420px, calc(100vw - 32px));
+  margin: auto;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-solid-border-radius);
+  background: var(--rs-surface);
+  color: var(--rs-ink);
+  box-shadow: var(--shadow-large-box-shadow);
+}
+.prompt::backdrop { background: rgba(34, 15, 64, 0.45); }
+.prompt h2 { margin: 0 0 8px; font-size: 1.125rem; font-weight: 600; }
+.prompt p { margin: 0 0 16px; color: var(--rs-ink-muted); }
+.prompt-actions { display: flex; justify-content: flex-end; gap: 8px; }
 
 .toast {
   position: fixed; top: 168px; right: var(--spacing-md); z-index: 30;

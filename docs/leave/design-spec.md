@@ -286,7 +286,7 @@ Goes to Marcus Bell, then HR.               [Cancel] [Send request]
 - **Notices**: `cautionary` InlineNotifications for over-balance and for annual leave inside 14 days ("Annual leave needs 14 days' notice. You can still send it."). They inform; they never block. Policy decides later. Staff never see Jev.
 - **Reason**: TextArea, 4 rows, description above, counter below right.
 - **Footer**: sticky, with the manager's name from the HR file and the two buttons.
-- On send: sheet closes, toast appears, the new row appears at the top with "With manager".
+- On send: sheet closes, a window says the request is being resolved, and the new row appears at the top with "With manager". The window stays until the person closes it.
 - `Esc` closes the sheet and focus returns to "Request leave".
 
 ### 5.2 Request detail (`GET /leave/:ref`)
