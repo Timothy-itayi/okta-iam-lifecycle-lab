@@ -2,7 +2,7 @@
 
 Previous: [Leaver leaves Rostr active](incidents/07-leaver-downstream.md).
 
-Date: 2026-10-07. This is a learning lab, not production Okta experience. Every claim below points at a file in this repository. The PDF at the repo root is an export of this page. Tasks 7.3 and 7.4 are not done: the CV notes are not in the repo, and the org has not been torn down.
+Date: 2026-10-07. This is a learning lab, not production Okta experience. Every claim below points at a file in this repository. The PDF at the repo root is an export of this page. The three practice accounts are [docs/interview-stories.md](interview-stories.md). The CV lines are not written up here, and the org has not been torn down.
 
 ## Purpose
 

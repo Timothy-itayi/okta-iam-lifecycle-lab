@@ -25,7 +25,7 @@ The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Oper
 | 4 | Joiner, mover, and leaver | 7 h | Done | [docs/phases/04-jml.md](docs/phases/04-jml.md) |
 | 5 | Governance and audit evidence | 7.5 h | Nearly done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Ticket `357784` is still Open. |
 | 6 | Failure drills | 6 h | Done | [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md) |
-| 7 | Write-up and teardown | 4 h | In progress | [docs/report.md](docs/report.md). 7.3 and 7.4 are not started. |
+| 7 | Write-up and teardown | 4 h | In progress | [docs/report.md](docs/report.md). Stories: [docs/interview-stories.md](docs/interview-stories.md). CV lines and teardown are not started. |
 
 ## Data flow
 
@@ -93,6 +93,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 - Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is still Open: [docs/phases/05-governance.md](docs/phases/05-governance.md).
 - Six failure drills: [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md).
 - Lab report: [docs/report.md](docs/report.md). The PDF export is [okta-iam-lifecycle-lab-report.pdf](okta-iam-lifecycle-lab-report.pdf).
+- Three practice accounts: [docs/interview-stories.md](docs/interview-stories.md). The PDF export is [okta-iam-interview-stories.pdf](okta-iam-interview-stories.pdf).
 
 ## Repository
 
