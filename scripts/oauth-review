@@ -1,0 +1,393 @@
+#!/usr/bin/env node
+// List OAuth app integrations, flag anything not on the approved catalog,
+// revoke grants and deactivate the planted legacy-report-tool.
+// Needs okta.apps.manage on svc-jml-sync plus an Application Administrator
+// role. Same gap as logs.read before Report Administrator.
+
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+const entitlements = require('./entitlements');
+const { loadEnvFile } = require('./hr-sync');
+
+const PLANT_LABEL = 'legacy-report-tool';
+const PLANT_SCOPES = [
+  'okta.users.manage',
+  'okta.groups.manage',
+  'okta.apps.manage',
+  'okta.logs.read',
+];
+const REVIEW_SCOPES = `${entitlements.SCOPES} okta.apps.manage okta.appGrants.manage`;
+const LOOKBACK_DAYS = 30;
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+// Recorded, approved integrations. The plant is deliberately absent.
+const APPROVED = {
+  'svc-jml-sync': { owner: 'IAM', purpose: 'hr-sync joiner/mover/leaver' },
+  Rostr: { owner: 'Operations', purpose: 'staff roster SAML' },
+  'Rostr Admin': { owner: 'Operations', purpose: 'roster admin OIDC' },
+};
+
+function parseArgs(argv) {
+  if (!argv.length) throw new Error('Pass plant, review, or revoke');
+  const command = argv[0];
+  if (!['plant', 'review', 'revoke'].includes(command)) {
+    throw new Error('Pass plant, review, or revoke');
+  }
+  let out = null;
+  let apply = false;
+  for (let index = 1; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === '--out') {
+      out = argv[index + 1];
+      index += 1;
+    } else if (arg === '--apply') {
+      apply = true;
+    } else {
+      throw new Error(`Unknown argument ${arg}`);
+    }
+  }
+  if (command === 'review' && !out) throw new Error('Pass --out <file>');
+  return { command, out, apply };
+}
+
+function isServiceApp(app) {
+  return app.signOnMode === 'OPENID_CONNECT'
+    && app.settings?.oauthClient?.application_type === 'service';
+}
+
+function isOauth(app) {
+  return app.signOnMode === 'OPENID_CONNECT' || Boolean(app.settings?.oauthClient);
+}
+
+function approvalOf(app) {
+  if (APPROVED[app.label]) {
+    return { ...APPROVED[app.label], status: 'approved' };
+  }
+  if (app.label === PLANT_LABEL) {
+    return { owner: '(none)', purpose: 'unrecorded', status: 'unapproved' };
+  }
+  if (String(app.label || '').startsWith('Okta ')) {
+    return { owner: 'Okta', purpose: 'platform', status: 'okta-owned' };
+  }
+  return { owner: 'unknown', purpose: 'unknown', status: 'unreviewed' };
+}
+
+function excessiveScopes(app, scopes) {
+  if (app.label !== PLANT_LABEL) return false;
+  return scopes.some((scope) => scope.endsWith('.manage'));
+}
+
+function disposition(row) {
+  if (row.label === PLANT_LABEL && row.deactivated) {
+    return 'grants revoked, deactivated';
+  }
+  if (row.status === 'unapproved' && row.excessive) {
+    return 'revoke grants and deactivate';
+  }
+  if (row.status === 'approved' || row.status === 'okta-owned') return 'keep';
+  return 'confirm with owner';
+}
+
+function lastUsedFromEvents(events) {
+  const latest = new Map();
+  for (const event of events) {
+    const published = event.published || '';
+    const targets = Array.isArray(event.target) ? event.target : [];
+    for (const target of targets) {
+      if (!target?.id || !String(target.id).startsWith('0oa')) continue;
+      const prev = latest.get(target.id);
+      if (!prev || published > prev) latest.set(target.id, published);
+    }
+    const clientId = event.client?.id;
+    if (clientId) {
+      const prev = latest.get(clientId);
+      if (!prev || published > prev) latest.set(clientId, published);
+    }
+  }
+  return latest;
+}
+
+function sinceIso(now = new Date(), days = LOOKBACK_DAYS) {
+  return new Date(now.getTime() - days * MS_PER_DAY).toISOString();
+}
+
+function csvCell(value) {
+  const text = String(value ?? '');
+  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
+
+function toMarkdown(rows, meta) {
+  const lines = [
+    '# OAuth integration review',
+    '',
+    `Generated ${meta.generated}. Catalog is the approved list in docs/runbooks/oauth-review.md.`,
+    `${PLANT_LABEL} is not on that list. That is the planted finding.`,
+    '',
+    '| label | id | type | owner | purpose | scopes | last used | approval | disposition |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+  ];
+  for (const row of rows) {
+    lines.push(`| ${[
+      row.label,
+      row.id,
+      row.type,
+      row.owner,
+      row.purpose,
+      row.scopes || '(none)',
+      row.lastUsed || '(none in 30d)',
+      row.status,
+      row.disposition,
+    ].join(' | ')} |`);
+  }
+  lines.push('');
+  const planted = rows.find((row) => row.label === PLANT_LABEL);
+  if (planted) {
+    lines.push(`Planted app \`${PLANT_LABEL}\` id \`${planted.id}\`: ${planted.disposition}.`);
+  } else {
+    lines.push(`\`${PLANT_LABEL}\` was not in the app list.`);
+  }
+  lines.push('');
+  return `${lines.join('\n')}\n`;
+}
+
+function nextLink(header) {
+  return entitlements.nextLink(header);
+}
+
+async function readJson(response) {
+  const text = await response.text();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { raw: text };
+  }
+}
+
+async function getJson(client, url) {
+  const response = await client.get(url);
+  if (!response.ok) {
+    const error = new Error(`HTTP ${response.status} for ${url.split('?')[0]}`);
+    error.status = response.status;
+    throw error;
+  }
+  return { body: await response.json(), next: nextLink(response.headers.get('link')) };
+}
+
+async function getAll(client, url) {
+  const rows = [];
+  let page = url;
+  while (page) {
+    const { body, next } = await getJson(client, page);
+    if (!Array.isArray(body)) throw new Error(`Expected a list from ${url.split('?')[0]}`);
+    rows.push(...body);
+    page = next;
+  }
+  return rows;
+}
+
+async function connect(root, fetchImpl) {
+  loadEnvFile(path.join(root, '.env'));
+  const org = (process.env.OKTA_ORG_URL || '').replace(/\/$/, '');
+  if (!org) throw new Error('Missing OKTA_ORG_URL');
+  const keyPath = process.env.OKTA_PRIVATE_KEY_PATH;
+  if (!keyPath) throw new Error('Missing OKTA_PRIVATE_KEY_PATH');
+  const privateKey = crypto.createPrivateKey(fs.readFileSync(keyPath));
+  let token;
+  let nonce;
+  try {
+    ({ token, nonce } = await entitlements.accessToken(org, privateKey, fetchImpl, REVIEW_SCOPES));
+  } catch (error) {
+    throw new Error(
+      `${error.message}. Grant okta.apps.manage on svc-jml-sync and assign Application Administrator. Same pattern as okta.logs.read plus Report Administrator.`,
+    );
+  }
+  const scp = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()).scp || [];
+  if (!scp.includes('okta.apps.manage')) {
+    throw new Error(
+      'Token is missing okta.apps.manage (Okta omitted it). Grant that scope on svc-jml-sync › Okta API Scopes, then assign Application Administrator. Same gap as logs.read before Report Administrator.',
+    );
+  }
+  if (!scp.includes('okta.appGrants.manage')) {
+    throw new Error(
+      'Token is missing okta.appGrants.manage. Grant it on svc-jml-sync › Okta API Scopes. GET /apps/{id}/grants is a different resource from Applications; Application Administrator is not enough, and Okta still requires Super Admin for that endpoint in this org.',
+    );
+  }
+  return { org, client: entitlements.oktaClient({ org, token, privateKey, nonce, fetchImpl }) };
+}
+
+function plantBody() {
+  return {
+    name: 'oidc_client',
+    label: PLANT_LABEL,
+    signOnMode: 'OPENID_CONNECT',
+    credentials: {
+      oauthClient: { token_endpoint_auth_method: 'client_secret_basic' },
+    },
+    settings: {
+      oauthClient: {
+        grant_types: ['client_credentials'],
+        application_type: 'service',
+        response_types: ['token'],
+        redirect_uris: [],
+        consent_method: 'REQUIRED',
+      },
+    },
+  };
+}
+
+async function listGrants(client, appId) {
+  try {
+    return await getAll(client, `/api/v1/apps/${appId}/grants`);
+  } catch (error) {
+    if (error.status === 404) return [];
+    throw error;
+  }
+}
+
+async function findPlanted(client) {
+  const apps = await getAll(client, `/api/v1/apps?q=${encodeURIComponent(PLANT_LABEL)}&limit=20`);
+  return apps.find((app) => app.label === PLANT_LABEL) || null;
+}
+
+async function plantApp(client, org) {
+  let app = await findPlanted(client);
+  if (!app) {
+    const created = await client.post('/api/v1/apps', plantBody());
+    if (!created.ok) {
+      const detail = await readJson(created);
+      throw new Error(`Create ${PLANT_LABEL} HTTP ${created.status}: ${detail?.errorSummary || ''}`.trim());
+    }
+    app = await created.json();
+  }
+  const grants = [];
+  for (const scopeId of PLANT_SCOPES) {
+    const response = await client.post(`/api/v1/apps/${app.id}/grants`, { scopeId, issuer: org });
+    grants.push({ scopeId, status: response.status });
+    if (!response.ok && response.status !== 409) {
+      const detail = await readJson(response);
+      throw new Error(`Grant ${scopeId} HTTP ${response.status}: ${detail?.errorSummary || ''}`.trim());
+    }
+  }
+  return { id: app.id, label: app.label, grants };
+}
+
+async function collectRows(client, now) {
+  const apps = await getAll(client, '/api/v1/apps?limit=200');
+  let lastUsed = new Map();
+  try {
+    const events = await getAll(
+      client,
+      `/api/v1/logs?filter=${encodeURIComponent('eventType eq "app.oauth2.token.grant.success"')}&since=${encodeURIComponent(sinceIso(now))}&limit=1000`,
+    );
+    lastUsed = lastUsedFromEvents(events);
+  } catch {
+    lastUsed = new Map();
+  }
+  const rows = [];
+  for (const app of apps.sort((a, b) => String(a.label).localeCompare(String(b.label)))) {
+    const grants = isOauth(app) ? await listGrants(client, app.id) : [];
+    const scopes = grants.map((grant) => grant.scopeId).filter(Boolean).sort();
+    const meta = approvalOf(app);
+    const type = isServiceApp(app) ? 'service' : (isOauth(app) ? 'oauth' : String(app.signOnMode || '').toLowerCase());
+    const row = {
+      label: app.label,
+      id: app.id,
+      type,
+      owner: meta.owner,
+      purpose: meta.purpose,
+      scopes: scopes.join(' '),
+      lastUsed: lastUsed.get(app.id) || '',
+      status: meta.status,
+      excessive: excessiveScopes(app, scopes),
+      deactivated: app.status && app.status !== 'ACTIVE',
+      grantIds: grants.map((grant) => grant.id).filter(Boolean),
+    };
+    row.disposition = disposition(row);
+    rows.push(row);
+  }
+  return rows;
+}
+
+async function revokePlanted(client, rows, apply) {
+  const planted = rows.find((row) => row.label === PLANT_LABEL);
+  if (!planted) throw new Error(`${PLANT_LABEL} not found`);
+  const actions = [];
+  for (const grantId of planted.grantIds) {
+    let http = 'dry-run';
+    if (apply) {
+      const response = await client.del(`/api/v1/apps/${planted.id}/grants/${grantId}`);
+      http = String(response.status);
+      if (response.status !== 204 && response.status !== 404) {
+        throw new Error(`Delete grant ${grantId} HTTP ${response.status}`);
+      }
+    }
+    actions.push({ kind: 'grant', id: grantId, http });
+  }
+  let deactivate = 'dry-run';
+  if (apply) {
+    const response = await client.post(`/api/v1/apps/${planted.id}/lifecycle/deactivate`);
+    deactivate = String(response.status);
+    if (!response.ok && response.status !== 409) {
+      throw new Error(`Deactivate ${PLANT_LABEL} HTTP ${response.status}`);
+    }
+  }
+  actions.push({ kind: 'deactivate', id: planted.id, http: deactivate });
+  return { planted, actions };
+}
+
+async function main(argv, io = {}) {
+  const stdout = io.stdout || ((line) => console.log(line));
+  const cwd = io.cwd || process.cwd();
+  const fetchImpl = io.fetchImpl || fetch;
+  const now = io.now || new Date();
+  const args = parseArgs(argv);
+  const root = path.resolve(cwd);
+  const { org, client } = io.connect ? await io.connect() : await connect(root, fetchImpl);
+  if (args.command === 'plant') {
+    const result = io.plantApp ? await io.plantApp() : await plantApp(client, org);
+    stdout(`planted ${result.label} ${result.id}`);
+    return 0;
+  }
+  const rows = io.rows || await collectRows(client, now);
+  if (args.command === 'review') {
+    const file = path.resolve(root, args.out);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, toMarkdown(rows, { generated: now.toISOString() }));
+    stdout(`${rows.length} apps -> ${path.relative(root, file)}`);
+    return 0;
+  }
+  const { planted, actions } = await revokePlanted(client, rows, args.apply);
+  stdout(`ticket ${PLANT_LABEL} ${args.apply ? 'apply' : 'dry-run'}`);
+  stdout(`id ${planted.id}`);
+  for (const action of actions) stdout(`${action.kind} ${action.id} ${action.http}`);
+  return 0;
+}
+
+if (require.main === module) {
+  main(process.argv.slice(2)).then(
+    (code) => process.exit(code),
+    (error) => {
+      console.error(error.message);
+      process.exit(1);
+    },
+  );
+}
+
+module.exports = {
+  PLANT_LABEL,
+  PLANT_SCOPES,
+  APPROVED,
+  parseArgs,
+  isServiceApp,
+  isOauth,
+  approvalOf,
+  excessiveScopes,
+  disposition,
+  lastUsedFromEvents,
+  toMarkdown,
+  plantBody,
+  main,
+};

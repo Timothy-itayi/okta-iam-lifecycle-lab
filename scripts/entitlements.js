@@ -90,7 +90,7 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function accessToken(org, privateKey, fetchImpl) {
+async function accessToken(org, privateKey, fetchImpl, scopes = SCOPES) {
   const tokenUrl = `${org}/oauth2/v1/token`;
   let nonce = null;
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -105,7 +105,7 @@ async function accessToken(org, privateKey, fetchImpl) {
       },
       body: new URLSearchParams({
         grant_type: 'client_credentials',
-        scope: SCOPES,
+        scope: scopes,
         client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
         client_assertion: assertion,
       }),
@@ -125,20 +125,23 @@ async function accessToken(org, privateKey, fetchImpl) {
 
 function oktaClient({ org, token, privateKey, nonce, fetchImpl }) {
   const state = { nonce };
-  async function request(method, url) {
+  async function request(method, url, body) {
     const target = url.startsWith('http') ? url : `${org}${url}`;
     const verb = method.toUpperCase();
     for (let attempt = 0; attempt < 5; attempt += 1) {
-      const response = await fetchImpl(target, {
-        method: verb,
-        headers: {
-          Accept: 'application/json',
-          Authorization: `DPoP ${token}`,
-          DPoP: dpopProof({
-            privateKey, method: verb, url: target, nonce: state.nonce, accessToken: token,
-          }),
-        },
-      });
+      const headers = {
+        Accept: 'application/json',
+        Authorization: `DPoP ${token}`,
+        DPoP: dpopProof({
+          privateKey, method: verb, url: target, nonce: state.nonce, accessToken: token,
+        }),
+      };
+      const init = { method: verb, headers };
+      if (body !== undefined) {
+        headers['Content-Type'] = 'application/json';
+        init.body = JSON.stringify(body);
+      }
+      const response = await fetchImpl(target, init);
       state.nonce = response.headers.get('dpop-nonce') || state.nonce;
       if (response.status === 429) {
         await sleep((Number(response.headers.get('retry-after')) || 1) * 1000);
@@ -152,6 +155,7 @@ function oktaClient({ org, token, privateKey, nonce, fetchImpl }) {
   return {
     get: (url) => request('GET', url),
     del: (url) => request('DELETE', url),
+    post: (url, body) => request('POST', url, body),
   };
 }
 
@@ -271,6 +275,8 @@ if (require.main === module) {
 }
 
 module.exports = {
+  CLIENT_ID,
+  SCOPES,
   b64url,
   signJwt,
   publicJwk,
