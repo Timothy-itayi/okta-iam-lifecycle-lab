@@ -13,7 +13,9 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
-| **Worked** | | **17 h 40 min** |
+| Break | 15:02 → 16:59 | 1 h 57 min |
+| Afternoon, drill 6.1 | 2026-10-07 16:59 → 17:12 | 13 min |
+| **Worked** | | **17 h 53 min** |
 
 ## Phase 0 — Prep
 
@@ -370,3 +372,16 @@ Runbook 5.6. The audit pack is runbook 5.5. This log already used 5.5 for the OA
 ### Access Request close-out (remove only)
 
 Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is `2026-10-07T03:06:20.435Z` in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Ticket `357784` is still Open. Still needed: Workflows History URL on the ticket, Internal Note, Close, and the three screenshots.
+
+## Phase 6 — Failure drills (started)
+
+About 13 min, 16:59 to 17:12. Rostr was already up. Local and public `/health` were 200.
+
+### 6.1 SAML ACS mismatch — 16:59 to 17:12, 13 min
+
+- Confirmed the Rostr SAML app `0oa18eddmjpNG4dNl698` was on `https://rostr.lanternfieldgoods.co.uk/saml/acs` for single sign-on URL, recipient, and destination.
+- Edit → Configure SAML. Changed only Single sign-on URL to `acs2`. Left **Use this for Recipient URL and Destination URL** ticked. Audience stayed `saml/metadata`. API confirmed all three URLs were `acs2`.
+- Jonah Hale, private window, `/saml/login`. Browser stopped on `/saml/acs2` with `Cannot POST /saml/acs2`. [evidence/6.1-saml-acs2.png](../../evidence/6.1-saml-acs2.png). `logs/rostr-auth.jsonl` gained no line. The SAML handler never ran.
+- Restored `/saml/acs` the same way. Jonah's dashboard tile reached `/me` at `2026-10-07T06:12:09.466Z`. Auth log `06:12:09.478Z`, `protocol` `saml`, `outcome` `success`. [evidence/6.1-jonah-me.png](../../evidence/6.1-jonah-me.png).
+- That success overwrote the planted stale `lastLogin`. The Phase 5 stale-access report no longer matches Rostr.
+- Record: [docs/incidents/02-saml-acs.md](../incidents/02-saml-acs.md).
