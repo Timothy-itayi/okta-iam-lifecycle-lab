@@ -116,6 +116,31 @@ test('a flash message is shown once', async () => {
   }
 });
 
+test('hub html cache-busts stylesheets that a browser may have cached as a 404', async () => {
+  const { app, db } = appWithSession();
+  const { server, base } = listen(app);
+  try {
+    const cookie = await sessionFor(base, {
+      email: 'helen.cho@lanternfieldgoods.co.uk',
+      givenName: 'Helen',
+      familyName: 'Cho',
+      department: 'Finance',
+      groups: 'APP-Rostr-Users, APP-Rostr-HR',
+    });
+    const page = await fetch(`${base}/leave`, { headers: { cookie } });
+    const html = await page.text();
+    assert.match(html, /href="\/app\.css\?v=/);
+    assert.match(html, /href="\/vendor\/kaizen\/variables\.css\?v=/);
+    assert.match(html, /href="\/fonts\/inter\.css\?v=/);
+    const css = await fetch(`${base}/app.css?v=2`);
+    assert.equal(css.status, 200);
+    assert.equal(css.headers.get('cache-control'), 'no-cache');
+  } finally {
+    await close(server);
+    db.close();
+  }
+});
+
 test('the stylesheet and fonts are served', async () => {
   const { app, db } = appWithSession();
   const { server, base } = listen(app);

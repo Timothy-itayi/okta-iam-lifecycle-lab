@@ -104,8 +104,14 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today
     next();
   });
   const kaizenCss = path.dirname(require.resolve('@kaizen/design-tokens/package.json'));
-  app.use('/vendor/kaizen', express.static(path.join(kaizenCss, 'css')));
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  const staticFiles = {
+    etag: true,
+    setHeaders(res) {
+      res.setHeader('Cache-Control', 'no-cache');
+    },
+  };
+  app.use('/vendor/kaizen', express.static(path.join(kaizenCss, 'css'), staticFiles));
+  app.use(express.static(path.join(__dirname, '..', 'public'), staticFiles));
   mountHubs(app, { db, hr, today, signInPath: saml || !oidc ? '/saml/login' : '/oidc/login' });
   app.get('/me', (req, res) => {
     res.type('html').send(renderMe(req.session.user));

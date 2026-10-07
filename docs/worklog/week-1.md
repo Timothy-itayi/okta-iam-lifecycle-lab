@@ -23,7 +23,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Rostr sign-in: FastPass, then a stale password | 2026-10-08 02:50 → 03:15 | 25 min |
 | Stretch phase 4, staff screens | 2026-10-08 03:15 → 03:55 | 40 min |
 | Leave hub reskin onto Kaizen tokens | 2026-10-08 03:55 → 04:10 | 15 min |
-| **Worked** | | **21 h 57 min** |
+| Stylesheet cache bust | 2026-10-08 04:03 → 04:08 | 5 min |
+| **Worked** | | **22 h 2 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -515,3 +516,8 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Shell is a purple global nav, a TitleBlock, and tabs. HR pages use the light admin band, with a link back to My leave. Jev's colour is reserved as orange.
 - Request behaviour is unchanged. A balance under 3 days now draws a yellow bar, including a full Personal balance of 2.
 - Rostr tests 59 passed. Container rebuilt. `/app.css`, the token file, and Inter return 200 on the tunnel. Shots: [evidence/leave/kaizen-my-leave-1440.png](../../evidence/leave/kaizen-my-leave-1440.png), [kaizen-request-sheet-1440.png](../../evidence/leave/kaizen-request-sheet-1440.png), [kaizen-hr-1440.png](../../evidence/leave/kaizen-hr-1440.png), [kaizen-my-leave-390.png](../../evidence/leave/kaizen-my-leave-390.png). The `04-` shots are the skin this replaced.
+
+### Stylesheet cache bust — 04:03 to 04:08, 5 min
+
+- Helen's live `/leave` at 03:59 was the new markup with no skin. The CSS files were already 200 and parsed (168 rules). Her browser still had the `/app.css` 404 from 03:18, and Cloudflare rewrites the cache header to `max-age=14400`.
+- Stylesheet URLs now end in `?v=2`. Origin sends `Cache-Control: no-cache`; the tunnel still emits four hours, so the query string is the part that matters. Rostr tests 60 passed. Container recreated, which drops in-memory sessions. A shell fixture on the tunnel rendered the purple nav before it was removed.

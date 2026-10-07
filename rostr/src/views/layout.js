@@ -2,6 +2,13 @@ const { escapeHtml, initials } = require('./format');
 const { icon } = require('./icons');
 
 const ROLE_CHIP = { staff: 'Staff', admin: 'Manager', hr: 'HR' };
+// Helen's browser cached the /app.css 404 from before public/ was in the image.
+// Cloudflare rewrites the cache header to 4 hours, so the URL has to change.
+const ASSET_VERSION = '2';
+
+function asset(path) {
+  return `${path}?v=${ASSET_VERSION}`;
+}
 
 function personName(user) {
   if (!user) return '';
@@ -65,9 +72,9 @@ function page({ title, context, action, user, role, body, flash, current, nav, b
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(title)} · Rostr</title>
-  <link rel="stylesheet" href="/vendor/kaizen/variables.css">
-  <link rel="stylesheet" href="/fonts/inter.css">
-  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="${asset('/vendor/kaizen/variables.css')}">
+  <link rel="stylesheet" href="${asset('/fonts/inter.css')}">
+  <link rel="stylesheet" href="${asset('/app.css')}">
 </head>
 <body class="no-shell">
   <main class="content column">
@@ -92,9 +99,9 @@ function page({ title, context, action, user, role, body, flash, current, nav, b
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(title)} · Rostr</title>
-  <link rel="stylesheet" href="/vendor/kaizen/variables.css">
-  <link rel="stylesheet" href="/fonts/inter.css">
-  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="${asset('/vendor/kaizen/variables.css')}">
+  <link rel="stylesheet" href="${asset('/fonts/inter.css')}">
+  <link rel="stylesheet" href="${asset('/app.css')}">
 </head>
 <body class="has-shell">
   <header class="global-nav">
