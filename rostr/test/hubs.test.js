@@ -32,6 +32,36 @@ test('each role lands on its own hub, can open its own leave, and is refused the
   }
 });
 
+test('profile names department, title, and each group, and links straight to leave', async () => {
+  const { app, db } = appWithSession();
+  const { server, base } = listen(app);
+  try {
+    const cookie = await sessionFor(base, {
+      email: 'helen.cho@lanternfieldgoods.co.uk',
+      givenName: 'Helen',
+      familyName: 'Cho',
+      department: 'Finance',
+      groups: 'APP-Rostr-Users, APP-Rostr-HR',
+    });
+    const html = await (await fetch(`${base}/me`, { headers: { cookie } })).text();
+    assert.match(html, /<dt>Department<\/dt><dd>Finance<\/dd>/);
+    assert.match(html, /<dt>Title<\/dt><dd>Finance Manager<\/dd>/);
+    assert.match(html, /<li>APP-Rostr-HR<\/li>/);
+    assert.match(html, /<li>APP-Rostr-Users<\/li>/);
+    assert.match(html, /href="\/leave"/);
+    assert.match(html, /data-user-key="helen.cho@lanternfieldgoods.co.uk"/);
+    const script = await fetch(`${base}/profile.js`);
+    assert.equal(script.status, 200);
+    assert.match(await script.text(), /localStorage/);
+    const unsigned = await fetch(`${base}/me`);
+    assert.equal(unsigned.status, 401);
+    assert.match(await unsigned.text(), /Not signed in/);
+  } finally {
+    await close(server);
+    db.close();
+  }
+});
+
 test('the sidebar shows only the sections a role can use', async () => {
   const { app, db } = appWithSession();
   const { server, base } = listen(app);

@@ -8,10 +8,10 @@ const { createHrReader } = require('../src/hr');
 const { createApp } = require('../src/app');
 
 const EMPLOYEES = [
-  { employeeId: 'EMP-1003', firstName: 'Priya', lastName: 'Shah', email: 'priya.shah@lanternfieldgoods.co.uk', department: 'Operations', status: 'active', leave: { annual: 2, sick: 8, personal: 2 } },
-  { employeeId: 'EMP-1004', firstName: 'Marcus', lastName: 'Bell', email: 'marcus.bell@lanternfieldgoods.co.uk', department: 'Operations', status: 'active', leave: { annual: 15, sick: 8, personal: 2 } },
+  { employeeId: 'EMP-1003', firstName: 'Priya', lastName: 'Shah', email: 'priya.shah@lanternfieldgoods.co.uk', department: 'Operations', title: 'Operations Analyst', status: 'active', leave: { annual: 2, sick: 8, personal: 2 } },
+  { employeeId: 'EMP-1004', firstName: 'Marcus', lastName: 'Bell', email: 'marcus.bell@lanternfieldgoods.co.uk', department: 'Operations', title: 'Operations Manager', status: 'active', leave: { annual: 15, sick: 8, personal: 2 } },
   { employeeId: 'EMP-1002', firstName: 'Jonah', lastName: 'Hale', email: 'jonah.hale@lanternfieldgoods.co.uk', department: 'Operations', status: 'active', leave: { annual: 15, sick: 8, personal: 2 } },
-  { employeeId: 'EMP-1006', firstName: 'Helen', lastName: 'Cho', email: 'helen.cho@lanternfieldgoods.co.uk', department: 'Finance', status: 'active', leave: { annual: 15, sick: 8, personal: 2 } },
+  { employeeId: 'EMP-1006', firstName: 'Helen', lastName: 'Cho', email: 'helen.cho@lanternfieldgoods.co.uk', department: 'Finance', title: 'Finance Manager', status: 'active', leave: { annual: 15, sick: 8, personal: 2 } },
   { employeeId: 'EMP-1008', firstName: 'Thomas', lastName: 'Okeke', email: 'thomas.okeke@lanternfieldgoods.co.uk', department: 'Operations', status: 'terminated', leave: { annual: 15, sick: 8, personal: 2 } },
   { employeeId: 'EMP-9001', firstName: 'Pat', lastName: 'Example', email: 'person@example.invalid', department: 'Operations', status: 'active', leave: { annual: 15, sick: 8, personal: 2 } },
 ];

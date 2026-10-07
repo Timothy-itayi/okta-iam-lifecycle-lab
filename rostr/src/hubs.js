@@ -1,7 +1,7 @@
 const express = require('express');
 const { page } = require('./views/layout');
 const { escapeHtml } = require('./views/format');
-const { roleOf, requireRole, requireSignedIn, rostrRow } = require('./roles');
+const { groupNames, roleOf, requireRole, requireSignedIn, rostrRow } = require('./roles');
 const {
   countLeaveWaiting,
   findLeaveRequestByRef,
@@ -21,6 +21,7 @@ const {
   weekdaysIn,
 } = require('./leave');
 const views = require('./views/leave');
+const { profileBody } = require('./views/profile');
 
 const REF = /^LV-\d{4,}$/i;
 
@@ -39,16 +40,28 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const email = emailOf(user);
     const row = rostrRow(user, db);
     const department = (row && row.department) || user.department || null;
+    let jobTitle = null;
+    if (hr && email) {
+      try {
+        const employee = hr.getEmployeeByEmail(email);
+        if (employee && employee.title) jobTitle = employee.title;
+      } catch (error) {
+        jobTitle = null;
+      }
+    }
     let waiting = 0;
     if (role === 'admin') waiting = countLeaveWaiting(db, 'with_admin', { department, excludeEmail: email });
     if (role === 'hr') waiting = countLeaveWaiting(db, 'with_hr', { excludeEmail: email });
-    return { user: { ...user, department }, role, email, department, nav: { waiting } };
+    const groups = [...groupNames(user, db)].sort();
+    return { user: { ...user, department }, role, email, department, jobTitle, groups, nav: { waiting } };
   }
 
   function render(req, res, me, options, status = 200) {
     res.status(status).type('html').send(page({
       user: me.user,
       role: me.role,
+      jobTitle: me.jobTitle,
+      groups: me.groups,
       nav: me.nav,
       flash: res.locals.flash,
       ...options,
@@ -92,6 +105,23 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
   function requestAction() {
     return '<a class="btn primary" href="/leave/new" data-sheet-open>Request leave</a>';
   }
+
+  app.get('/me', (req, res) => {
+    if (!req.session.user) {
+      return res.status(401).type('html').send(page({
+        title: 'Profile',
+        context: 'Not signed in.',
+        body: `<p><a class="btn primary" href="${escapeHtml(signInPath)}">Sign in</a></p>`,
+      }));
+    }
+    const me = viewer(req);
+    render(req, res, me, {
+      title: 'Profile',
+      current: '/me',
+      action: '<a class="btn primary" href="/leave">My leave</a>',
+      body: profileBody(me.user),
+    });
+  });
 
   app.get('/', (req, res) => {
     if (!req.session.user) return res.redirect(signInPath);

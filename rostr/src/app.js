@@ -48,16 +48,6 @@ function page(title, body) {
 </html>`;
 }
 
-function renderMe(user) {
-  if (!user) {
-    return page('Rostr', '<p>Not signed in.</p>');
-  }
-  const rows = Object.entries(user).map(([key, value]) => {
-    return `<tr><th>${escapeHtml(key)}</th><td>${escapeHtml(value)}</td></tr>`;
-  }).join('');
-  return page('Rostr', `<table>${rows}</table>`);
-}
-
 function renderUsers(users) {
   const head = COLUMNS.map((name) => `<th>${name}</th>`).join('');
   const body = users.map((user) => {
@@ -113,9 +103,6 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today
   app.use('/vendor/kaizen', express.static(path.join(kaizenCss, 'css'), staticFiles));
   app.use(express.static(path.join(__dirname, '..', 'public'), staticFiles));
   mountHubs(app, { db, hr, today, signInPath: saml || !oidc ? '/saml/login' : '/oidc/login' });
-  app.get('/me', (req, res) => {
-    res.type('html').send(renderMe(req.session.user));
-  });
   app.get('/admin/users', (req, res) => {
     if (!req.session.user) {
       return res.status(401).type('text/plain').send('Not signed in.');
@@ -134,4 +121,4 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today
   return app;
 }
 
-module.exports = { createApp, signIn, renderMe, renderUsers };
+module.exports = { createApp, signIn, renderUsers };

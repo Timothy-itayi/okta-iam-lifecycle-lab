@@ -50,6 +50,7 @@ function requireRole(role, db) {
 
 module.exports = {
   HR_GROUP,
+  groupNames,
   roleOf,
   rostrRow,
   requireSignedIn,

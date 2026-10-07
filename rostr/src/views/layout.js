@@ -4,10 +4,45 @@ const { icon } = require('./icons');
 const ROLE_CHIP = { staff: 'Staff', admin: 'Manager', hr: 'HR' };
 // Helen's browser cached the /app.css 404 from before public/ was in the image.
 // Cloudflare rewrites the cache header to 4 hours, so the URL has to change.
-const ASSET_VERSION = '2';
+const ASSET_VERSION = '3';
 
 function asset(path) {
   return `${path}?v=${ASSET_VERSION}`;
+}
+
+function groupItems(groups) {
+  if (!groups) return [];
+  const list = Array.isArray(groups) ? groups : String(groups).split(',');
+  return [...new Set(list.map((item) => String(item).trim()).filter(Boolean))].sort();
+}
+
+function photoKey(user) {
+  if (!user) return '';
+  return String(user.email || user.userName || user.sub || '').trim().toLowerCase();
+}
+
+function avatarHtml(name, large) {
+  const size = large ? ' avatar-lg' : '';
+  return `<span class="avatar${size}" data-avatar>
+    <img alt="" hidden>
+    <span class="avatar-initials">${escapeHtml(initials(name))}</span>
+  </span>`;
+}
+
+function identityFacts({ department, jobTitle, groups, role }) {
+  const items = groupItems(groups);
+  const groupHtml = items.length
+    ? `<ul class="group-list">${items.map((group) => `<li>${escapeHtml(group)}</li>`).join('')}</ul>`
+    : '<span class="fact-empty">None in this sign-in</span>';
+  const roleHtml = role
+    ? `<div><dt>Role</dt><dd><span class="chip chip-role">${ROLE_CHIP[role] || 'Staff'}</span></dd></div>`
+    : '';
+  return `<dl class="facts">
+    <div><dt>Department</dt><dd>${escapeHtml(department || 'Not recorded')}</dd></div>
+    <div><dt>Title</dt><dd>${escapeHtml(jobTitle || 'Not recorded')}</dd></div>
+    <div><dt>Groups</dt><dd>${groupHtml}</dd></div>
+    ${roleHtml}
+  </dl>`;
 }
 
 function personName(user) {
@@ -62,7 +97,11 @@ function toastHtml(flash) {
   </script>`;
 }
 
-function page({ title, context, action, user, role, body, flash, current, nav, banner }) {
+function photoScript() {
+  return `<script src="${asset('/profile.js')}"></script>`;
+}
+
+function page({ title, context, action, user, role, jobTitle, groups, body, flash, current, nav, banner }) {
   const name = personName(user);
   const shell = user && role;
   if (!shell) {
@@ -87,8 +126,12 @@ function page({ title, context, action, user, role, body, flash, current, nav, b
   }
 
   const variant = String(current || '').startsWith('/hr') ? 'admin' : 'default';
-  const subtitle = context || [name, user.department].filter(Boolean).join(' · ');
-  const groups = user.groups ? String(user.groups) : '';
+  const facts = identityFacts({
+    department: user.department,
+    jobTitle,
+    groups: groups && groups.length ? groups : user.groups,
+    role,
+  });
   const crumb = variant === 'admin'
     ? `<a class="crumb" href="/leave">${icon('chevron-left')}<span>Back to my leave</span></a>`
     : '';
@@ -103,20 +146,21 @@ function page({ title, context, action, user, role, body, flash, current, nav, b
   <link rel="stylesheet" href="${asset('/fonts/inter.css')}">
   <link rel="stylesheet" href="${asset('/app.css')}">
 </head>
-<body class="has-shell">
+<body class="has-shell" data-user-key="${escapeHtml(photoKey(user))}">
   <header class="global-nav">
     <div class="column nav-row">
       <a class="brand" href="/"><span class="mark" aria-hidden="true"></span>Rostr</a>
       <span class="org">Lanternfield Goods</span>
       <details class="account">
         <summary>
-          <span class="avatar" aria-hidden="true">${escapeHtml(initials(name))}</span>
+          ${avatarHtml(name)}
           <span class="account-name">${escapeHtml(name)}</span>
         </summary>
         <div class="account-menu">
-          <p>${escapeHtml(user.department || 'No department')}</p>
-          <p><span class="chip chip-role">${ROLE_CHIP[role] || 'Staff'}</span></p>
-          ${groups ? `<p class="account-groups">${escapeHtml(groups)}</p>` : ''}
+          <p class="account-person">${escapeHtml(name)}</p>
+          ${facts}
+          <a href="/me">${icon('user')} Profile</a>
+          <a href="/leave">${icon('calendar')} My leave</a>
           <a href="/logout">${icon('log-out')} Sign out</a>
         </div>
       </details>
@@ -128,7 +172,8 @@ function page({ title, context, action, user, role, body, flash, current, nav, b
         <div class="title-text">
           ${crumb}
           <h1>${escapeHtml(title)}</h1>
-          ${subtitle ? `<p class="context">${escapeHtml(subtitle)}</p>` : ''}
+          ${facts}
+          ${context ? `<p class="context">${escapeHtml(context)}</p>` : ''}
         </div>
         ${action ? `<div class="page-actions">${action}</div>` : ''}
       </div>
@@ -142,8 +187,9 @@ function page({ title, context, action, user, role, body, flash, current, nav, b
     </div>
   </main>
   ${toastHtml(flash)}
+  ${photoScript()}
 </body>
 </html>`;
 }
 
-module.exports = { page, escapeHtml, personName, ROLE_CHIP };
+module.exports = { page, escapeHtml, personName, ROLE_CHIP, identityFacts, photoKey };
