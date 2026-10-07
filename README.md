@@ -41,7 +41,7 @@ flowchart LR
 
 ![Diagram of the lab as built](docs/built-so-far.png)
 
-Solid nodes exist. The dashed node is teardown, which has not been done. The top row is the path above. `hr/okta-import.csv` was the one-time load. `hr-sync` is a script, not one of the Workflows.
+Every node is built. The top row is the path above. `hr/okta-import.csv` was the one-time load. `hr-sync` is a script, not one of the Workflows. Teardown is not on this diagram.
 
 ## Run Rostr locally
 
