@@ -1,6 +1,6 @@
 # Phase 5 — Governance
 
-osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow is ON and has not been invoked. Stale-Access is not started.
+osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/admin/users` has not been proven. The one-hour remove has not fired. Stale-Access is not started.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
 
@@ -23,7 +23,19 @@ The ticket is Open, unassigned, Help Topic Access Request, user `lena.ortiz@lant
 
 ## 5.2 Access Request flow
 
-Saved, Flow ON, **Not saving data**. It adds the user to `APP-Rostr-Admins`, returns HTTP 200, waits one hour, then removes them. It does not update the Okta profile. It does not assign the Rostr Admin app as an Individual. `hr-sync` does not call it. It has not been invoked.
+Saved, Flow ON, **Not saving data**. It adds the user to `APP-Rostr-Admins`, returns HTTP 200, waits one hour, then removes them. It does not update the Okta profile. It does not assign the Rostr Admin app as an Individual. `hr-sync` does not call it.
+
+A first POST returned 404 from Add User to Group: the flow was ON but the canvas still had body `email` on User ID and had not been saved. After Save, a second POST at about 13:06 returned HTTP 200 `{}`. `hr-sync --ticket REQ-0001` dry-run reported `no changes`; that is expected.
+
+| Event | Time (Sydney) | Evidence |
+| --- | --- | --- |
+| `group.user_membership.add` SUCCESS, actor Timothy Itayi (Workflows Okta connection), target Lena Ortiz / `APP-Rostr-Admins` | 13:06:18 | [evidence/5.2-system-log-group-add.png](../../evidence/5.2-system-log-group-add.png) |
+| Group Push of that membership to Rostr | 13:06:18 | same log |
+| Lena in `APP-Rostr-Admins`, Active, Managed Manually | 13:07 | [evidence/5.2-lena-in-app-rostr-admins.png](../../evidence/5.2-lena-in-app-rostr-admins.png) |
+
+OIDC `/admin/users` was not a 200. Express `Cannot GET` is a missing route, not the admin gate. `/admin/users` with no session returns `401 Not signed in.` `/oidc/login` only exists if OIDC is mounted. Open a private window, go to `https://rostr.lanternfieldgoods.co.uk/oidc/login`, sign in as Lena (Any two factors), then open `/admin/users`. Do not paste `/admin/users` as the first URL.
+
+The ticket stays Open until she is removed. Wait For is one hour from the successful POST, so revoke is due around 14:06. Then Internal Note, then Close.
 
 `APP-Rostr-Admins` group id `00g18dk6nvdMFQAgi698`. Close uses a dummy API Connector connection named `unused-close` with auth None, because Workflows stuffed Close under API Connector.
 
