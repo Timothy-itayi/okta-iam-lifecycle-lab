@@ -19,7 +19,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Break | 18:55 → 2026-10-08 01:38 | 6 h 43 min |
 | Stretch phase 1, Okta groups and the TypeSafe key | 2026-10-08 01:38 → 02:11 | 33 min |
 | Stretch phase 2, leave data model | 2026-10-08 02:19 → 02:30 | 11 min |
-| **Worked** | | **20 h 17 min** |
+| Stretch phase 3, hub shell | 2026-10-08 02:30 → 02:50 | 20 min |
+| **Worked** | | **20 h 37 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -477,3 +478,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Tables `shifts`, `leave_requests`, `leave_reviews`, `leave_events`, `balance_changes`. State machine in `rostr/src/leave-state.js`.
 - `node scripts/seed-shifts.js` wrote 60 shifts from 2026-10-12. A second run added none. Samir and Thomas were skipped.
 - Rostr tests 39 passed. `hr-sync` tests 10 passed. Record: [docs/leave/02-data.md](../leave/02-data.md).
+
+### 3. Hub shell — 02:30 to 02:50, 20 min
+
+- `GET /` sends HR to `/hr/leave`, an admin to `/admin/leave`, and everyone else to `/leave`. The other hubs return 403.
+- Groups come from the session and from SCIM membership when the session has an email. An inactive Rostr row is 403. `/health` stays open.
+- One layout, `rostr/public/app.css`, and a flash message that shows once. Forms are not on the page yet.
+- Rostr tests 44 passed. Live sign-in as Priya, Marcus, and Helen is not done. Record: [docs/leave/03-shell.md](../leave/03-shell.md).

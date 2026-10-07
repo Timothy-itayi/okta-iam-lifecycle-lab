@@ -2,9 +2,12 @@ const express = require('express');
 const session = require('express-session');
 const { listUsers } = require('./db');
 const { recordSignIn } = require('./auth-log');
+const path = require('path');
 const { mountSaml } = require('./saml');
 const { mountOidc, isRostrAdmin } = require('./oidc');
 const { createScimRouter } = require('./scim');
+const { mountHubs } = require('./hubs');
+const { rostrRow } = require('./roles');
 
 const COLUMNS = [
   'id',
@@ -89,6 +92,19 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim }) {
   app.get('/health', (req, res) => {
     res.type('text/plain').send('OK');
   });
+  app.use((req, res, next) => {
+    res.locals.flash = req.session.flash || '';
+    if (req.session.flash) delete req.session.flash;
+    next();
+  });
+  app.use((req, res, next) => {
+    if (req.path === '/health') return next();
+    const row = rostrRow(req.session.user, db);
+    if (row && !row.active) return res.status(403).type('text/plain').send('Not allowed.');
+    next();
+  });
+  app.use(express.static(path.join(__dirname, '..', 'public')));
+  mountHubs(app, db);
   app.get('/me', (req, res) => {
     res.type('html').send(renderMe(req.session.user));
   });

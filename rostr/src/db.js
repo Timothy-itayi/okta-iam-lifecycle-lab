@@ -193,6 +193,16 @@ function pageGroups(db, offset, limit) {
   return db.prepare('SELECT * FROM groups ORDER BY id LIMIT ? OFFSET ?').all(limit, offset);
 }
 
+function userGroupNames(db, userId) {
+  return db.prepare(`
+    SELECT groups.displayName AS name
+    FROM group_members
+    JOIN groups ON groups.id = group_members.groupId
+    WHERE group_members.userId = ?
+    ORDER BY groups.displayName
+  `).all(userId).map((row) => row.name);
+}
+
 function groupMembers(db, groupId) {
   return db.prepare(`
     SELECT users.id AS value, users.userName AS display
@@ -274,6 +284,7 @@ module.exports = {
   countGroups,
   pageGroups,
   groupMembers,
+  userGroupNames,
   insertGroup,
   replaceGroup,
   deleteGroup,

@@ -71,4 +71,4 @@ function mountOidc(app, { client, redirectUri, authLogPath }) {
   });
 }
 
-module.exports = { mountOidc, sessionFromClaims, isRostrAdmin, groupList };
+module.exports = { mountOidc, sessionFromClaims, isRostrAdmin, groupList, ADMIN_GROUP };

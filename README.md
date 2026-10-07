@@ -26,7 +26,7 @@ A staff member will sign in to Rostr and ask for leave. [Jev](docs/decisions/jev
 | `APP-Rostr-Admins` | Marcus Bell, Ava Nguyen | Pending requests in their department |
 | `APP-Rostr-HR` | Helen Cho | Final sign-off for every department |
 
-Phase 1 is done: those groups, the existing `groups` claim (it already matches `APP-Rostr-HR`), and the TypeSafe key in `rostr/.env`. The value is not in Git. [docs/leave/01-okta.md](docs/leave/01-okta.md). Phase 2 stores leave balances in the HR file and the request tables in Rostr. [docs/leave/02-data.md](docs/leave/02-data.md). The leave screens are not built. Phases that need a live Okta sign-in have to land before the trial ends around 4 November 2026.
+Phase 1 is done: those groups, the existing `groups` claim (it already matches `APP-Rostr-HR`), and the TypeSafe key in `rostr/.env`. The value is not in Git. [docs/leave/01-okta.md](docs/leave/01-okta.md). Phase 2 stores leave balances in the HR file and the request tables in Rostr. [docs/leave/02-data.md](docs/leave/02-data.md). Phase 3 routes a signed-in person to one hub from their Okta groups. [docs/leave/03-shell.md](docs/leave/03-shell.md). The leave forms are not built. Phases that need a live Okta sign-in have to land before the trial ends around 4 November 2026.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |
