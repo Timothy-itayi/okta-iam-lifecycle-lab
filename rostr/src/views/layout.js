@@ -4,7 +4,7 @@ const { icon } = require('./icons');
 const ROLE_CHIP = { staff: 'Staff', admin: 'Manager', hr: 'HR' };
 // Helen's browser cached the /app.css 404 from before public/ was in the image.
 // Cloudflare rewrites the cache header to 4 hours, so the URL has to change.
-const ASSET_VERSION = '8';
+const ASSET_VERSION = '9';
 
 function asset(path) {
   return `${path}?v=${ASSET_VERSION}`;
@@ -43,6 +43,12 @@ function identityFacts({ department, jobTitle, groups, role }) {
     <div><dt>Groups</dt><dd>${groupHtml}</dd></div>
     ${roleHtml}
   </dl>`;
+}
+
+function accountMeta({ department, jobTitle, groups, role }) {
+  const line = [ROLE_CHIP[role] || '', department, jobTitle].filter(Boolean).join(' · ');
+  const names = groupItems(groups);
+  return `${line ? `<p class="account-meta">${escapeHtml(line)}</p>` : ''}${names.length ? `<p class="account-groups">${escapeHtml(names.join(', '))}</p>` : ''}`;
 }
 
 function personName(user) {
@@ -162,10 +168,17 @@ function page({ title, context, action, user, role, jobTitle, groups, body, flas
         </summary>
         <div class="account-menu">
           <p class="account-person">${escapeHtml(name)}</p>
-          ${facts}
-          <a href="/me">${icon('user')} Profile</a>
-          <a href="/leave">${icon('calendar')} My leave</a>
-          <a href="/logout">${icon('log-out')} Sign out</a>
+          ${accountMeta({
+            department: user.department,
+            jobTitle,
+            groups: groups && groups.length ? groups : user.groups,
+            role,
+          })}
+          <nav class="account-links" aria-label="Account">
+            <a href="/me">${icon('user')} Profile</a>
+            <a href="/leave">${icon('calendar')} My leave</a>
+            <a href="/logout">${icon('log-out')} Sign out</a>
+          </nav>
         </div>
       </details>
     </div>

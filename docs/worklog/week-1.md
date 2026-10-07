@@ -34,7 +34,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | HR queue rows | 2026-10-08 05:35 → 05:42 | 7 min |
 | Leave apply | 2026-10-08 05:42 → 05:45 | 3 min |
 | Week grid and Jev flag | 2026-10-08 05:48 → 05:54 | 6 min |
-| **Worked** | | **23 h 3 min** |
+| Account menu | 2026-10-08 06:11 → 06:12 | 1 min |
+| **Worked** | | **23 h 4 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -596,3 +597,8 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - The decision page, for a manager and for HR, shows Monday to Friday for the active people in that department. Open leave is hatched, approved leave is gray, a rostered day is light blue. A second week appears only when the request crosses into it.
 - Flag Jev's suggestion stores approve, deny, or needs review, and a note, on `jev_flags`. The request stays where it was. Staff do not see the flag. You cannot flag your own request.
 - Rostr tests 75 passed. Checked the grid and the open flag form in a local browser. Stylesheets are `?v=8`. Container rebuilt, which drops in-memory sessions. Record: [docs/leave/10-grid.md](../leave/10-grid.md).
+
+### Account menu — 06:11 to 06:12, 1 min
+
+- The menu was the page's identity block squeezed into a dropdown: four labels and group pills. It is now the name, one line for role, department, and title, the groups as text, then Profile, My leave, and Sign out. The page header is unchanged.
+- Stylesheets are `?v=9`. Container rebuilt, which drops in-memory sessions.

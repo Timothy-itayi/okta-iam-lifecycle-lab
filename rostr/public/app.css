@@ -93,18 +93,24 @@ a:hover { text-decoration: underline; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; grid-area: 1 / 1; }
 .avatar-initials { grid-area: 1 / 1; }
 .avatar-lg { width: 72px; height: 72px; font-size: 1.25rem; }
-.account-person { font-weight: 600; }
+.account-person { margin: 4px 8px 0; font-weight: 600; font-size: 1rem; }
+.account-meta, .account-groups { margin: 2px 8px 0; color: var(--rs-ink-muted); font-size: .8125rem; line-height: 1.4; }
+.account-groups { margin-bottom: 8px; }
 .account-menu {
   position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
-  min-width: 280px; max-height: min(70vh, 520px); overflow: auto; padding: var(--spacing-sm);
+  width: 260px; max-height: min(70vh, 520px); overflow: auto; padding: 8px;
   background: var(--rs-surface); color: var(--rs-ink);
   border-radius: var(--border-solid-border-radius);
   box-shadow: var(--shadow-small-box-shadow);
-  display: grid; gap: var(--spacing-8);
+  display: grid; gap: 0;
   font-size: var(--typography-paragraph-small-font-size, .875rem);
 }
-.account-menu a { display: inline-flex; align-items: center; gap: 8px; color: var(--rs-ink); text-decoration: none; min-height: 36px; }
-.account-menu .facts { display: grid; gap: 10px; padding-top: 4px; border-top: var(--border-width-1) solid var(--rs-line); }
+.account-links { display: grid; margin-top: 8px; padding-top: 4px; border-top: var(--border-width-1) solid var(--rs-line); }
+.account-menu a {
+  display: flex; align-items: center; gap: 8px; padding: 0 8px;
+  color: var(--rs-ink); text-decoration: none; min-height: 40px; border-radius: 6px;
+}
+.account-menu a:hover { text-decoration: none; background: var(--color-gray-100); }
 .facts { display: flex; flex-wrap: wrap; gap: 16px 32px; margin: 8px 0 0; }
 .facts div { display: grid; gap: 2px; min-width: 0; }
 .facts dt { font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--rs-ink-muted); }
