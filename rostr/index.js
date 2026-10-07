@@ -1,5 +1,6 @@
 const path = require('path');
 const { openDatabase } = require('./src/db');
+const { createHrReader } = require('./src/hr');
 const { createApp } = require('./src/app');
 const { Issuer } = require('openid-client');
 const { fetchIdpMetadata } = require('./src/saml-metadata');
@@ -70,6 +71,14 @@ Promise.all([loadSaml(), loadOidc()])
   .then(([saml, oidc]) => {
     const scim = loadScim();
     const db = openDatabase(dbPath);
+    const hrFile = process.env.HR_FILE || '/app/hr/employees.json';
+    try {
+      const priya = createHrReader(hrFile).getEmployeeByEmail('priya.shah@lanternfieldgoods.co.uk');
+      const annual = priya && priya.leave ? priya.leave.annual : 'missing';
+      console.log(`HR file ${hrFile}, priya annual ${annual}`);
+    } catch (error) {
+      console.warn(`HR file not read (${hrFile}): ${error.message}`);
+    }
     const app = createApp({ db, authLogPath, sessionSecret, saml, oidc, scim });
     app.listen(port, '0.0.0.0', () => {
       console.log(`Rostr listening on ${port}`);

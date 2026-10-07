@@ -18,7 +18,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Evening, report, README, and stories | 2026-10-07 18:29 → 18:55 | 26 min |
 | Break | 18:55 → 2026-10-08 01:38 | 6 h 43 min |
 | Stretch phase 1, Okta groups and the TypeSafe key | 2026-10-08 01:38 → 02:11 | 33 min |
-| **Worked** | | **20 h 6 min** |
+| Stretch phase 2, leave data model | 2026-10-08 02:19 → 02:30 | 11 min |
+| **Worked** | | **20 h 17 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -468,3 +469,11 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - `TYPESAFE_API_KEY` is set in `rostr/.env`. The value is not recorded. The name is in `rostr/.env.example`.
 - Decisions: [docs/decisions/jev-01-leave-workflow.md](../decisions/jev-01-leave-workflow.md), [docs/decisions/jev-02-decision-model.md](../decisions/jev-02-decision-model.md). Record: [docs/leave/01-okta.md](../leave/01-okta.md).
 - `/me` as Helen and as Marcus is not checked yet.
+
+### 2. Data model — 02:19 to 02:30, 11 min
+
+- Every HR row has `leave`. Priya's annual balance is 2. Others are 15 annual, 8 sick, 2 personal. `hr-sync --ticket REQ-0009` printed `no changes`.
+- Compose mounts `../hr` read-only at `/app/hr`. Startup logs Priya's annual balance after a rebuild.
+- Tables `shifts`, `leave_requests`, `leave_reviews`, `leave_events`, `balance_changes`. State machine in `rostr/src/leave-state.js`.
+- `node scripts/seed-shifts.js` wrote 60 shifts from 2026-10-12. A second run added none. Samir and Thomas were skipped.
+- Rostr tests 39 passed. `hr-sync` tests 10 passed. Record: [docs/leave/02-data.md](../leave/02-data.md).

@@ -14,9 +14,19 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 The documented lab is done. It took three days, 5 October through 7 October. osTicket ticket `357784` is Closed. The report and the three practice accounts are written for a reader who was not in the lab. The trial org is still up. Teardown was not run.
 
-A stretch started on 8 October: a leave hub inside Rostr, with Jev recommending and people approving. Phase 1 is the Okta groups and the TypeSafe key. [docs/leave/01-okta.md](docs/leave/01-okta.md).
+The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Operations. Samir Adeyemi and Thomas Okeke are terminated. Marcus Bell and Ava Nguyen were added to `APP-Rostr-Admins` by hand for the stretch below. An orphan row in Rostr was imported, matched nobody, and ignored. The finished account is [docs/report.md](docs/report.md).
 
-The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Operations. Samir Adeyemi and Thomas Okeke are terminated. `APP-Rostr-Admins` is empty. An orphan row in Rostr was imported, matched nobody, and ignored. The finished account is [docs/report.md](docs/report.md).
+## Stretch: leave hub
+
+A staff member will sign in to Rostr and ask for leave. [Jev](docs/decisions/jev-02-decision-model.md), a TypeSafe decision model, reads the request and recommends approve, deny, or needs review. It does not make the decision. Code checks the hard rules. A department admin approves first, then HR. Okta groups decide who sees which screen. No new Okta user and no new Workflow.
+
+| Group | Who, so far | Screen, once it exists |
+| --- | --- | --- |
+| `APP-Rostr-Users` | Staff already in it by rule | Their own requests |
+| `APP-Rostr-Admins` | Marcus Bell, Ava Nguyen | Pending requests in their department |
+| `APP-Rostr-HR` | Helen Cho | Final sign-off for every department |
+
+Phase 1 is done: those groups, the existing `groups` claim (it already matches `APP-Rostr-HR`), and the TypeSafe key in `rostr/.env`. The value is not in Git. [docs/leave/01-okta.md](docs/leave/01-okta.md). Phase 2 stores leave balances in the HR file and the request tables in Rostr. [docs/leave/02-data.md](docs/leave/02-data.md). The leave screens are not built. Phases that need a live Okta sign-in have to land before the trial ends around 4 November 2026.
 
 | Phase | Focus | Time box | Status | Where to read it |
 | --- | --- | --- | --- | --- |

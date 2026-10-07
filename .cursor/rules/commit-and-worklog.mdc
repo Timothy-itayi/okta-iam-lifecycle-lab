@@ -1,0 +1,14 @@
+---
+description: Commit finished slices and update the worklog as the lab proceeds
+alwaysApply: true
+---
+
+# Commit and worklog
+
+When a phase, drill, or stretch slice is finished, update `docs/worklog/week-1.md` in the same change and commit it. Do not wait to be asked again.
+
+The worklog entry names what changed, the evidence, and the clock in Australia/Sydney. Keep the session table in step with that entry.
+
+Do not commit `.env` files or secret values. Commit the docs, code, and screenshots that belong to that slice.
+
+Leave the next phase unstarted until this commit exists.

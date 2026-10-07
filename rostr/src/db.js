@@ -27,10 +27,65 @@ const CREATE_USERS = `
   );
 `;
 
+const CREATE_LEAVE = `
+  CREATE TABLE IF NOT EXISTS shifts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    day TEXT NOT NULL,
+    start TEXT NOT NULL,
+    end TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'scheduled'
+  );
+  CREATE TABLE IF NOT EXISTS leave_requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL,
+    department TEXT NOT NULL,
+    leave_type TEXT NOT NULL,
+    start_day TEXT NOT NULL,
+    end_day TEXT NOT NULL,
+    days INTEGER NOT NULL,
+    reason TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS leave_reviews (
+    request_id INTEGER PRIMARY KEY,
+    policy_outcome TEXT NOT NULL,
+    policy_rules TEXT NOT NULL,
+    jev_outcome TEXT,
+    jev_rule TEXT,
+    jev_confidence REAL,
+    jev_probabilities TEXT,
+    jev_reason_fit TEXT,
+    jev_urgency REAL,
+    agree INTEGER,
+    model TEXT,
+    reviewed_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS leave_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id INTEGER NOT NULL,
+    at TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    action TEXT NOT NULL,
+    note TEXT
+  );
+  CREATE TABLE IF NOT EXISTS balance_changes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ref TEXT NOT NULL,
+    email TEXT NOT NULL,
+    leave_type TEXT NOT NULL,
+    days INTEGER NOT NULL,
+    exported INTEGER NOT NULL DEFAULT 0
+  );
+`;
+
 function openDatabase(file) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new Database(file);
   db.exec(CREATE_USERS);
+  db.exec(CREATE_LEAVE);
   return db;
 }
 
@@ -171,6 +226,26 @@ function replaceGroup(db, id, { displayName, members }) {
   return findGroupById(db, id);
 }
 
+function findShift(db, email, day) {
+  return db.prepare('SELECT * FROM shifts WHERE email = ? AND day = ?').get(email, day);
+}
+
+function insertShift(db, shift) {
+  const existing = findShift(db, shift.email, shift.day);
+  if (existing) return existing;
+  const info = db.prepare(`
+    INSERT INTO shifts (email, day, start, end, status)
+    VALUES (@email, @day, @start, @end, @status)
+  `).run({
+    email: shift.email,
+    day: shift.day,
+    start: shift.start,
+    end: shift.end,
+    status: shift.status || 'scheduled',
+  });
+  return findShift(db, shift.email, shift.day) || { id: info.lastInsertRowid };
+}
+
 function deleteGroup(db, id) {
   if (!findGroupById(db, id)) return false;
   const clear = db.prepare('DELETE FROM group_members WHERE groupId = ?');
@@ -202,4 +277,6 @@ module.exports = {
   insertGroup,
   replaceGroup,
   deleteGroup,
+  findShift,
+  insertShift,
 };

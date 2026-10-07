@@ -64,6 +64,17 @@ test('classify emits one event per changed employee', () => {
   assert.deepStrictEqual(missing, []);
 });
 
+test('a leave balance change is not a mover', () => {
+  const previous = [employee({ employeeId: 'EMP-1003' })];
+  const current = [employee({
+    employeeId: 'EMP-1003',
+    leave: { annual: 2, sick: 8, personal: 2 },
+  })];
+  const { events, missing } = hr.classify(previous, current, TODAY);
+  assert.deepStrictEqual(events, []);
+  assert.deepStrictEqual(missing, []);
+});
+
 test('an employee removed from the file is reported and not classified', () => {
   const { events, missing } = hr.classify(
     [employee({ employeeId: 'EMP-1001' })],
