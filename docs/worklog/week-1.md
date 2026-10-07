@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5 osTicket through audit pack | 2026-10-07 11:46 → 15:00 | 3 h 14 min |
-| **Worked** | | **17 h 38 min** |
+| Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
+| **Worked** | | **17 h 40 min** |
 
 ## Phase 0 — Prep
 
@@ -275,7 +275,7 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 3 h 14 min, 11:46 to 15:00. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. Audit pack assembled with control mapping. System Log JSONL exported at 15:00. OIG mapping written. Access Request remove is in the log; the ticket is not Closed.
+About 3 h 16 min, 11:46 to 15:02. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. Audit pack assembled with control mapping. System Log JSONL exported at 15:00. OIG mapping closed at 15:02. Access Request remove is in the log; the ticket is not Closed.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
@@ -288,7 +288,7 @@ About 3 h 14 min, 11:46 to 15:00. Staff login through OIDC `/admin/users`. Acces
 | 5.4 Stale-Access | 13:46 → 13:49 | 3 min |
 | 5.5 OAuth review | 13:52 → 14:12 | 20 min |
 | 5.6 Audit pack | 14:15 → 15:00 | 45 min |
-| 5.7 OIG mapping | 14:15 → 14:31 | 16 min |
+| 5.6 OIG mapping (runbook) | 14:15 → 15:02 | 47 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -351,11 +351,14 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - Wrote `evidence/audit-pack/README.md`: index of every file, mapped to SOC 2 CC6.1–CC6.3 and ISO 27001:2022 A.5.15–A.5.18, A.8.2, A.8.5.
 - Record: [docs/phases/05-governance.md](../phases/05-governance.md).
 
-### 5.7 OIG mapping — 14:15 to 14:31, 16 min (parallel with 5.6)
+### 5.6 OIG mapping — 14:15 to 15:02
+
+Runbook 5.6. The audit pack is runbook 5.5. This log already used 5.5 for the OAuth review.
 
 - Fetched Okta docs on Identity Governance, Access Requests, Access Certifications, Entitlement Management.
-- Wrote [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md): lab process vs how OIG does it, what OIG adds, checkpoint "who approved whose access", what to learn first on the job.
-- Trial does not have OIG. The lab proved the processes OIG is sold to replace.
+- Wrote [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md): lab process, how OIG does it, what OIG adds, who approved whose access, what to learn first on the job.
+- 15:02: checkpoint updated for the 14:06 remove. Marcus Bell approved Lena's hour. Workflows is the System Log actor on the add and the remove. Ticket `357784` is still Open.
+- Trial does not have OIG. The note is not a compliance claim. [docs/decisions/02-design.md](../decisions/02-design.md) now points at it.
 
 ### Access Request close-out (remove only)
 

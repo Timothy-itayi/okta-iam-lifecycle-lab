@@ -72,5 +72,5 @@ Access Request joins at Okta from an approved ticket, not from `hr-sync`. Stale-
 
 - **Device trust.** It needs managed devices. It is a known gap, not a build.
 - **A real HRIS.** The HR system is `hr/employees.json` in Git. No Workday, BambooHR, or other connector.
-- **Okta Identity Governance.** Not in this plan. Requests and reviews are osTicket, Workflows, and the API. The product is read and mapped later. That mapping is not an audit opinion and is not a compliance claim.
+- **Okta Identity Governance.** Not built in this org. Requests and reviews are osTicket, Workflows, and the API. The product mapping is [oig-mapping.md](oig-mapping.md). That note is not an audit opinion and is not a compliance claim.
 - **Production data.** Staff are fictional. This org is a lab. Nothing from a real employer goes in the HR file, Okta, or Rostr.

@@ -21,7 +21,7 @@ Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department g
 | 2 | SaaS onboarding: SAML and OIDC | 8 h | In progress | [docs/phases/02-onboarding.md](docs/phases/02-onboarding.md) |
 | 3 | SCIM provisioning | 8 h | Done | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
 | 4 | Joiner, mover, and leaver | 7 h | Done | [docs/phases/04-jml.md](docs/phases/04-jml.md) |
-| 5 | Governance and audit evidence | 7.5 h | Nearly done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Access review, Stale-Access, OAuth review, audit pack, and OIG mapping done. Access Request close-out waiting on Wait For. |
+| 5 | Governance and audit evidence | 7.5 h | Nearly done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Access review, Stale-Access, OAuth review, audit pack, and OIG mapping done. Ticket `357784` is still Open. |
 | 6 | Failure drills | 6 h | Not started | |
 | 7 | Write-up and teardown | 4 h | Not started | Milestone M3 |
 
@@ -29,7 +29,7 @@ Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department g
 
 ![Diagram of the lab as built](docs/built-so-far.png)
 
-Solid nodes exist. Dashed nodes are TBC. The top row is the running path: `hr/employees.json` into `scripts/hr-sync`, into the Joiner, Mover, and Leaver flows, into Okta, into Rostr over SAML, OIDC, and SCIM. `hr/okta-import.csv` was the one-time load. Access Request close-out is waiting on Wait For. Stale-Access is a script. Phase notes 6 and 7 and the Phase 6 drills are not started. `hr-sync` is a script, not one of the five flows. The first incident record is the duplicate Rostr Admin app.
+Solid nodes exist. Dashed nodes are TBC. The top row is the running path: `hr/employees.json` into `scripts/hr-sync`, into the Joiner, Mover, and Leaver flows, into Okta, into Rostr over SAML, OIDC, and SCIM. `hr/okta-import.csv` was the one-time load. Lena's Access Request hour ended at 14:06. Ticket `357784` is still Open. Stale-Access is a script. Phase notes 6 and 7 and the Phase 6 drills are not started. `hr-sync` is a script, not one of the five flows. The first incident record is the duplicate Rostr Admin app.
 
 ## What is in place
 
@@ -40,7 +40,7 @@ Solid nodes exist. Dashed nodes are TBC. The top row is the running path: `hr/em
 - Lost-phone reset: [docs/runbooks/mfa-reset.md](docs/runbooks/mfa-reset.md).
 - SaaS onboarding: [docs/runbooks/saas-onboarding.md](docs/runbooks/saas-onboarding.md).
 - Joiner, mover, and leaver: [docs/phases/04-jml.md](docs/phases/04-jml.md).
-- Access Request grant, access review, Stale-Access, OAuth review, audit pack, OIG mapping (Access Request revoke outstanding): [docs/phases/05-governance.md](docs/phases/05-governance.md).
+- Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is still Open: [docs/phases/05-governance.md](docs/phases/05-governance.md).
 - OIG mapping: [docs/decisions/oig-mapping.md](docs/decisions/oig-mapping.md).
 - Audit evidence pack: [evidence/audit-pack/README.md](evidence/audit-pack/README.md).
 

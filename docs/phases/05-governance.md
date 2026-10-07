@@ -1,6 +1,6 @@
 # Phase 5 — Governance
 
-osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. The one-hour remove was due around 14:06. Access review REQ-0002 applied at 13:43. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`.
+osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06 and removed her at 14:06:20. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. Ticket `357784` is still Open. Access review REQ-0002 applied at 13:43. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. The audit pack and the OIG mapping are written.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
 
@@ -157,18 +157,20 @@ That script pulls System Log by event family (`user.lifecycle.*`, `group.user_me
 
 Index: [evidence/audit-pack/README.md](../../evidence/audit-pack/README.md).
 
-## 5.7 OIG mapping
+## 5.6 OIG mapping
 
-[docs/decisions/oig-mapping.md](../decisions/oig-mapping.md). Table of lab process vs Okta Identity Governance: Access Requests (conditions and request types), Access Certifications (campaigns and security access reviews), Entitlement Management (policies, bundles, resource collections). What to learn first on the job.
+Runbook task 5.6. The audit pack above is runbook 5.5. This repo already used 5.5 for the OAuth review, so the pack is filed under the heading before this one.
 
-Checkpoint: for any staff member, who approved their access?
+Done. The note is [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md). Sources are Okta's Identity Governance, Access Requests, Access Certifications, and Entitlement Management pages. This trial does not include OIG. The note is how the product would do the lab's hand work. It is not a compliance claim.
 
-| Person | Birthright | Exception | Recertification |
-| --- | --- | --- | --- |
-| Department heads (Ava, Helen, Marcus) | CSV import + group rules, no named approver | — | Keep, `no-manager.csv` |
-| Jonah Hale | same | — | Keep, Ava Nguyen |
-| Lena Ortiz | same | `APP-Rostr-Admins`: Marcus Bell, ticket `357784` | Keep, Marcus Bell |
-| Priya Shah, Thomas Okeke | import / Joiner flow | — | Keep, Marcus Bell |
-| Samir Adeyemi | import, then Leaver | — | Revoke, Helen Cho |
+| Lab process | How OIG does it | What OIG adds |
+| --- | --- | --- |
+| Birthright via HR, Joiner, group rules | Entitlement policy on the app, from profile or Okta-sourced group | Policy vs Custom recorded. Preview before apply. |
+| `REQ-0001`: osTicket note, Workflows add, wait, remove | Access request condition: who, how long, approval sequence | Named approver, time box, catalog request, request history |
+| `scripts/access-review` CSV, then DELETE | Certification campaign, or a security access review | Reviewer UI, auto-revoke, campaign report |
+| Stale-Access report, no deactivate | Usage in a campaign; Analyzer last-use | Okta SSO last-use, scheduled revoke |
+| Two groups as the only entitlements | Entitlements, bundles, collections, owners | Values finer than a group. Source labelled. |
 
-Birthright has no approver. The manager's Keep on the access review is the approval of record. Exception access for Lena has an approver; the grant actor in System Log is still Workflows.
+Checkpoint: for any staff member, who approved their access? Birthright has no named approver. The Keep on REQ-0002 is the approval of record. Lena's `APP-Rostr-Admins` hour was approved by Marcus Bell. The flow removed it at 14:06:20. The System Log actor is Workflows, not Marcus. Ticket `357784` is still Open.
+
+What to learn first on the job is in the mapping note: conditions before request types, campaign scope and auto-revoke, Policy vs Custom vs Bundle, and whether the org bought OIG at all.

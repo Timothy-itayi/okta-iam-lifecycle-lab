@@ -23,13 +23,13 @@ For staff in `hr/employees.json`, this is the honest answer today:
 | --- | --- | --- | --- |
 | Ava Nguyen, Marcus Bell, Helen Cho | CSV import 1.2, then group rules. No named approver. | none | Keep on `no-manager.csv` (peer department heads) |
 | Jonah Hale | same | none | Keep, Ava Nguyen |
-| Lena Ortiz | same | `APP-Rostr-Admins`: Marcus Bell, Internal Note on ticket `357784` / `REQ-0001` | Keep, Marcus Bell |
+| Lena Ortiz | same | `APP-Rostr-Admins`: Marcus Bell, Internal Note on ticket `357784` / `REQ-0001`. Granted 13:06, removed 14:06:20 by the flow. The approver is still Marcus. The remove has no second approver. | Keep, Marcus Bell |
 | Priya Shah, Thomas Okeke | Priya: import. Thomas: Joiner flow, no ticket. | none | Keep, Marcus Bell |
 | Samir Adeyemi | import, then Leaver deactivate | none | Revoke leftover `APP-Rostr-Users`, Helen Cho |
 
 `test.joiner` is lab debris, Revoke on `unmanaged.csv`. Orphan Roster is not an Okta user.
 
-Birthright has a source (HR + rules) and no approver. That is the gap Access Certifications closes: the manager's Keep is the approval on the record. Exception access for Lena has an approver; the grant actor in System Log is still the Workflows connection.
+Birthright has a source (HR + rules) and no approver. That is the gap Access Certifications closes: the manager's Keep is the approval on the record. Exception access for Lena has an approver. The System Log actor on both the add (`02:06:18Z`) and the remove (`03:06:20Z`) is the Workflows connection, not Marcus. Ticket `357784` is still Open, so the ticket record does not yet show the revoke.
 
 ## What to learn first on the job
 
