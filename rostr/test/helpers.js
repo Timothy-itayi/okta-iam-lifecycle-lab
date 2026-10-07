@@ -34,7 +34,7 @@ function seedDirectory(db) {
   insertGroup(db, { displayName: 'APP-Rostr-Admins', members: ['marcus'] });
 }
 
-function appWithSession({ today = '2026-10-08', seed = true } = {}) {
+function appWithSession({ today = '2026-10-08', seed = true, jev = null } = {}) {
   const dir = tempDir();
   const hrFile = path.join(dir, 'employees.json');
   fs.writeFileSync(hrFile, JSON.stringify(EMPLOYEES));
@@ -46,6 +46,7 @@ function appWithSession({ today = '2026-10-08', seed = true } = {}) {
     sessionSecret: 'test-secret',
     hr: createHrReader(hrFile),
     today: () => today,
+    jev,
   });
   app.post('/test/session', express.json(), (req, res) => {
     req.session.user = req.body.user;

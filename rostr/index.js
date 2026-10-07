@@ -67,6 +67,22 @@ async function loadOidc() {
   return { client, redirectUri };
 }
 
+function loadJev() {
+  if (!process.env.TYPESAFE_API_KEY) {
+    console.warn('TYPESAFE_API_KEY is not set. Leave reviews will record the policy check only.');
+    return null;
+  }
+  const { TypeSafeClient } = require('@typesafe-ai/sdk');
+  const client = new TypeSafeClient({
+    timeout: 5000,
+    retry: { maxRetries: 0 },
+    defaultModel: 'jev-latest',
+    logLevel: 'warn',
+  });
+  console.log('Jev on, model jev-latest');
+  return client;
+}
+
 Promise.all([loadSaml(), loadOidc()])
   .then(([saml, oidc]) => {
     const scim = loadScim();
@@ -80,7 +96,7 @@ Promise.all([loadSaml(), loadOidc()])
     } catch (error) {
       console.warn(`HR file not read (${hrFile}): ${error.message}`);
     }
-    const app = createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr });
+    const app = createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, jev: loadJev() });
     app.listen(port, '0.0.0.0', () => {
       console.log(`Rostr listening on ${port}`);
     });

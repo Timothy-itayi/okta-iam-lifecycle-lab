@@ -20,6 +20,7 @@ const {
   myRequests,
   weekdaysIn,
 } = require('./leave');
+const { reviewLeave } = require('./review');
 const views = require('./views/leave');
 const { profileBody } = require('./views/profile');
 
@@ -29,7 +30,7 @@ function emailOf(user) {
   return String((user && (user.email || user.userName)) || '').trim();
 }
 
-function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydneyToday() }) {
+function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydneyToday(), jev = null }) {
   const requireAdmin = requireRole('admin', db);
   const requireHR = requireRole('hr', db);
   const form = express.urlencoded({ extended: false, limit: '10kb' });
@@ -168,25 +169,30 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     });
   });
 
-  app.post('/leave', requireSignedIn, form, (req, res) => {
-    const me = viewer(req);
-    const employee = employeeOr403(req, res, me, 'Request leave', '/leave');
-    if (!employee) return;
-    const requests = myRequests(db, me.email);
-    const state = formState(me, employee, requests);
-    const result = validateLeave(req.body || {}, { requests, balance: state.balance, today: state.today });
-    if (result.errors.length) {
-      return render(req, res, me, {
-        title: 'Request leave',
-        current: '/leave',
-        body: views.newLeaveBody({ form: views.requestForm({ ...state, value: result.value, errors: result.errors, standalone: true }) }),
-      }, 400);
+  app.post('/leave', requireSignedIn, form, async (req, res, next) => {
+    try {
+      const me = viewer(req);
+      const employee = employeeOr403(req, res, me, 'Request leave', '/leave');
+      if (!employee) return;
+      const requests = myRequests(db, me.email);
+      const state = formState(me, employee, requests);
+      const result = validateLeave(req.body || {}, { requests, balance: state.balance, today: state.today });
+      if (result.errors.length) {
+        return render(req, res, me, {
+          title: 'Request leave',
+          current: '/leave',
+          body: views.newLeaveBody({ form: views.requestForm({ ...state, value: result.value, errors: result.errors, standalone: true }) }),
+        }, 400);
+      }
+      const department = me.department || employee.department;
+      const { request, approvers } = createLeaveRequest(db, { email: me.email, department, value: result.value });
+      await reviewLeave(db, hr, request, { today: state.today, client: jev });
+      const to = approvers.length ? approvers.map(displayName).join(' or ') : 'HR';
+      req.session.flash = { text: `Request ${request.ref} sent to ${to}`, href: `/leave/${request.ref}` };
+      req.session.save(() => res.redirect(303, '/leave'));
+    } catch (error) {
+      next(error);
     }
-    const department = me.department || employee.department;
-    const { request, approvers } = createLeaveRequest(db, { email: me.email, department, value: result.value });
-    const to = approvers.length ? approvers.map(displayName).join(' or ') : 'HR';
-    req.session.flash = { text: `Request ${request.ref} sent to ${to}`, href: `/leave/${request.ref}` };
-    req.session.save(() => res.redirect(303, '/leave'));
   });
 
   function ownRequest(req, res, me) {

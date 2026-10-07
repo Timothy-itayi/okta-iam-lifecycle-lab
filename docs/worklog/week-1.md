@@ -26,7 +26,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stylesheet cache bust | 2026-10-08 04:03 → 04:08 | 5 min |
 | Profile, photo, and identity row | 2026-10-08 04:09 → 04:14 | 5 min |
 | Stretch phase 5, policy engine | 2026-10-08 04:25 → 04:38 | 13 min |
-| **Worked** | | **22 h 20 min** |
+| Stretch phase 6, Jev review | 2026-10-08 04:39 → 04:45 | 6 min |
+| **Worked** | | **22 h 26 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -537,3 +538,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Cover counts other people in the department whose leave is `with_hr` or `approved`. A request still with the manager does not count. Remaining balance is the HR file minus that person's other open requests of the same type.
 - Changing `minDays` or `maxOffPerDept` on the rules object changes the outcome. The form's 14-day notice reads the same `minDays`. `POST /leave` still does not run the check. Phase 6 stores it next to Jev.
 - Priya's 3 days against 2 left, with Jonah already approved on those dates, is a deny plus a cover review. Rostr tests 66 passed. Record: [docs/leave/05-policy.md](../leave/05-policy.md).
+
+### 6. Jev review — 04:39 to 04:45, 6 min
+
+- After the request is saved, `reviewLeave` stores the policy outcome and asks Jev. It does not move the request again. Priya's three days against two left is a policy deny (`insufficient_balance`, and short notice). Jev's answer is stored beside it. `agree` is null when Jev did not answer.
+- The written reason is a state field. Question instructions do not contain it. Urgency is the SDK score plus one, so 1 is "can wait" and 5 is "same-day emergency". Below 0.7 the recommendation is stored and `jevIsSure` is false. The admin screen that hides it is not built.
+- A 401, 422, 429, 529, timeout, or missing key leaves the Jev columns empty, writes that code on the event, and still returns the toast. The response body is not logged. Staff activity does not list the policy or Jev rows.
+- Rostr tests 72 passed. The suite stubs the client and does not call TypeSafe. A live request through Okta is not done. Record: [docs/leave/06-jev.md](../leave/06-jev.md). Decision: [docs/decisions/jev-02-decision-model.md](../decisions/jev-02-decision-model.md).

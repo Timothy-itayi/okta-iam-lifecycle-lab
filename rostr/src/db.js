@@ -308,6 +308,32 @@ function countLeaveWaiting(db, status, { department, excludeEmail } = {}) {
     .get({ status, department: department || null, excludeEmail: excludeEmail || null }).total;
 }
 
+function insertLeaveReview(db, review) {
+  db.prepare(`
+    INSERT INTO leave_reviews (
+      request_id, policy_outcome, policy_rules, jev_outcome, jev_rule, jev_confidence,
+      jev_probabilities, jev_reason_fit, jev_urgency, agree, model, reviewed_at
+    ) VALUES (
+      @request_id, @policy_outcome, @policy_rules, @jev_outcome, @jev_rule, @jev_confidence,
+      @jev_probabilities, @jev_reason_fit, @jev_urgency, @agree, @model, @reviewed_at
+    )
+  `).run({
+    jev_outcome: null,
+    jev_rule: null,
+    jev_confidence: null,
+    jev_probabilities: null,
+    jev_reason_fit: null,
+    jev_urgency: null,
+    agree: null,
+    model: null,
+    ...review,
+  });
+}
+
+function findLeaveReview(db, requestId) {
+  return db.prepare('SELECT * FROM leave_reviews WHERE request_id = ?').get(requestId);
+}
+
 function insertLeaveEvent(db, event) {
   db.prepare(`
     INSERT INTO leave_events (request_id, at, actor, action, note)
@@ -374,6 +400,8 @@ module.exports = {
   listCoverRequests,
   listLeaveRequestsByEmail,
   countLeaveWaiting,
+  insertLeaveReview,
+  findLeaveReview,
   insertLeaveEvent,
   listLeaveEvents,
   departmentAdmins,

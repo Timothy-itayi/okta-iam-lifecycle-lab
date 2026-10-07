@@ -13,6 +13,7 @@
   "dependencies": {
     "@kaizen/design-tokens": "^11.0.20",
     "@node-saml/passport-saml": "^5.1.1",
+    "@typesafe-ai/sdk": "^0.6.0",
     "@xmldom/xmldom": "^0.8.15",
     "better-sqlite3": "^13.0.3",
     "express": "^5.2.1",

@@ -65,7 +65,7 @@ function signIn(req, authLogPath, event) {
   req.session.user = event.attributes || { user: event.user };
 }
 
-function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today }) {
+function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today, jev = null }) {
   if (!sessionSecret) {
     throw new Error('SESSION_SECRET is required');
   }
@@ -102,7 +102,7 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today
   };
   app.use('/vendor/kaizen', express.static(path.join(kaizenCss, 'css'), staticFiles));
   app.use(express.static(path.join(__dirname, '..', 'public'), staticFiles));
-  mountHubs(app, { db, hr, today, signInPath: saml || !oidc ? '/saml/login' : '/oidc/login' });
+  mountHubs(app, { db, hr, today, jev, signInPath: saml || !oidc ? '/saml/login' : '/oidc/login' });
   app.get('/admin/users', (req, res) => {
     if (!req.session.user) {
       return res.status(401).type('text/plain').send('Not signed in.');

@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { insertShift, listLeaveEvents, findLeaveRequestByRef } = require('../src/db');
+const { insertShift, listLeaveEvents, findLeaveRequestByRef, findLeaveReview } = require('../src/db');
 const { validateLeave, weekdaysIn } = require('../src/leave');
 const { shortRange, longRange, shortDay } = require('../src/views/format');
 const { appWithSession, listen, close, sessionFor, postForm, PEOPLE } = require('./helpers');
@@ -89,7 +89,14 @@ test('Priya sends a request: it goes to Marcus, shows in her list, and toasts on
     assert.deepEqual(listLeaveEvents(db, request.id).map((event) => [event.actor, event.action, event.note]), [
       [PEOPLE.priya.email, 'submitted', null],
       ['rostr', 'to_admin', 'Marcus Bell'],
+      ['policy', 'policy', 'deny: insufficient_balance, short_notice_annual'],
+      ['jev', 'jev_unavailable', 'no_key'],
     ]);
+    const review = findLeaveReview(db, request.id);
+    assert.equal(review.policy_outcome, 'deny');
+    assert.deepEqual(JSON.parse(review.policy_rules), ['insufficient_balance', 'short_notice_annual']);
+    assert.equal(review.jev_outcome, null);
+    assert.equal(review.agree, null);
 
     const list = await (await fetch(`${base}/leave`, { headers: { cookie } })).text();
     assert.match(list, /Request LV-0001 sent to Marcus Bell/);
@@ -106,6 +113,8 @@ test('Priya sends a request: it goes to Marcus, shows in her list, and toasts on
     assert.match(detail, /aria-current="step"/);
     assert.match(detail, /You sent this request/);
     assert.match(detail, /Sent to Marcus Bell/);
+    assert.doesNotMatch(detail, /insufficient_balance/);
+    assert.doesNotMatch(detail, /no_key/);
 
     const admin = await sessionFor(base, PEOPLE.marcus);
     const queue = await (await fetch(`${base}/admin/leave`, { headers: { cookie: admin } })).text();

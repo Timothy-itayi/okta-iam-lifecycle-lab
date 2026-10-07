@@ -16,6 +16,8 @@ services:
       OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:?Set OIDC_CLIENT_SECRET in rostr/.env}
       SCIM_TOKEN: ${SCIM_TOKEN:?Set SCIM_TOKEN in rostr/.env}
       HR_FILE: /app/hr/employees.json
+      TYPESAFE_API_KEY: ${TYPESAFE_API_KEY:-}
+      JEV_MIN_CONFIDENCE: ${JEV_MIN_CONFIDENCE:-0.7}
     volumes:
       - ../logs:/logs
       - ./data:/data
