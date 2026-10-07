@@ -22,7 +22,7 @@ Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department g
 | 3 | SCIM provisioning | 8 h | Done | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
 | 4 | Joiner, mover, and leaver | 7 h | Done | [docs/phases/04-jml.md](docs/phases/04-jml.md) |
 | 5 | Governance and audit evidence | 7.5 h | Nearly done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Access review, Stale-Access, OAuth review, audit pack, and OIG mapping done. Ticket `357784` is still Open. |
-| 6 | Failure drills | 6 h | Started | 6.1 SAML ACS mismatch done. [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) |
+| 6 | Failure drills | 6 h | Started | 6.1 and 6.2 done. [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md), [docs/incidents/03-oidc-redirect.md](docs/incidents/03-oidc-redirect.md) |
 | 7 | Write-up and teardown | 4 h | Not started | Milestone M3 |
 
 ## Map of what exists
