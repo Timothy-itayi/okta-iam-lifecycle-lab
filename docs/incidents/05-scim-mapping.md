@@ -1,6 +1,6 @@
 # SCIM department missing on create
 
-Date: 2026-10-07, 17:35–18:01 Sydney. Drill 6.4. Not closed. Rostr's create route was changed so a user with no department returned 400, the department mapping was removed, and `drill.scim@lanternfieldgoods.co.uk` was created in Okta with department `Sales`. The refusal is in the log. The later create is not a fix: Okta marked it successful, and the body still had no department.
+Date: 2026-10-07, 17:35–18:07 Sydney. Drill 6.4. Rostr's create route was changed so a user with no department returned 400, the department mapping was removed, and `drill.scim@lanternfieldgoods.co.uk` was created in Okta with department `Sales`. The refusal is in the log. The retry create is not the fix: Okta marked it successful, and the body still had no department. A later profile edit pushed the department, and deactivation set Rostr `active` to false.
 
 ## What we saw
 
@@ -30,11 +30,13 @@ A group `PUT` at `07:00:26.286Z` added that Rostr id to `APP-Rostr-Users`. Membe
 
 ## Fix
 
-Not done. The mapping row is back on the screen. The create that Okta accepted did not use it. Deactivate Users, Create Users, and Update User Attributes were left ticked. Drill Scim is still active, which fills the last user slot.
+The mapping row was put back as `user.department`, create and update. Retrying the failed create did not re-read it. Directory → People → Drill Scim → Edit, Title set to `Drill`, Department left as `Sales`. That profile save is what pushed the attribute. Deactivate Users stayed ticked. More Actions → Deactivate. He was not deleted.
 
 ## Check
 
-Still open. The next write for this user has to be a `PUT /Users/e4aaf631-250f-4fe8-b8c0-3df1394665f2` whose body includes `urn:ietf:params:scim:schemas:extension:enterprise:2.0:User` and `department` `Sales`. A 201 with no department does not close this drill.
+`PUT /Users/e4aaf631-250f-4fe8-b8c0-3df1394665f2` at `2026-10-07T07:06:38.644Z` returned 200. `title` was `Drill`. The enterprise extension was present and `department` was `Sales`. `active` was true.
+
+The same id at `2026-10-07T07:07:31.523Z` returned 200 with `active` false. Title and department were still on that body. Rostr kept the row and marked it inactive. The user slot is free. `rostr/src/scim.js` matches git.
 
 ## Do this next time
 
