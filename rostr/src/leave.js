@@ -186,6 +186,30 @@ function myRequests(db, email) {
   return listLeaveRequestsByEmail(db, email);
 }
 
+function decideLeaveRequest(db, { ref, actor, action, note, at = new Date().toISOString() }) {
+  const request = findLeaveRequestByRef(db, ref);
+  if (!request) return null;
+  if (String(request.email).toLowerCase() === String(actor).toLowerCase()) {
+    throw new Error('own request');
+  }
+  const trimmed = String(note || '').trim();
+  if (action === 'deny' && !trimmed) throw new Error('note required');
+  const move = action === 'approve' ? 'to_hr' : action === 'deny' ? 'deny' : null;
+  if (!move) throw new Error('action required');
+  const next = transition(request, move, actor);
+  db.transaction(() => {
+    updateLeaveStatus(db, request.id, next.status);
+    insertLeaveEvent(db, {
+      request_id: request.id,
+      at,
+      actor,
+      action: move,
+      note: move === 'deny' ? trimmed : null,
+    });
+  })();
+  return findLeaveRequestByRef(db, ref);
+}
+
 module.exports = {
   LEAVE_TYPES,
   TYPE_LABEL,
@@ -203,5 +227,6 @@ module.exports = {
   displayName,
   createLeaveRequest,
   cancelLeaveRequest,
+  decideLeaveRequest,
   myRequests,
 };

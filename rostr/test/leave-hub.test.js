@@ -107,6 +107,9 @@ test('Priya sends a request: it goes to Marcus, shows in her list, and the windo
     assert.match(list, /Tue 20 – Thu 22 Oct/);
     assert.match(list, /3 days/);
     assert.match(list, /With manager/);
+    assert.match(list, /href="\/leave\/LV-0001"/);
+    assert.match(list, /class="request-ref">LV-0001</);
+    assert.match(list, /aria-current="step"/);
     const again = await (await fetch(`${base}/leave`, { headers: { cookie } })).text();
     assert.doesNotMatch(again, /This is being resolved/);
 
@@ -121,8 +124,10 @@ test('Priya sends a request: it goes to Marcus, shows in her list, and the windo
 
     const admin = await sessionFor(base, PEOPLE.marcus);
     const queue = await (await fetch(`${base}/admin/leave`, { headers: { cookie: admin } })).text();
-    assert.match(queue, /1 request is waiting from Operations/);
+    assert.match(queue, /Priya Shah/);
+    assert.match(queue, /href="\/admin\/leave\/LV-0001"/);
     assert.match(queue, /aria-label="1 waiting"/);
+    assert.match(queue, /Deny/);
   } finally {
     await close(server);
     db.close();
@@ -233,6 +238,40 @@ test('only the owner sees or cancels a request, and only while it is open', asyn
     const again = await postForm(base, '/leave', priya, { leave_type: 'sick', start_day: '2026-10-20', end_day: '2026-10-20', reason: 'Flu again' });
     assert.equal(again.status, 303);
     assert.equal(findLeaveRequestByRef(db, 'LV-0002').status, 'with_admin');
+  } finally {
+    await close(server);
+    db.close();
+  }
+});
+
+test('Marcus opens the waiting request, and a deny without a note does not decide it', async () => {
+  const { app, db } = appWithSession();
+  const { server, base } = listen(app);
+  try {
+    const priya = await sessionFor(base, PEOPLE.priya);
+    await postForm(base, '/leave', priya, {
+      leave_type: 'annual', start_day: '2026-10-20', end_day: '2026-10-22', reason: 'Family wedding in Ballarat.',
+    });
+    assert.equal((await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: priya } })).status, 403);
+
+    const marcus = await sessionFor(base, PEOPLE.marcus);
+    const page = await (await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: marcus } })).text();
+    assert.match(page, /Priya Shah · Annual leave/);
+    assert.match(page, /Family wedding in Ballarat/);
+    assert.match(page, /Jev couldn't review this request/);
+    assert.match(page, /Policy check/);
+    assert.match(page, /aria-current="page">Team requests/);
+
+    const denied = await postForm(base, '/admin/leave/LV-0001', marcus, { action: 'deny' });
+    assert.equal(denied.status, 400);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'with_admin');
+
+    const approved = await postForm(base, '/admin/leave/LV-0001', marcus, { action: 'approve' });
+    assert.equal(approved.status, 303);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'with_hr');
+    const detail = await (await fetch(`${base}/leave/LV-0001`, { headers: { cookie: priya } })).text();
+    assert.match(detail, /Your manager approved it/);
+    assert.match(detail, /aria-current="step"/);
   } finally {
     await close(server);
     db.close();

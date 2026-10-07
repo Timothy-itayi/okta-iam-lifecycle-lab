@@ -28,7 +28,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stretch phase 5, policy engine | 2026-10-08 04:25 → 04:38 | 13 min |
 | Stretch phase 6, Jev review | 2026-10-08 04:39 → 04:45 | 6 min |
 | Confirmation window instead of the toast | 2026-10-08 04:49 → 04:53 | 4 min |
-| **Worked** | | **22 h 30 min** |
+| Manager queue, request chain, tab mark | 2026-10-08 05:09 → 05:17 | 8 min |
+| **Worked** | | **22 h 38 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -552,3 +553,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - The key was already in the container, 108 characters, and startup already logged `Jev on`. A connectivity call from that container returned `jev-1.13.0`. There was no missing key to repair.
 - After send, `/leave` opens a window: "This is being resolved" and who has the request. OK closes it. A reload does not show it again. The request row stays. Cancel uses the same window. Stylesheets are `?v=4`.
 - Rostr tests 72 passed. Checked in a local browser as Priya: send, window, OK, reload. Container rebuilt, which drops in-memory sessions. A live request through Okta is not done.
+
+### Manager queue — 05:09 to 05:17, 8 min
+
+- The active mark was drawn at the top of the tab, so it sat on the date line. It now sits under the tab for the page you are on. Buttons stay without an underline.
+- My leave shows each request as a card with its reference and the Sent / Manager / HR / Done chain. The card opens the detail page.
+- Team requests lists the department. Waiting is still with the manager. The decision page shows Jev and the policy check. Approve sends it to HR. Deny needs a note. A manager cannot decide their own request.
+- Rostr tests 73 passed. Checked in a local browser as Priya and as Marcus. Stylesheets are `?v=5`. Container rebuilt, which drops in-memory sessions. LV-0002 is still `with_admin`. The week grid, the Jev flag, and Helen's decision are not built. Record: [docs/leave/07-queue.md](../leave/07-queue.md).

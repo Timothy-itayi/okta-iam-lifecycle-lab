@@ -294,6 +294,25 @@ function listCoverRequests(db, { department, start, end, excludeEmail }) {
   `).all({ department, start, end, excludeEmail: excludeEmail || '' });
 }
 
+function listLeaveByDepartment(db, department) {
+  if (!department) return [];
+  return db.prepare(`
+    SELECT leave_requests.*,
+      leave_reviews.policy_outcome,
+      leave_reviews.policy_rules,
+      leave_reviews.jev_outcome,
+      leave_reviews.jev_rule,
+      leave_reviews.jev_confidence,
+      leave_reviews.jev_reason_fit,
+      leave_reviews.jev_urgency,
+      leave_reviews.agree
+    FROM leave_requests
+    LEFT JOIN leave_reviews ON leave_reviews.request_id = leave_requests.id
+    WHERE leave_requests.department = ? COLLATE NOCASE
+    ORDER BY leave_requests.created_at, leave_requests.id
+  `).all(department);
+}
+
 function listLeaveRequestsByEmail(db, email) {
   return db.prepare(`
     SELECT * FROM leave_requests WHERE email = ? COLLATE NOCASE ORDER BY created_at DESC, id DESC
@@ -398,6 +417,7 @@ module.exports = {
   findLeaveRequestByRef,
   updateLeaveStatus,
   listCoverRequests,
+  listLeaveByDepartment,
   listLeaveRequestsByEmail,
   countLeaveWaiting,
   insertLeaveReview,

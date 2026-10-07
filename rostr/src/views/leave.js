@@ -34,13 +34,42 @@ function balanceTiles(balance) {
   }).join('')}</ul><p class="tiles-foot">From HR records</p>`;
 }
 
+function chainSteps(status) {
+  const steps = [
+    { label: 'Sent', state: 'done' },
+    { label: 'Manager', state: 'upcoming' },
+    { label: 'HR', state: 'upcoming' },
+    { label: 'Done', state: 'upcoming' },
+  ];
+  if (status === 'submitted' || status === 'with_admin') steps[1].state = 'current';
+  else if (status === 'with_hr') {
+    steps[1].state = 'done';
+    steps[2].state = 'current';
+  } else if (status === 'approved') steps.forEach((step) => { step.state = 'done'; });
+  else if (status === 'denied') steps[1].state = 'declined';
+  else if (status === 'cancelled') steps[0].state = 'cancelled';
+  return steps;
+}
+
+function chainHtml(status) {
+  return `<ol class="chain">${chainSteps(status).map((step) => {
+    const mark = step.state === 'done' ? icon('check') : step.state === 'declined' ? icon('x') : '';
+    return `<li class="chain-step chain-${step.state}"${step.state === 'current' ? ' aria-current="step"' : ''}>
+      <span class="chain-dot" aria-hidden="true">${mark}</span>
+      <span>${escapeHtml(step.label)}</span>
+    </li>`;
+  }).join('')}</ol>`;
+}
+
 function requestRow(request) {
-  return `<li><a class="request-row" href="/leave/${escapeHtml(request.ref)}">
-    <span class="request-what">${TYPE_LABEL[request.leave_type] || escapeHtml(request.leave_type)} leave</span>
-    <span class="request-when num">${listRange(request.start_day, request.end_day)}</span>
-    <span class="request-days num">${plural(request.days, 'day')}</span>
-    ${statusChip(request.status)}
-    <span class="request-ref">${icon('chevron-right')}<span class="visually-hidden">${escapeHtml(request.ref)}</span></span>
+  return `<li><a class="request-card" href="/leave/${escapeHtml(request.ref)}">
+    <span class="request-top">
+      <span class="request-ref">${escapeHtml(request.ref)}</span>
+      <span class="request-what">${TYPE_LABEL[request.leave_type] || escapeHtml(request.leave_type)} leave</span>
+      ${statusChip(request.status)}
+    </span>
+    <span class="request-when num">${listRange(request.start_day, request.end_day)} · ${plural(request.days, 'day')}</span>
+    ${chainHtml(request.status)}
   </a></li>`;
 }
 

@@ -5,6 +5,9 @@ const { groupNames, roleOf, requireRole, requireSignedIn, rostrRow } = require('
 const {
   countLeaveWaiting,
   findLeaveRequestByRef,
+  findLeaveReview,
+  findUserByUserName,
+  listLeaveByDepartment,
   listLeaveEvents,
   listShiftsByEmail,
 } = require('./db');
@@ -15,13 +18,18 @@ const {
   approversFor,
   routeText,
   displayName,
+  TYPE_LABEL,
   createLeaveRequest,
   cancelLeaveRequest,
+  decideLeaveRequest,
   myRequests,
   weekdaysIn,
 } = require('./leave');
+const { factsFor } = require('./policy');
+const { longRange } = require('./views/format');
 const { reviewLeave } = require('./review');
 const views = require('./views/leave');
+const queue = require('./views/queue');
 const { profileBody } = require('./views/profile');
 
 const REF = /^LV-\d{4,}$/i;
@@ -259,15 +267,74 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     });
   });
 
+  function personNameFor(email) {
+    const user = email ? findUserByUserName(db, email) : null;
+    return user ? displayName(user) : email;
+  }
+
   app.get('/admin/leave', requireAdmin, (req, res) => {
     const me = viewer(req);
-    const waiting = me.nav.waiting;
+    const rows = listLeaveByDepartment(db, me.department);
+    const waiting = rows.filter((row) => row.status === 'with_admin');
+    const decided = rows.filter((row) => row.status !== 'with_admin' && row.status !== 'submitted');
+    const view = req.query.view === 'decided' ? 'decided' : 'waiting';
+    const names = {};
+    for (const row of rows) names[row.email] = personNameFor(row.email);
     render(req, res, me, {
       title: 'Team requests',
       context: `${me.department || 'Your department'} · leave waiting for your decision`,
       current: '/admin/leave',
-      body: `<section class="panel empty"><p>${waiting ? `${waiting} ${waiting === 1 ? 'request is' : 'requests are'} waiting from ${escapeHtml(me.department || 'your department')}.` : `Nothing waiting. New requests from ${escapeHtml(me.department || 'your department')} will appear here.`}</p><p class="helper">The decision queue is the next part to be built.</p></section>`,
+      body: queue.queueBody({ waiting, decided, view, names }),
     });
+  });
+
+  function teamRequest(req, res, me) {
+    const ref = String(req.params.ref || '');
+    const request = REF.test(ref) ? findLeaveRequestByRef(db, ref) : null;
+    const same = request && String(request.department || '').toLowerCase() === String(me.department || '').toLowerCase();
+    if (!request || !same) {
+      render(req, res, me, { title: 'Request not found', current: '/admin/leave', body: '<section class="panel empty"><p>That request is not in your department.</p><a class="btn secondary" href="/admin/leave">Back to team requests</a></section>' }, 404);
+      return null;
+    }
+    return request;
+  }
+
+  function decisionPage(req, res, me, request, error, status) {
+    const review = findLeaveReview(db, request.id);
+    const facts = factsFor(db, hr, request, { today: today() });
+    const own = request.email.toLowerCase() === me.email.toLowerCase();
+    render(req, res, me, {
+      title: `${personNameFor(request.email)} · ${TYPE_LABEL[request.leave_type] || request.leave_type} leave`,
+      context: `${longRange(request.start_day, request.end_day)} · ${request.ref}`,
+      current: '/admin/leave',
+      body: queue.decisionBody({ request, review, facts, own, error }),
+    }, status);
+  }
+
+  app.get('/admin/leave/:ref', requireAdmin, (req, res) => {
+    const me = viewer(req);
+    const request = teamRequest(req, res, me);
+    if (!request) return;
+    decisionPage(req, res, me, request);
+  });
+
+  app.post('/admin/leave/:ref', requireAdmin, form, (req, res) => {
+    const me = viewer(req);
+    const request = teamRequest(req, res, me);
+    if (!request) return;
+    const action = String((req.body && req.body.action) || '');
+    try {
+      decideLeaveRequest(db, { ref: request.ref, actor: me.email, action, note: req.body && req.body.note });
+      const name = personNameFor(request.email);
+      req.session.flash = action === 'approve'
+        ? { title: 'Sent to HR', text: `Approved. ${request.ref} is with HR.` }
+        : { title: 'Request denied', text: `Denied. ${name} will see it on the request.` };
+      req.session.save(() => res.redirect(303, '/admin/leave?view=decided'));
+    } catch (error) {
+      if (error.message === 'note required') return decisionPage(req, res, me, request, 'Write a note to deny this request.', 400);
+      req.session.flash = { title: 'Already decided', text: `${request.ref} is no longer waiting for you.` };
+      req.session.save(() => res.redirect(303, '/admin/leave'));
+    }
   });
 
   app.get('/hr/export', requireHR, (req, res) => {
