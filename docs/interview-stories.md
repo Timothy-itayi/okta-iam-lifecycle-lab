@@ -2,11 +2,13 @@
 
 Previous: [Okta IAM lab report](report.md).
 
-Date: 2026-10-07. These are practice accounts for a technical conversation. They are not a claim of production Okta administration. Each account is about two minutes read aloud. The captures they depend on are already in this repository.
+Date: 2026-10-07. These are three accounts from a learning lab, written so someone who was not in the lab can follow them. They are not a claim of production Okta administration. The lab report, with the people and the short definitions, is [docs/report.md](report.md). Each "two-minute account" below is the version to read aloud.
+
+Rostr is the mock rostering app. Okta is the directory. A SAML sign-in is Okta posting a signed message to Rostr. SCIM is the separate API Okta uses to create and update the account inside Rostr. A mover is a department or job change. A group rule fills a group from the person's profile. A membership added by hand does not move when the department changes.
 
 ## 1. A SAML assertion
 
-Staff sign-in to Rostr is SAML, started by the app. The record is [docs/phases/02-onboarding.md](phases/02-onboarding.md). An annotated raw assertion was not saved. Task 2.5 was not done. The account below uses the metadata, the ACS behaviour, Jonah Hale's `/me` page, the auth log, and drill 6.1.
+This is the staff sign-in. The person is Jonah Hale, a fictional salesperson. The app starts the login. Okta posts the signed message to `/saml/acs`, which is the only address Rostr accepts it on. The full record is [docs/phases/02-onboarding.md](phases/02-onboarding.md). An annotated copy of the raw message was not saved. The account uses the settings, Jonah's signed-in page, the auth log, and a later drill where that address was pointed at the wrong path.
 
 | Field | What this lab used |
 | --- | --- |
@@ -42,7 +44,7 @@ I do not have an annotated raw assertion saved. What I can show is the metadata,
 
 ## 2. A mover with no leftover access
 
-Priya Shah, EMP-1003, moved from Sales to Operations on 6 October. The record is [docs/phases/04-jml.md](phases/04-jml.md). The entitlements files are [evidence/04-jml/before.csv](../evidence/04-jml/before.csv) and [evidence/04-jml/after.csv](../evidence/04-jml/after.csv). No row in either file has source `individual`.
+This is a department change that did not leave the old access behind. Priya Shah moved from Sales to Operations on 6 October. Her old department group was removed, the new one was added, and her access to Rostr stayed because that access comes from "any department," not from Sales. Nothing on her account had been granted by hand. The record is [docs/phases/04-jml.md](phases/04-jml.md). The before and after lists are [evidence/04-jml/before.csv](../evidence/04-jml/before.csv) and [evidence/04-jml/after.csv](../evidence/04-jml/after.csv). No row in either file was added by hand.
 
 | Step | What landed |
 | --- | --- |
@@ -66,7 +68,7 @@ The entitlements export before and after is the check for leftover access. Befor
 
 ## 3. The provisioning incident
 
-Drill 6.4. The record is [docs/incidents/05-scim-mapping.md](incidents/05-scim-mapping.md). Rostr was changed, only on the running container, so a create with no department returned 400. The department mapping was removed in Okta. Drill Scim was created with department Sales. The group rule put him in `APP-Rostr-Users`, which is what makes Okta send the SCIM create. That refusal is not in git. `rostr/src/scim.js` was put back before the retry.
+This is a created account that Okta reported as successful while the department never arrived. Drill Scim is a throwaway user, not an employee. Rostr was temporarily set to reject a new account that had no department, and the Okta mapping that sends department was removed. His Okta profile still said Sales. The group rule put him in the Rostr users group, so Okta tried to create him in the app. The record is [docs/incidents/05-scim-mapping.md](incidents/05-scim-mapping.md). The refusal was only on the running app. The code in Git does not contain it.
 
 | Call | Time | Result |
 | --- | --- | --- |

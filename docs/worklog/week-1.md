@@ -2,7 +2,7 @@
 
 Times are Australia/Sydney (+1100). Duration is from the first clock we have for that task to the last. A stretch with no commit and no evidence is a break.
 
-Two working days, then a third sitting on the morning of 7 October. Night of 5–6 October, afternoon and night of 6 October into 7 October, morning of 7 October.
+Three days so far, from the night of 5 October through the evening of 7 October. The clocked work is the total below. The gaps are breaks, not extra days of work. Night of 5–6 October, afternoon and night of 6 October into 7 October, then the whole of 7 October.
 
 | Session | Clock | Duration |
 | --- | --- | --- |
@@ -15,8 +15,9 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
 | Break | 15:02 → 16:59 | 1 h 57 min |
 | Afternoon, drills 6.1 to 6.6 | 2026-10-07 16:59 → 18:26 | 1 h 27 min |
-| Evening, report and README | 2026-10-07 18:29 → 18:36 | 7 min |
-| **Worked** | | **19 h 14 min** |
+| Evening, report, README, and stories | 2026-10-07 18:29 → 18:55 | 26 min |
+| **Worked** | | **19 h 33 min** |
+| **Elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
 
@@ -431,15 +432,20 @@ About 1 h 27 min, 16:59 to 18:26. Rostr was already up. Local and public `/healt
 
 ## Phase 7 — Write-up and teardown (started)
 
-7.3 and 7.4 are not started. The CV notes stay out of the repo. Nothing has been torn down.
+The CV lines are not written up. Nothing has been torn down. The reports were rewritten on the evening of 7 October so a reader who was not in the lab can follow the people and the protocols.
 
-### 7.1 Final report — 18:29 to 18:36
+### 7.1 Final report — 18:29 to 18:55
 
-- [docs/report.md](../report.md). Sections are purpose, how it was built, why, risk management, incidents, outcome, and what production would add. It says the lab is not production experience. Ticket `357784` is still Open. Teardown is not done.
-- PDF export at the repo root: [okta-iam-lifecycle-lab-report.pdf](../../okta-iam-lifecycle-lab-report.pdf). Figures are existing evidence screenshots.
+- [docs/report.md](../report.md). Opens with who the people are and what SAML, OIDC, SCIM, and a group rule mean in this lab. Then purpose, how it was built, why, risk management, incidents, outcome, and what production would add. Ticket `357784` is still Open. Teardown is not done.
+- PDF export at the repo root: [okta-iam-lifecycle-lab-report.pdf](../../okta-iam-lifecycle-lab-report.pdf).
 
 ### 7.2 README — 18:29 to 18:36
 
 - Phase table marks 2 done, 6 done, and 7 in progress. Run instructions for Rostr name the env vars and say not to pass `-v`.
 - Data flow diagram is in the README. [docs/built-so-far.svg](../built-so-far.svg) now shows the six drills written and teardown still open.
 - Numbered files link to the previous one, from [docs/decisions/00-domain.md](../decisions/00-domain.md) through the report.
+
+### 7.3 Practice accounts — 18:45 to 18:55
+
+- Three accounts, each with the record and a two-minute telling: SAML sign-in, Priya's mover, and the department provisioning failure. [docs/interview-stories.md](../interview-stories.md). PDF: [okta-iam-interview-stories.pdf](../../okta-iam-interview-stories.pdf).
+- The CV wording from the runbook is not in the repo.

@@ -12,7 +12,7 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-Phases 0 through 4 and Phase 6 are done. Phase 5 is done except osTicket `357784`, which is still Open after Lena Ortiz's hour. Phase 7.1 and 7.2 are this report and this README. The CV notes and the teardown are not started.
+The work so far took three days, 5 October through 7 October. Phases 0 through 4 and Phase 6 are done. Phase 5 is done except osTicket ticket `357784`, which is still Open after Lena Ortiz's one-hour admin grant. The lab report and the three practice accounts are written for a reader who was not in the lab. The CV lines and the teardown are not started.
 
 The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Operations. Samir Adeyemi and Thomas Okeke are terminated. `APP-Rostr-Admins` is empty. An orphan row in Rostr was imported, matched nobody, and ignored. The finished account is [docs/report.md](docs/report.md).
 
