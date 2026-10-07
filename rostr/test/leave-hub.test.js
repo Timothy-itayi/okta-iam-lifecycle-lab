@@ -93,7 +93,9 @@ test('Priya sends a request: it goes to Marcus, shows in her list, and toasts on
 
     const list = await (await fetch(`${base}/leave`, { headers: { cookie } })).text();
     assert.match(list, /Request LV-0001 sent to Marcus Bell/);
-    assert.match(list, /Annual · 20–22 Oct · 3 days/);
+    assert.match(list, /Annual leave/);
+    assert.match(list, /Tue 20 – Thu 22 Oct/);
+    assert.match(list, /3 days/);
     assert.match(list, /With manager/);
     const again = await (await fetch(`${base}/leave`, { headers: { cookie } })).text();
     assert.doesNotMatch(again, /sent to Marcus Bell/);
@@ -207,7 +209,7 @@ test('only the owner sees or cancels a request, and only while it is open', asyn
     assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'cancelled');
     const list = await (await fetch(`${base}/leave`, { headers: { cookie: priya } })).text();
     assert.match(list, /Request LV-0001 cancelled/);
-    assert.match(list, /class="divider">Past/);
+    assert.match(list, /Past requests/);
 
     await postForm(base, '/leave/LV-0001/cancel', priya, {});
     const after = await (await fetch(`${base}/leave`, { headers: { cookie: priya } })).text();

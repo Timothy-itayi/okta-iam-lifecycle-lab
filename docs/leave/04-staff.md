@@ -45,6 +45,8 @@ Departures from the spec: a balance bar turns amber under 3 days only when some 
 
 Sessions are in memory. Rebuilding the container signs everyone out. The cookie is `SameSite=Lax`, which keeps a cross-site form post from carrying it. There is no CSRF token.
 
+The same morning the skin was replaced with Kaizen tokens. The screenshots above are the first skin. The replacement is [docs/decisions/jev-03-ui-kaizen.md](../decisions/jev-03-ui-kaizen.md).
+
 ## Check
 
 `npm test` in `rostr/`: 59 passed. Container rebuilt. `/health` 200, and `/app.css` 200 on the tunnel. Live sign-in after this rebuild, and a request sent through Okta, are not done yet.

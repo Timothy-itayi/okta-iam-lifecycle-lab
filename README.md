@@ -18,7 +18,7 @@ The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Oper
 
 ## Stretch: leave hub
 
-A staff member will sign in to Rostr and ask for leave. [Jev](docs/decisions/jev-02-decision-model.md), a TypeSafe decision model, reads the request and recommends approve, deny, or needs review. It does not make the decision. Code checks the hard rules. A department admin approves first, then HR. Okta groups decide who sees which screen. No new Okta user and no new Workflow.
+A staff member will sign in to Rostr and ask for leave. [Jev](docs/decisions/jev-02-decision-model.md), a TypeSafe decision model, reads the request and recommends approve, deny, or needs review. It does not make the decision. Code checks the hard rules. A department admin approves first, then HR. Okta groups decide who sees which screen. No new Okta user and no new Workflow. The leave hub UI is built on [Kaizen](https://github.com/cultureamp/kaizen-design-system) design tokens (Culture Amp, MIT licence). [docs/decisions/jev-03-ui-kaizen.md](docs/decisions/jev-03-ui-kaizen.md).
 
 | Group | Who, so far | Screen, once it exists |
 | --- | --- | --- |

@@ -8,27 +8,32 @@ function personName(user) {
   return [user.givenName, user.familyName].filter(Boolean).join(' ') || user.email || user.userName || 'Signed in';
 }
 
-function navItem({ href, label, current, count }) {
-  const active = current === href;
-  const dot = count ? `<span class="nav-count" aria-label="${count} waiting"><span class="dot" aria-hidden="true"></span>${count}</span>` : '';
-  return `<li><a href="${href}"${active ? ' aria-current="page"' : ''}>${escapeHtml(label)}${dot}</a></li>`;
+function tab(item, current) {
+  const active = current === item.href || (item.match && item.match(current));
+  const count = item.count
+    ? ` <span class="tab-count" aria-label="${item.count} waiting">(${item.count})</span>`
+    : '';
+  return `<li><a href="${item.href}"${active ? ' aria-current="page"' : ''}>${escapeHtml(item.label)}${count}</a></li>`;
 }
 
-function navFor(role, current, nav = {}) {
-  const sections = [
-    { items: [{ href: '/leave', label: 'My leave' }, { href: '/roster', label: 'My roster' }] },
+function tabsFor(role, current, nav = {}) {
+  const onHrDesk = String(current || '').startsWith('/hr');
+  const mine = [
+    { href: '/leave', label: 'My leave', match: (path) => String(path).startsWith('/leave') },
+    { href: '/roster', label: 'My roster' },
   ];
-  if (role === 'admin') {
-    sections.push({ title: 'Team', items: [{ href: '/admin/leave', label: 'Requests', count: nav.waiting }] });
+  if (role === 'admin') mine.push({ href: '/admin/leave', label: 'Team requests', count: nav.waiting });
+  if (role === 'hr' && !onHrDesk) {
+    mine.push({ href: '/hr/leave', label: 'All leave', count: nav.waiting });
+    mine.push({ href: '/hr/export', label: 'Export' });
   }
-  if (role === 'hr') {
-    sections.push({ title: 'HR', items: [{ href: '/hr/leave', label: 'All leave', count: nav.waiting }] });
-  }
-  return sections.map((section) => `
-      <div class="nav-section">
-        ${section.title ? `<p class="nav-title">${escapeHtml(section.title)}</p>` : ''}
-        <ul>${section.items.map((item) => navItem({ ...item, current })).join('')}</ul>
-      </div>`).join('');
+  const items = role === 'hr' && onHrDesk
+    ? [
+      { href: '/hr/leave', label: 'All leave', count: nav.waiting, match: (path) => path === '/hr/leave' },
+      { href: '/hr/export', label: 'Export' },
+    ]
+    : mine;
+  return `<ul>${items.map((item) => tab(item, current)).join('')}</ul>`;
 }
 
 function toastHtml(flash) {
@@ -36,44 +41,50 @@ function toastHtml(flash) {
   const message = typeof flash === 'string' ? { text: flash } : flash;
   const tone = message.tone || 'ok';
   const view = message.href ? ` <a href="${escapeHtml(message.href)}">View</a>` : '';
-  return `<div class="toast toast-${tone}" role="status"><p>${escapeHtml(message.text)}${view}</p></div>
-  <script>setTimeout(function () {
-    var node = document.querySelector('.toast');
-    if (node) node.classList.add('gone');
-  }, 4000);</script>`;
+  const stay = tone === 'bad' ? 'true' : 'false';
+  return `<div class="toast toast-${tone}" role="status">
+    <p>${escapeHtml(message.text)}${view}</p>
+    <button type="button" class="toast-close" aria-label="Dismiss">${icon('x')}</button>
+  </div>
+  <script>
+    var toast = document.querySelector('.toast');
+    if (toast) {
+      toast.querySelector('.toast-close').addEventListener('click', function () { toast.classList.add('gone'); });
+      if (!${stay}) setTimeout(function () { toast.classList.add('gone'); }, 5000);
+    }
+  </script>`;
 }
 
-function page({ title, context, action, aside, user, role, body, flash, current, nav, banner }) {
+function page({ title, context, action, user, role, body, flash, current, nav, banner }) {
   const name = personName(user);
   const shell = user && role;
-  const header = `
-    <header class="page-header">
-      <div>
-        <h1>${escapeHtml(title)}</h1>
-        ${context ? `<p class="context">${escapeHtml(context)}</p>` : ''}
-      </div>
-      ${action || aside ? `<div class="page-actions">${aside || ''}${action || ''}</div>` : ''}
-    </header>
-    ${banner ? `<div class="banner banner-bad" role="alert">${icon('alert-triangle')}<p>${escapeHtml(banner)}</p></div>` : ''}`;
+  if (!shell) {
+    return `<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(title)} · Rostr</title>
+  <link rel="stylesheet" href="/vendor/kaizen/variables.css">
+  <link rel="stylesheet" href="/fonts/inter.css">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body class="no-shell">
+  <main class="content column">
+    <h1>${escapeHtml(title)}</h1>
+    ${context ? `<p class="context">${escapeHtml(context)}</p>` : ''}
+    ${body}
+  </main>
+</body>
+</html>`;
+  }
 
-  const sidebar = shell ? `
-  <aside class="sidebar">
-    <a class="brand" href="/"><span class="mark" aria-hidden="true"></span>Rostr</a>
-    <nav aria-label="Main">${navFor(role, current, nav)}</nav>
-    <div class="identity">
-      <span class="avatar" aria-hidden="true">${escapeHtml(initials(name))}</span>
-      <div class="identity-text">
-        <span class="identity-name">${escapeHtml(name)}</span>
-        <span class="identity-dept">${escapeHtml(user.department || '')}</span>
-        <span class="chip chip-role">${ROLE_CHIP[role] || 'Staff'}</span>
-      </div>
-      <a class="sign-out" href="/logout">${icon('log-out')}<span>Sign out</span></a>
-    </div>
-  </aside>
-  <div class="mobile-top">
-    <a class="brand" href="/"><span class="mark" aria-hidden="true"></span>Rostr</a>
-    <a class="avatar" href="/logout" title="Sign out ${escapeHtml(name)}"><span aria-hidden="true">${escapeHtml(initials(name))}</span><span class="visually-hidden">Sign out</span></a>
-  </div>` : '';
+  const variant = String(current || '').startsWith('/hr') ? 'admin' : 'default';
+  const subtitle = context || [name, user.department].filter(Boolean).join(' · ');
+  const groups = user.groups ? String(user.groups) : '';
+  const crumb = variant === 'admin'
+    ? `<a class="crumb" href="/leave">${icon('chevron-left')}<span>Back to my leave</span></a>`
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="en-AU">
@@ -81,13 +92,47 @@ function page({ title, context, action, aside, user, role, body, flash, current,
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${escapeHtml(title)} · Rostr</title>
+  <link rel="stylesheet" href="/vendor/kaizen/variables.css">
+  <link rel="stylesheet" href="/fonts/inter.css">
   <link rel="stylesheet" href="/app.css">
 </head>
-<body class="${shell ? 'has-shell' : 'no-shell'}">
-  ${sidebar}
+<body class="has-shell">
+  <header class="global-nav">
+    <div class="column nav-row">
+      <a class="brand" href="/"><span class="mark" aria-hidden="true"></span>Rostr</a>
+      <span class="org">Lanternfield Goods</span>
+      <details class="account">
+        <summary>
+          <span class="avatar" aria-hidden="true">${escapeHtml(initials(name))}</span>
+          <span class="account-name">${escapeHtml(name)}</span>
+        </summary>
+        <div class="account-menu">
+          <p>${escapeHtml(user.department || 'No department')}</p>
+          <p><span class="chip chip-role">${ROLE_CHIP[role] || 'Staff'}</span></p>
+          ${groups ? `<p class="account-groups">${escapeHtml(groups)}</p>` : ''}
+          <a href="/logout">${icon('log-out')} Sign out</a>
+        </div>
+      </details>
+    </div>
+  </header>
+  <section class="titleblock titleblock-${variant}">
+    <div class="column">
+      <div class="title-row">
+        <div class="title-text">
+          ${crumb}
+          <h1>${escapeHtml(title)}</h1>
+          ${subtitle ? `<p class="context">${escapeHtml(subtitle)}</p>` : ''}
+        </div>
+        ${action ? `<div class="page-actions">${action}</div>` : ''}
+      </div>
+      <nav class="tabs" aria-label="Sections">${tabsFor(role, current, nav)}</nav>
+    </div>
+  </section>
   <main class="content">
-    ${header}
-    ${body}
+    <div class="column">
+      ${banner ? `<div class="banner banner-bad" role="alert">${icon('alert-triangle')}<p>${escapeHtml(banner)}</p></div>` : ''}
+      ${body}
+    </div>
   </main>
   ${toastHtml(flash)}
 </body>

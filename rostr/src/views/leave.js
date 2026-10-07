@@ -1,4 +1,4 @@
-const { escapeHtml, shortDay, shortRange, longRange, sydneyStamp, sydneyShort, plural } = require('./format');
+const { escapeHtml, shortDay, listRange, longRange, sydneyStamp, sydneyShort, plural } = require('./format');
 const { icon } = require('./icons');
 const { LEAVE_TYPES, TYPE_LABEL, ENTITLEMENT, ANNUAL_NOTICE_DAYS, REASON_MAX } = require('../leave');
 const { OPEN } = require('../leave-state');
@@ -24,40 +24,42 @@ function balanceTiles(balance) {
     const left = Number(balance[type] ?? 0);
     const total = ENTITLEMENT[type];
     const percent = Math.max(0, Math.min(100, Math.round((left / total) * 100)));
-    const low = left < 3 && left < total ? ' low' : '';
+    const low = left < 3 ? ' low' : '';
     return `<li class="tile">
       <p class="tile-type">${icon(TYPE_ICON[type])}${TYPE_LABEL[type]}</p>
       <p class="tile-figure"><span class="balance">${left}</span> ${left === 1 ? 'day' : 'days'} left</p>
       <div class="bar${low}" role="img" aria-label="${left} of ${total} days left"><span style="width:${percent}%"></span></div>
-      <p class="tile-foot">of ${total} · From HR records</p>
+      <p class="tile-foot">of ${total}</p>
     </li>`;
-  }).join('')}</ul>`;
+  }).join('')}</ul><p class="tiles-foot">From HR records</p>`;
 }
 
 function requestRow(request) {
   return `<li><a class="request-row" href="/leave/${escapeHtml(request.ref)}">
-    <span class="request-what">${TYPE_LABEL[request.leave_type] || escapeHtml(request.leave_type)} · ${shortRange(request.start_day, request.end_day)} · ${plural(request.days, 'day')}</span>
+    <span class="request-what">${TYPE_LABEL[request.leave_type] || escapeHtml(request.leave_type)} leave</span>
+    <span class="request-when num">${listRange(request.start_day, request.end_day)}</span>
+    <span class="request-days num">${plural(request.days, 'day')}</span>
     ${statusChip(request.status)}
-    <span class="request-ref num">${escapeHtml(request.ref)}${icon('chevron-right')}</span>
+    <span class="request-ref">${icon('chevron-right')}<span class="visually-hidden">${escapeHtml(request.ref)}</span></span>
   </a></li>`;
 }
 
 function requestList(requests) {
   if (!requests.length) {
-    return `<section class="panel empty"><p>No leave requested yet.</p><a class="btn secondary" href="/leave/new" data-sheet-open>Request leave</a></section>`;
+    return `<section class="panel empty">${icon('calendar')}<h2 class="panel-title">No leave requested yet.</h2><a class="btn primary" href="/leave/new" data-sheet-open>Request leave</a></section>`;
   }
   const open = requests.filter((request) => OPEN.has(request.status));
   const past = requests.filter((request) => !OPEN.has(request.status));
   return `<section class="panel list-panel" aria-labelledby="requests-title">
     <h2 id="requests-title" class="panel-title">Requests</h2>
     ${open.length ? `<ul class="rows">${open.map(requestRow).join('')}</ul>` : ''}
-    ${past.length ? `<p class="divider">Past</p><ul class="rows">${past.map(requestRow).join('')}</ul>` : ''}
+    ${past.length ? `<h3 class="section-label">Past requests</h3><ul class="rows">${past.map(requestRow).join('')}</ul>` : ''}
   </section>`;
 }
 
 function fieldError(errors, field) {
   const error = errors.find((item) => item.field === field);
-  return error ? `<p class="field-error" id="error-${field}">${escapeHtml(error.message)}</p>` : '';
+  return error ? `<p class="field-error" id="error-${field}">${icon('alert-triangle')}${escapeHtml(error.message)}</p>` : '';
 }
 
 function describedBy(errors, field, helper) {
@@ -231,7 +233,7 @@ function stepsFor(request, events) {
   const stage = routedToHr ? hr : manager;
   if (request.status === 'with_admin' || request.status === 'with_hr') {
     stage.state = 'current';
-    stage.sub = 'waiting';
+    stage.sub = 'Waiting';
   } else if (request.status === 'approved') {
     hr.state = 'done';
     hr.sub = sydneyShort(at('approve'));

@@ -26,6 +26,12 @@ function longDay(day) {
 }
 
 // 20–22 Oct, 30 Oct – 2 Nov, 2 Oct
+function listRange(start, end) {
+  if (start === end) return shortDay(start);
+  const startText = format(start, { weekday: 'short', day: 'numeric' }).replace(',', '');
+  return `${startText} – ${shortDay(end)}`;
+}
+
 function shortRange(start, end) {
   const startDay = format(start, { day: 'numeric' });
   const startMonth = format(start, { month: 'short' });
@@ -73,4 +79,4 @@ function initials(name) {
     .join('') || '?';
 }
 
-module.exports = { escapeHtml, shortDay, longDay, shortRange, longRange, sydneyStamp, sydneyShort, plural, initials };
+module.exports = { escapeHtml, shortDay, longDay, shortRange, listRange, longRange, sydneyStamp, sydneyShort, plural, initials };

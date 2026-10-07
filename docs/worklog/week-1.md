@@ -22,7 +22,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stretch phase 3, hub shell | 2026-10-08 02:30 → 02:50 | 20 min |
 | Rostr sign-in: FastPass, then a stale password | 2026-10-08 02:50 → 03:15 | 25 min |
 | Stretch phase 4, staff screens | 2026-10-08 03:15 → 03:55 | 40 min |
-| **Worked** | | **21 h 42 min** |
+| Leave hub reskin onto Kaizen tokens | 2026-10-08 03:55 → 04:10 | 15 min |
+| **Worked** | | **21 h 57 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -507,3 +508,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - `/app.css` had been 404 since phase 3. The Dockerfile did not copy `public/`. Helen's request list at 03:18 showed it, and showed `/` sending her to `/hr/leave`. That screenshot is not committed because it holds a Google session value.
 - `GET /` with no session starts SAML. SAML success goes to `/`. `/me` says `hr` for `APP-Rostr-HR`.
 - Rostr tests 59 passed. Container rebuilt, `/app.css` 200 on the tunnel. Screens checked at 1440 and 390 px on a throwaway preview with a copy of the database. [evidence/leave/04-my-leave-1440.png](../../evidence/leave/04-my-leave-1440.png) and the other `04-` files. A live request through Okta is not done. Record: [docs/leave/04-staff.md](../leave/04-staff.md).
+
+### Kaizen reskin — 03:55 to 04:10, 15 min
+
+- Replaced the pine and lantern skin with Kaizen design tokens `11.0.20`, served at `/vendor/kaizen/variables.css`. Inter replaces Bricolage Grotesque and Instrument Sans. Decision: [docs/decisions/jev-03-ui-kaizen.md](../decisions/jev-03-ui-kaizen.md). Spec: [docs/leave/design-spec.md](../leave/design-spec.md).
+- Shell is a purple global nav, a TitleBlock, and tabs. HR pages use the light admin band, with a link back to My leave. Jev's colour is reserved as orange.
+- Request behaviour is unchanged. A balance under 3 days now draws a yellow bar, including a full Personal balance of 2.
+- Rostr tests 59 passed. Container rebuilt. `/app.css`, the token file, and Inter return 200 on the tunnel. Shots: [evidence/leave/kaizen-my-leave-1440.png](../../evidence/leave/kaizen-my-leave-1440.png), [kaizen-request-sheet-1440.png](../../evidence/leave/kaizen-request-sheet-1440.png), [kaizen-hr-1440.png](../../evidence/leave/kaizen-hr-1440.png), [kaizen-my-leave-390.png](../../evidence/leave/kaizen-my-leave-390.png). The `04-` shots are the skin this replaced.

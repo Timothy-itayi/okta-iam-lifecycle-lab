@@ -103,6 +103,8 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today
     if (row && !row.active) return res.status(403).type('text/plain').send('Not allowed.');
     next();
   });
+  const kaizenCss = path.dirname(require.resolve('@kaizen/design-tokens/package.json'));
+  app.use('/vendor/kaizen', express.static(path.join(kaizenCss, 'css')));
   app.use(express.static(path.join(__dirname, '..', 'public')));
   mountHubs(app, { db, hr, today, signInPath: saml || !oidc ? '/saml/login' : '/oidc/login' });
   app.get('/me', (req, res) => {

@@ -124,8 +124,11 @@ test('the stylesheet and fonts are served', async () => {
     assert.equal(css.status, 200);
     const text = await css.text();
     assert.match(text, /\.toast/);
-    assert.match(text, /--lantern: #E9A23B/);
-    const font = await fetch(`${base}/fonts/instrument-sans-400.woff2`);
+    assert.match(text, /--rs-nav: var\(--color-purple-700\)/);
+    const tokens = await fetch(`${base}/vendor/kaizen/variables.css`);
+    assert.equal(tokens.status, 200);
+    assert.match(await tokens.text(), /--color-purple-600:/);
+    const font = await fetch(`${base}/fonts/inter-400.woff2`);
     assert.equal(font.status, 200);
   } finally {
     await close(server);

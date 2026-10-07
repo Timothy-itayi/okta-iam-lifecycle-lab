@@ -1,384 +1,443 @@
-# Rostr design spec — leave hub (staff, admin, HR)
+# Rostr design spec — leave hub on Kaizen
 
-Design spec for the Rostr leave hub described in [rostr-leave-jev-plan.md](rostr-leave-jev-plan.md). It covers the look, the layout, every screen and its states. It is written for a Cursor agent to build from. It replaces the loose styling notes in steps 3.0 to 3.2 of the plan; everything else in the plan stands.
+Design spec for the Rostr leave hub in [rostr-leave-jev-plan.md](rostr-leave-jev-plan.md). Rostr's visual language comes from **Kaizen**, Culture Amp's public design system, released under the MIT licence. This spec says which Kaizen tokens to use, which Kaizen component each part of the UI copies, and how every screen and state looks. It is written for a Cursor agent to build from, and replaces the styling notes in plan steps 3.0 to 3.2.
 
-Build constraints from the plan still apply: server-rendered HTML from `rostr/src/views/`, one stylesheet at `rostr/public/app.css`, small inline scripts only, no front-end framework or build step.
+Build constraints from the plan still apply: server-rendered HTML from `rostr/src/views/`, plain CSS, small inline scripts only, no front-end framework. Kaizen's components are React, so Rostr **does not** use them. It uses Kaizen's **design tokens** directly and rebuilds the component patterns in HTML and CSS.
 
-## 1. Direction
+## 1. Kaizen in this project
 
-**Subject.** Rostr is the internal people app for Lanternfield Goods, a small retailer. Staff use it a few times a month, managers a few times a week, HR daily. It should feel like a calm, trustworthy work tool that respects people's time off: corporate and organised, but warm and human, in the spirit of Culture Amp, without copying it.
+### 1.0 What we use and what we don't
 
-**The idea that makes it Lanternfield's own.** The name gives it: a lantern in a field at dusk. Deep pine green for structure, a single warm lantern-amber light for the things that need attention or are yours. Amber is never decoration. It marks "your turn" — the primary action, the focus ring, a pending item waiting on you.
+| Use | Don't use |
+| --- | --- |
+| `@kaizen/design-tokens` CSS variables (colour, type, spacing, border, shadow, motion) | `@kaizen/components` React components (Rostr has no React) |
+| Kaizen component patterns, rebuilt as HTML + CSS: TitleBlock, Button, Tag, Well, Card, Table, Tabs, InlineNotification, ToastNotification, TextField, TextArea, Radio, Avatar, EmptyState | Culture Amp's logo, illustrations, product names or marketing imagery |
+| Inter, the open-licence font Kaizen uses for UI text | Tiempos Headline (Kaizen's display serif). It's a commercial font and not needed here |
 
-**The one memorable element.** Spend the boldness in one place: the **decision panel** that admins and HR see, where Jev's case and the policy check sit side by side and agree or disagree visibly. Everything else stays quiet.
+Rostr keeps its own name and Lanternfield Goods branding. Someone familiar with Culture Amp should recognise the system, not mistake Rostr for a Culture Amp product.
 
-**Patterns borrowed from current HR and work apps** (the kind collected on Mobbin): leave balances shown up front before you ask (BambooHR, Rippling, Deel); a side sheet for the request form instead of a separate page; a status stepper so people know where their request is; a queue with tabs and a detail view (Linear-style triage); AI suggestions clearly labelled as suggestions, never presented as decisions.
+### 1.1 Install and serve the tokens
 
-## 2. Tokens
-
-Put these in `:root` at the top of `app.css`. Name every colour by its job, not its hue.
-
-### 2.0 Colour
-
-| Token | Hex | Use |
-| --- | --- | --- |
-| `--pine-900` | `#17302B` | Sidebar, headings, primary button fill |
-| `--pine-700` | `#2A4A43` | Hover on pine, secondary headings |
-| `--pine-100` | `#E3ECE8` | Selected row, active nav item background |
-| `--lantern` | `#E9A23B` | Primary action accent, focus ring, "waiting on you" dot. Fill only, never text on white |
-| `--lantern-100` | `#FCEFD8` | Pending chip background, notice banners |
-| `--paper` | `#F5F6F3` | Page background (cool, sage-tinted; not cream) |
-| `--surface` | `#FFFFFF` | Panels, tables, form |
-| `--line` | `#DDE2DC` | Borders and dividers |
-| `--ink` | `#1A2421` | Body text |
-| `--ink-muted` | `#5B6661` | Secondary text, labels, helper text |
-| `--jev` | `#4B47B8` | Everything from Jev, and nothing else |
-| `--jev-100` | `#ECEBFA` | Jev panel background |
-| `--ok` | `#1F7A55` / bg `#DDF2E7` | Approved, policy pass |
-| `--warn` | `#8A5A00` / bg `--lantern-100` | Needs review, pending |
-| `--bad` | `#B42318` / bg `#FDE5E2` | Denied, policy fail, errors |
-
-Rules:
-- Text on white must reach WCAG AA (4.5:1). `--ink-muted` passes on `--surface` and `--paper`. Amber fails as text, so amber only appears as a fill with pine text on it, or as a dot or ring.
-- Jev's indigo is reserved for Jev. No other element uses it, so a reader always knows what came from the model.
-- Status is never shown by colour alone: every chip has a word, and status icons differ in shape.
-
-### 2.1 Type
-
-| Role | Family | Notes |
-| --- | --- | --- |
-| Headings | **Bricolage Grotesque**, weights 600 and 700 | Characterful but corporate. Slight negative tracking at large sizes (`-0.01em`). |
-| UI and body | **Instrument Sans**, weights 400, 500, 600 | Clear at small sizes in tables and forms. |
-| Numbers | Instrument Sans with `font-variant-numeric: tabular-nums` | Dates, day counts, balances, confidence. Columns of numbers line up. |
-
-Self-host both as `woff2` files in `rostr/public/fonts/` (download from Google Fonts or `@fontsource`). Don't load from a CDN: it's an internal app behind Okta and shouldn't call third parties on every page.
-
-Scale (rem, 16px base), sentence case everywhere, no all-caps labels:
-
-| Token | Size / line-height | Use |
-| --- | --- | --- |
-| `--text-xs` | 0.75 / 1.4 | Timestamps, helper text |
-| `--text-sm` | 0.875 / 1.45 | Tables, labels, chips |
-| `--text-md` | 1 / 1.55 | Body, form inputs |
-| `--text-lg` | 1.25 / 1.4 | Panel titles |
-| `--text-xl` | 1.625 / 1.25 | Page titles (Bricolage) |
-| `--text-2xl` | 2.25 / 1.1 | Balance numbers only (Bricolage) |
-
-Body copy and helper text: max line length 70 characters.
-
-### 2.2 Space, radius, elevation
-
-- Spacing on a 4 px grid: `4, 8, 12, 16, 24, 32, 48`. Panels use 24 px padding on desktop, 16 px on mobile.
-- Radius follows hierarchy, not one value everywhere: `6px` controls (inputs, buttons), `10px` panels and the side sheet, `999px` chips and avatars.
-- Panels sit on `--paper` with a 1 px `--line` border and no shadow. Shadows are only for things floating above the page: the side sheet, menus and toasts (`0 12px 32px rgba(23, 48, 43, .18)`).
-
-### 2.3 Icons
-
-[Lucide](https://lucide.dev) icons, copied as inline SVG into one partial (`views/icons.js`), 18 px, 1.75 stroke, `currentColor`. Set used: `calendar`, `plane` (annual), `thermometer` (sick), `user` (personal), `check`, `x`, `clock`, `flag`, `sparkles` (Jev only), `scale` (policy only), `download`, `log-out`, `chevron-right`, `alert-triangle`.
-
-### 2.4 Motion
-
-- Side sheet: slides in from the right, 220 ms, ease-out.
-- Toast: rises 8 px and fades in, 180 ms; stays 4 s; fades out.
-- Deciding a request: its row in the queue collapses out over 200 ms. This is the one orchestrated moment; it shows the queue getting shorter.
-- Nothing animates on page load. Respect `prefers-reduced-motion`: replace movement with instant changes.
-
-## 3. App shell (all roles)
-
-```
-Desktop (≥ 1024 px)
-┌────────────┬──────────────────────────────────────────────┐
-│ ◐ Rostr    │  Page title                    [Primary btn] │
-│            │  One line of context                         │
-│ My leave   │ ──────────────────────────────────────────── │
-│ My roster  │                                              │
-│            │  Content, max-width 1120 px, left-aligned    │
-│ Team       │                                              │
-│ Requests ● │                                              │
-│            │                                              │
-│ HR         │                                              │
-│ All leave  │                                              │
-│ Export     │                                              │
-│            │                                              │
-│ ────────── │                                              │
-│ (PS) Priya │                                              │
-│ Operations │                                              │
-│ Staff      │                                              │
-│ Sign out   │                                              │
-└────────────┴──────────────────────────────────────────────┘
-
-Mobile (< 768 px): sidebar becomes a top bar with the logo and avatar,
-and a bottom tab bar with up to 4 items for the person's role.
+```bash
+cd rostr && npm install @kaizen/design-tokens
 ```
 
-- **Sidebar**: 248 px, `--pine-900`, white text at 80% opacity, active item white at 100% on a slightly lighter pine with a 3 px amber bar on the left. Logo mark: a small circle half filled amber (a lantern seen from above) and "Rostr" in Bricolage.
-- **Navigation by role.** Only sections a person can use are rendered. Hiding is for clarity, not security; the server still enforces access.
-  - Staff: My leave, My roster.
-  - Admin: adds "Team" section with Requests (shows an amber dot and count when anything waits on them).
-  - HR: adds "HR" section with All leave and Export.
-- **Identity block** at the bottom: initials avatar, full name, department, role chip (Staff / Manager / HR). This shows what Okta says about the person, which helps when demoing group changes.
-- **Page header**: title (Bricolage `--text-xl`), one line of context in `--ink-muted`, primary action on the right.
-- Content is left-aligned. Nothing is centred except empty states.
+Checked version: `11.0.20`, MIT. The CSS variables are in `node_modules/@kaizen/design-tokens/css/variables.css` as a single `:root { ... }` block.
 
-## 4. Shared components
+Serve it as a static file. In `rostr/src/app.js`:
 
-### 4.0 Buttons
-- **Primary**: `--pine-900` fill, white text, 40 px tall (44 px on mobile), 6 px radius. Focus: 2 px `--lantern` ring with 2 px offset.
-- **Secondary**: white fill, `--line` border, `--ink` text.
-- **Destructive** (Deny): white fill, `--bad` border and text. Solid red only inside a confirm step.
-- Labels say what happens: "Send request", "Approve", "Deny", "Flag Jev's suggestion". No arrows appended.
+```js
+const path = require('node:path');
+const kaizenCss = path.dirname(require.resolve('@kaizen/design-tokens/package.json'));
+app.use('/vendor/kaizen', express.static(path.join(kaizenCss, 'css')));
+```
 
-### 4.1 Status chips
-Pill, `--text-sm`, icon plus word.
+In the layout `<head>`, load in this order:
 
-| Status | Text | Colours |
+```html
+<link rel="stylesheet" href="/vendor/kaizen/variables.css">
+<link rel="stylesheet" href="/fonts/inter.css">
+<link rel="stylesheet" href="/app.css">
+```
+
+`app.css` only references `var(--...)` tokens. No raw hex values outside a short alias block (1.3).
+
+### 1.2 Credit
+
+- `README.md`: one line under the Rostr section: "UI built on Kaizen design tokens (Culture Amp, MIT licence)" with a link to `https://github.com/cultureamp/kaizen-design-system`.
+- `docs/decisions/jev-03-ui-kaizen.md`: why Kaizen (public, permissive licence, a real HR product's design language), what was used, what wasn't (components, brand, Tiempos), and how the tokens are served.
+
+### 1.3 Rostr aliases
+
+Name tokens by job in one block at the top of `app.css`, pointing at Kaizen variables. Screens use these aliases, so a change of mind is one edit.
+
+```css
+:root {
+  /* text */
+  --rs-ink: var(--color-purple-800);                 /* #2f2438, Kaizen's text colour */
+  --rs-ink-muted: rgba(var(--color-purple-800-rgb), .7);
+  /* surfaces */
+  --rs-page: var(--color-gray-100);                  /* #f9f9f9 */
+  --rs-surface: var(--color-white);
+  --rs-line: var(--color-gray-300);                  /* #eaeaec */
+  --rs-line-strong: var(--color-gray-500);           /* #878792, input borders */
+  /* brand */
+  --rs-nav: var(--color-purple-700);                 /* #4a234d, global nav */
+  --rs-title: var(--color-purple-600);               /* #5f3361, TitleBlock default */
+  /* actions */
+  --rs-action: var(--color-blue-500);                /* #0168b3, Kaizen primary button */
+  --rs-action-hover: var(--color-blue-600);
+  --rs-focus: var(--color-blue-500);
+  /* status */
+  --rs-ok-bg: var(--color-green-100);    --rs-ok: var(--color-green-700);    --rs-ok-icon: var(--color-green-500);
+  --rs-wait-bg: var(--color-yellow-100); --rs-wait: var(--color-yellow-700);
+  --rs-bad-bg: var(--color-red-100);     --rs-bad: var(--color-red-700);     --rs-bad-icon: var(--color-red-500);
+  --rs-info-bg: var(--color-blue-100);   --rs-info: var(--color-blue-700);
+  /* Jev — reserved, nothing else uses orange */
+  --rs-jev-bg: var(--color-orange-100);  --rs-jev: var(--color-orange-700);  --rs-jev-line: var(--color-orange-500);
+}
+```
+
+**Why Jev is orange.** Kaizen uses purple for the brand, blue for actions, and green, yellow and red for status. Orange is the one family left free, so it can mean "this came from Jev" and nothing else. Jev's suggestions never look like an action, a status, or a person's decision.
+
+## 2. Foundations
+
+### 2.0 Type
+
+Self-host **Inter** (SIL Open Font License) as `woff2` in `rostr/public/fonts/`, weights 400, 500 and 600, with `rostr/public/fonts/inter.css` declaring the `@font-face` rules. Kaizen's font-family tokens already list Inter first, so nothing else changes.
+
+| Rostr use | Kaizen token prefix | Size / line height / weight |
 | --- | --- | --- |
-| `with_admin` | With manager | `--warn` on `--lantern-100`, `clock` |
-| `with_hr` | With HR | `--warn` on `--lantern-100`, `clock` |
-| `approved` | Approved | `--ok` on its bg, `check` |
-| `denied` | Declined | `--bad` on its bg, `x` |
-| `cancelled` | Cancelled | `--ink-muted` on `--paper`, no icon |
+| Page title in TitleBlock | `--typography-heading-2-*` | 1.75 / 2.25 rem, 600 |
+| Panel title | `--typography-heading-4-*` | 1.125 / 1.5 rem, 600 |
+| Small section heading | `--typography-heading-6-*` | 0.875 / 1.5 rem, 600 |
+| Body, inputs | `--typography-paragraph-body-*` | 1 / 1.5 rem, 400, max width 780 px |
+| Tables, chips, helper text | `--typography-paragraph-small-*` | 0.875 / 1.125 rem, 400 |
+| Timestamps | `--typography-paragraph-extra-small-*` | 0.75 rem |
+| Balance numbers | `--typography-data-small-*` | 1.5 rem, 700 |
+| Bold inline | `--typography-paragraph-bold-font-weight` | 600 |
 
-Use "Declined" in the staff view (softer) and "Denied" only in audit exports. Use one word per view consistently.
+All numbers (dates, days, balances, confidence) use `font-variant-numeric: tabular-nums`. Sentence case everywhere. No all-caps labels.
 
-### 4.2 Jev chip and policy chip
-- **Jev chip**: `sparkles` icon, `--jev` text on `--jev-100`, e.g. "Suggests approve · 92%". Low confidence: "Not sure" in the same colours, no percentage emphasis.
-- **Policy chip**: `scale` icon, outcome colour, e.g. "Policy: needs review".
-- **Agreement mark** in tables: a small `check` in `--ok` when they agree; `alert-triangle` in `--bad` with the text "Differs" when they don't.
+### 2.1 Space, border, shadow, motion
 
-### 4.3 Form fields
-- Label above the field (`--text-sm`, 600, `--ink`). Helper text below in `--ink-muted`. No placeholder-only labels.
-- Inputs: 44 px tall, white, `--line` border, 6 px radius; hover border `--ink-muted`; focus amber ring.
-- Errors: border `--bad`, message below starting with what to do ("Choose an end date on or after the start date"), linked with `aria-describedby`. On submit with errors, a summary box at the top of the form lists each error as a link to its field.
+- Spacing: Kaizen named steps. `--spacing-xs` 6 px, `--spacing-sm` 12 px, `--spacing-md` 24 px, `--spacing-lg` 36 px, `--spacing-xl` 48 px. Use the numeric ones (`--spacing-8`, `--spacing-16`) for fine adjustments.
+- Panels, inputs and cards: `--border-solid-border-radius` (7 px). Focus rings: `--border-focus-ring-border-radius` (10 px). Chips: fully rounded.
+- Input borders: `--border-solid-border-width` (2 px), colour `--rs-line-strong`. This 2 px border is part of what makes Kaizen look like Kaizen; keep it.
+- Panel borders: `--border-width-1` in `--rs-line`. No shadow.
+- Shadows: `--shadow-small-box-shadow` for menus and toasts, `--shadow-large-box-shadow` for the side sheet. Nothing else floats.
+- Motion: `--animation-duration-rapid` (200 ms) with `--animation-easing-function-ease-out` for the side sheet and toasts; `--animation-duration-fast` (300 ms) for the queue row collapsing after a decision. Nothing animates on page load. `prefers-reduced-motion` turns motion off.
 
-### 4.4 Toast
-Bottom-left on desktop, bottom of screen above the tab bar on mobile. White surface, shadow, 4 px left bar in the outcome colour, message and an optional "View" link. `role="status"`, so screen readers announce it. Copy repeats the action name: button "Send request" → toast "Request LV-0007 sent to Marcus Bell".
+### 2.2 Icons
 
-### 4.5 Empty, loading and error states
-- Empty states are centred in their panel: one line of what's here and one action. "No leave requested yet. Request leave".
-- Jev unavailable: the Jev panel shows "Jev couldn't review this request (error 401). Use the policy check." in `--ink-muted` with no indigo, so missing AI isn't styled like AI.
-- Server errors: the page header area shows a `--bad` banner that says what failed and what to try.
+Kaizen's icon set comes from its React package, so use **Lucide** instead (ISC licence), inline SVG, 20 px, 1.75 stroke, `currentColor`, collected in `views/icons.js`. Set: `calendar`, `plane` (annual), `thermometer` (sick), `user` (personal), `check`, `x`, `clock`, `flag`, `sparkles` (Jev only), `scale` (policy only), `download`, `log-out`, `chevron-left`, `alert-triangle`, `info`.
+
+### 2.3 Focus
+
+Every interactive element: `outline: var(--border-focus-ring-border-width) solid var(--rs-focus); outline-offset: 1px;`. On the purple TitleBlock and nav, use `--color-blue-300` so the ring stays visible. This mirrors Kaizen's Input and Button focus rules.
+
+## 3. App shell
+
+Culture Amp's structure, rebuilt: a dark global nav bar, then a TitleBlock band with the page title, actions and tabs, then content on a light page.
+
+```
+┌───────────────────────────────────────────────────────────────────────┐
+│ ◐ Rostr   Lanternfield Goods                       (PS) Priya Shah ▾  │  global nav, --rs-nav
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  My leave                                          [Request leave]    │  TitleBlock, --rs-title
+│  Priya Shah · Operations                                               │
+│                                                                       │
+│  My leave   My roster   Team requests (3)                             │  navigation tabs
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│   content, max-width 1080 px, centred column, left-aligned inside     │  --rs-page
+│                                                                       │
+└───────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.0 Global nav
+56 px tall, `--rs-nav` background, white text. Left: the Rostr mark (a small circle, half filled `--color-yellow-400`, like a lantern seen from above) and "Rostr", then "Lanternfield Goods" at 70% white. Right: avatar (Kaizen Avatar pattern, `--color-orange-100` background for "personal") with the person's name and a menu holding their department, role, Okta groups (for demos) and "Sign out".
+
+### 3.1 TitleBlock
+Copies Kaizen's TitleBlock: full-width band, content in the centred column, minimum 88 px tall title row, title in heading-2, a subtitle line, and the page's primary action on the right. Primary actions on the dark band use the **reversed** button (white fill, `--rs-ink` text), as in Kaizen.
+
+**Variant by role**, using Kaizen's own variants:
+
+| Area | Variant | Background | Text |
+| --- | --- | --- | --- |
+| Staff pages (My leave, My roster) | default | `--color-purple-600` | white |
+| Manager pages (Team requests) | default | `--color-purple-600` | white |
+| HR pages (All leave, Export) | admin | `--color-gray-100` with a bottom border in `--rs-line` | `--rs-ink` |
+
+The HR area looking different is deliberate. Kaizen uses the admin variant for admin tools, and HR's desk is an admin tool. It also makes it obvious when you're acting with HR rights.
+
+### 3.2 Navigation tabs
+Inside the TitleBlock, like Kaizen's NavigationTabs. Links with white text at 70%, the active tab at 100% with a 5 px bar along the top edge. On the HR (light) band: `--rs-ink` at 75%, active bar in `--color-blue-500`. Only the tabs a role can use are rendered:
+
+| Role | Tabs |
+| --- | --- |
+| Staff | My leave, My roster |
+| Manager | My leave, My roster, Team requests (count) |
+| HR | My leave, My roster, All leave (count), Export |
+
+HR pages show the HR tabs only; a "Back to my leave" breadcrumb (Kaizen's round breadcrumb button, `chevron-left`) sits left of the title.
+
+Hiding tabs is for clarity. The server still enforces every route.
+
+### 3.3 Mobile (< 768 px)
+Global nav keeps the mark and avatar. TitleBlock stacks: title, subtitle, full-width primary action. Tabs scroll sideways with the Kaizen edge fade. Content gets `--spacing-sm` side padding.
+
+## 4. Components
+
+### 4.0 Button (Kaizen Button)
+- **Primary**: `--rs-action` fill and border, white text, min height 40 px (48 px on mobile), radius 7 px, label in `--typography-button-primary-*` weight 500.
+- **Secondary**: white fill, 2 px `--color-gray-500` border, `--rs-ink` text. Hover `--color-gray-200`.
+- **Tertiary**: text only, `--rs-action`, underline on hover. Used for "Flag Jev's suggestion".
+- **Destructive**: secondary style with `--color-red-500` border and `--color-red-600` text. Used for Deny.
+- **Reversed** (on the purple band): white fill, `--rs-ink` text.
+- Labels are verbs that say what happens: "Request leave", "Send request", "Approve", "Deny", "Approve and update balance".
+
+### 4.1 Tag (Kaizen Tag)
+Pill, paragraph-small, icon + word, coloured with Kaizen's Tag pairs (light background, `-700` text, `-500` icon):
+
+| Status | Text (staff) | Text (manager, HR) | Kaizen colour |
+| --- | --- | --- | --- |
+| `with_admin` | With manager | Waiting for you / With manager | yellow, `clock` |
+| `with_hr` | With HR | With HR | yellow, `clock` |
+| `approved` | Approved | Approved | green, `check` |
+| `denied` | Declined | Denied | red, `x` |
+| `cancelled` | Cancelled | Cancelled | gray, no icon |
+
+Jev tag: orange, `sparkles`, "Suggests approve · 92%", or "Not sure" under the threshold.
+Policy tag: `scale` icon, coloured by outcome (green approve, yellow needs review, red deny), "Policy: deny".
+Agreement in tables: `check` in `--rs-ok-icon` when they agree; `alert-triangle` in `--rs-bad-icon` plus the word "Differs" when they don't.
+
+### 4.2 Well (Kaizen Well)
+Bordered, tinted box, 1 px border, 7 px radius, `--spacing-md` padding. Rostr uses three, and their colours are fixed:
+
+| Well | Kaizen colours | Holds |
+| --- | --- | --- |
+| Jev | orange: `--color-orange-100` bg, `--color-orange-500` border | Jev's suggestion |
+| Policy | white: white bg, `--color-gray-500` border | Policy check |
+| Manager decision | blue: `--color-blue-100` bg, `--color-blue-400` border | Manager's decision, on HR's view |
+
+### 4.3 Notifications (Kaizen InlineNotification and ToastNotification)
+- **Inline**: white text area with a coloured 1 px border and tinted background, icon on the left, title in bold, one line of body. Variants map to Kaizen's: `success` green, `informative` blue, `cautionary` yellow, `warning` red.
+- **Toast**: stacked top-right below the TitleBlock on desktop, full-width at the bottom on mobile. White, `--shadow-small-box-shadow`, 7 px radius, a 4 px left bar in the variant colour, title + body, close button. `role="status"`. Disappears after 5 seconds, or stays until closed for errors.
+- Toast copy repeats the button: "Send request" → "Request sent. LV-0007 is with Marcus Bell."
+
+### 4.4 Fields (Kaizen TextField, TextArea, Radio, FieldMessage)
+- Label above, paragraph-small 600. Optional description below the label in `--rs-ink-muted`.
+- Input: white, 2 px `--color-gray-500` border, 7 px radius, 48 px tall, body text. Hover border `--color-gray-600`. Focus: 2 px `--color-blue-500` outline, 1 px offset.
+- Error: border `--color-red-500`, FieldMessage below with `alert-triangle`, linked by `aria-describedby`. Messages say what to do: "Choose an end date on or after the start date."
+- On submit with errors, a `warning` InlineNotification at the top of the form lists each error as a link to its field.
+
+### 4.5 Table (Kaizen Table)
+White panel, 1 px `--rs-line` border, 7 px radius. Header row: paragraph-small 600, `--rs-ink` at 70%, sentence case, bottom border. Rows: minimum 60 px, `--spacing-md` side padding, hover `--color-gray-100`, whole row is a link with a visible focus ring. Visually hidden `<caption>`, `<th scope="col">`.
+
+### 4.6 Card (Kaizen Card)
+White, 1 px `--rs-line`, 7 px radius, `--spacing-md` padding. Used for balance tiles and the request panel.
+
+### 4.7 EmptyState (Kaizen EmptyState, text only)
+Centred in its panel: a heading-4 line, one sentence, one button. Kaizen's illustrations belong to Culture Amp, so use a 48 px Lucide icon in `--rs-ink-muted` instead.
 
 ## 5. Staff screens
 
 ### 5.0 My leave (`GET /leave`)
 
 ```
-My leave                                           [Request leave]
-Your balances and requests
+TitleBlock (purple):  My leave                              [Request leave]
+                      Priya Shah · Operations
+                      My leave   My roster
 
-┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
-│ ✈ Annual         │ │ 🌡 Sick           │ │ 👤 Personal      │
-│ 2  days left     │ │ 8  days left     │ │ 2  days left     │
-│ ▓▓░░░░░░░░ of 15 │ │ ▓▓▓▓▓▓▓▓▓▓ of 8  │ │ ▓▓▓▓▓▓▓▓▓▓ of 2  │
-└──────────────────┘ └──────────────────┘ └──────────────────┘
+┌ Annual ─────────────┐ ┌ Sick ───────────────┐ ┌ Personal ───────────┐
+│ ✈                   │ │ 🌡                   │ │ 👤                  │
+│ 2  days left        │ │ 8  days left        │ │ 2  days left        │
+│ ▓▓░░░░░░░░░  of 15  │ │ ▓▓▓▓▓▓▓▓▓▓  of 8    │ │ ▓▓▓▓▓▓▓▓▓▓  of 2    │
+└─────────────────────┘ └─────────────────────┘ └─────────────────────┘
+From HR records
 
-Requests
-┌─────────────────────────────────────────────────────────────┐
-│ Annual · 20–22 Oct · 3 days      [With manager]   LV-0007 › │
-│ Sick · 2 Oct · 1 day             [Approved]       LV-0004 › │
-└─────────────────────────────────────────────────────────────┘
-```
-
-- Balance tiles: number in Bricolage `--text-2xl`, "days left" beside it, a thin bar showing remaining against the yearly amount. Bar fill pine; under 3 days left, the bar turns amber. Balances come from the HR file; the tile footnote reads "From HR records".
-- Requests list: newest first, one row each, the whole row is a link to the request. Open requests first, then decided ones under a "Past" divider.
-
-### 5.1 Request leave (side sheet)
-
-Opens from "Request leave" as a side sheet 480 px wide on desktop and full screen on mobile. It's a real `<form>` posting to `POST /leave`; the sheet also works as a normal page at `/leave/new` without JavaScript.
-
-```
-Request leave                                              ✕
-────────────────────────────────────────────────────────────
-Type
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ ✈ Annual     │ │ 🌡 Sick       │ │ 👤 Personal  │
-│ 2 days left  │ │ 8 days left  │ │ 2 days left  │
-└──────────────┘ └──────────────┘ └──────────────┘
-
-Dates
-[ Start  20/10/2026 ]   [ End  22/10/2026 ]
-3 working days · Mon 20 – Wed 22 October
-
-┌────────────────────────────────────────────────────────┐
-│ ⚠ This is 1 day more than your annual balance.          │
-│   You can still send it; your manager will see this.    │
-└────────────────────────────────────────────────────────┘
-
-Reason
-┌────────────────────────────────────────────────────────┐
-│                                                        │
-└────────────────────────────────────────────────────────┘
-Your manager and HR will read this.               0 / 500
-
-────────────────────────────────────────────────────────────
-Goes to Marcus Bell, then HR.        [Cancel] [Send request]
-```
-
-- **Type** is a radio group styled as three cards. Each card shows its remaining balance. Selected: pine border 2 px and `--pine-100` fill. Arrow keys move between them (native radio behaviour).
-- **Dates**: two native `<input type="date">` fields side by side (stacked on mobile). Below, a live summary in tabular numbers: working days and the date range in words. The server recalculates; the client count is a convenience.
-- **Inline notices** (amber box, not an error) appear when the request would exceed the balance, or annual leave starts within 14 days ("Annual leave needs 14 days' notice. You can still send it."). They inform; they don't block. Policy decides later. This matches the plan: staff don't see Jev.
-- **Reason**: textarea, 4 rows, counter right-aligned. Helper text says who reads it.
-- **Footer** is sticky: who it goes to (manager name from the HR file) and the actions.
-- On send: the sheet closes, the toast shows, and the new row appears at the top of the list with "With manager".
-
-### 5.2 Request detail (staff, `GET /leave/:ref`)
-
-```
-LV-0007 · Annual leave                              [Cancel request]
-Mon 20 – Wed 22 October · 3 working days
-
-  ●───────────●───────────○───────────○
-  Sent        Manager     HR          Done
-  8 Oct       waiting
-
-Your reason
-"Family wedding in Ballarat."
-
-Activity
-8 Oct 14:02  You sent this request
-```
-
-- The stepper is the main thing on this page. Done steps pine, current step amber ring, future steps outline only. On decline, the line stops and the last step shows "Declined" in `--bad` with the decider's note.
-- Activity comes from `leave_events`, written in plain words. Jev and policy events are not shown to staff.
-- "Cancel request" only shows while the request is open, and asks to confirm.
-
-### 5.3 My roster
-
-A simple week list: day, shift times, location. Released shifts show struck through with "On leave". Out of scope for detail; keep the same table style as the queues.
-
-## 6. Manager (admin) screens
-
-Managers see everything staff see for themselves, plus the Team section.
-
-### 6.0 Team requests queue (`GET /admin/leave`)
-
-```
-Team requests                                       Operations
-Leave waiting for your decision
-
-[ Waiting 3 ]  Decided   Flagged
-
+Requests                                                           heading-4
 ┌──────────────────────────────────────────────────────────────────────┐
-│ Person        Dates          Days  Type    Jev              Policy    │
-├──────────────────────────────────────────────────────────────────────┤
-│ (PS) Priya    20–22 Oct      3     Annual  ✦ Deny · 88%     ✕ Deny  ✓│
-│ (JH) Jonah    21 Oct         1     Annual  ✦ Approve · 74%  ⚖ Review ⚠│
-│ (LO) Lena     4 Nov          1     Sick    ✦ Not sure       ✓ Approve │
+│ Annual leave   Mon 20 – Wed 22 Oct   3 days   [◷ With manager]     › │
+│ Sick leave     Thu 2 Oct             1 day    [✓ Approved]         › │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-- Tabs are links with counts; the active tab has a 2 px pine underline.
-- Table: `--surface`, rows 56 px, hover `--paper`, the whole row links to the detail page. Column headers `--text-sm` 500 `--ink-muted`, sentence case.
-- The department name sits at the right of the header as plain text, so it's clear the list is scoped.
-- Sort: oldest waiting first, because that's who has waited longest.
-- Mobile: rows become stacked cards with person and dates on top, chips below.
+- Balance tiles are Cards in a 3-column grid (1 column on mobile). Number in `--typography-data-small-*`, "days left" in paragraph-small, a 6 px progress bar: track `--color-gray-300`, fill `--color-blue-500`, turning `--color-yellow-500` when under 3 days left. Footnote "From HR records" in extra-small muted.
+- Requests table: open requests first, then decided ones under a "Past requests" heading-6.
+- Empty: "No leave requested yet." + "Request leave".
+
+### 5.1 Request leave (side sheet)
+
+Opened by "Request leave". A `<dialog>` 520 px wide sliding in from the right with `--shadow-large-box-shadow`, full screen on mobile. It's a real form posting to `POST /leave`, and `/leave/new` renders the same form as a page without JavaScript.
+
+```
+Request leave                                                    ✕
+───────────────────────────────────────────────────────────────────
+Leave type
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│ ✈ Annual      │ │ 🌡 Sick        │ │ 👤 Personal   │
+│ 2 days left   │ │ 8 days left   │ │ 2 days left   │
+└───────────────┘ └───────────────┘ └───────────────┘
+
+Start date             End date
+[ 20/10/2026     ]     [ 22/10/2026     ]
+3 working days · Monday 20 to Wednesday 22 October
+
+┌ ⚠ More than your balance ─────────────────────────────────────┐
+│ This is 1 day more than your annual balance. You can still    │
+│ send it, and your manager will see this.                      │
+└───────────────────────────────────────────────────────────────┘
+
+Reason
+Your manager and HR will read this.
+┌───────────────────────────────────────────────────────────────┐
+│                                                               │
+└───────────────────────────────────────────────────────────────┘
+                                                        0 / 500
+───────────────────────────────────────────────────────────────────
+Goes to Marcus Bell, then HR.               [Cancel] [Send request]
+```
+
+- **Leave type**: native radio group styled as three Kaizen Tile-like cards. Each shows its icon, name and remaining balance. Selected: 2 px `--color-blue-500` border, `--color-blue-100` background. Arrow keys move between them.
+- **Dates**: two native `<input type="date">` fields (stacked on mobile), then a live summary in tabular numbers. The server recalculates the working days.
+- **Notices**: `cautionary` InlineNotifications for over-balance and for annual leave inside 14 days ("Annual leave needs 14 days' notice. You can still send it."). They inform; they never block. Policy decides later. Staff never see Jev.
+- **Reason**: TextArea, 4 rows, description above, counter below right.
+- **Footer**: sticky, with the manager's name from the HR file and the two buttons.
+- On send: sheet closes, toast appears, the new row appears at the top with "With manager".
+- `Esc` closes the sheet and focus returns to "Request leave".
+
+### 5.2 Request detail (`GET /leave/:ref`)
+
+```
+TitleBlock (purple):  ‹  Annual leave · LV-0007              [Cancel request]
+                         Mon 20 – Wed 22 October · 3 working days
+
+┌ Progress ────────────────────────────────────────────────────────────┐
+│   ●──────────────●──────────────○──────────────○                     │
+│   Sent           Manager        HR             Done                  │
+│   8 Oct          Waiting                                             │
+└──────────────────────────────────────────────────────────────────────┘
+┌ Your reason ─────────────────┐ ┌ Activity ───────────────────────────┐
+│ Family wedding in Ballarat.  │ │ 8 Oct 14:02  You sent this request  │
+└──────────────────────────────┘ └─────────────────────────────────────┘
+```
+
+- Progress copies the step pattern from Kaizen's Workflow: done steps filled `--color-blue-500`, current step a ring in `--color-yellow-500` with "Waiting", future steps outlined `--color-gray-400`. On decline, the line stops and the step shows a red `x` and the decider's note.
+- Activity lists `leave_events` in plain words. Staff don't see Jev or policy events.
+- "Cancel request" (reversed secondary button) only while open, with a confirm dialog.
+
+### 5.3 My roster
+A table of the week: day, start, end, location. Released shifts show a gray "On leave" tag in place of the times.
+
+## 6. Manager screens
+
+### 6.0 Team requests (`GET /admin/leave`)
+
+```
+TitleBlock (purple):  Team requests
+                      Operations · leave waiting for your decision
+                      My leave   My roster   Team requests (3)
+
+[ Waiting 3 ]  Decided  Flagged                       ← in-page tabs
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Person        Dates          Days  Type     Jev               Policy      │
+├──────────────────────────────────────────────────────────────────────────┤
+│ (PS) Priya    20–22 Oct      3     Annual   ✦ Deny · 88%     ✕ Deny   ✓  │
+│ (JH) Jonah    Tue 21 Oct     1     Annual   ✦ Approve · 74%  ⚖ Review ⚠  │
+│ (LO) Lena     Tue 4 Nov      1     Sick     ✦ Not sure       ✓ Approve    │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+- In-page tabs: links with counts, active tab underlined 3 px in `--color-blue-500`.
+- Sort oldest waiting first.
+- Mobile: each row becomes a Card with person and dates on top and tags below.
 - Empty: "Nothing waiting. New requests from Operations will appear here."
 
 ### 6.1 Decision view (`GET /admin/leave/:ref`)
 
-The memorable screen. Two columns on desktop (60 / 40), stacked on mobile with the decision panel first.
+The screen this project is about. Two columns on desktop (7 / 5 of 12), stacked on mobile with the decision column first.
 
 ```
-‹ Team requests
-Priya Shah · Annual leave                          LV-0007
-Mon 20 – Wed 22 October · 3 working days · sent 8 Oct
+TitleBlock (purple):  ‹  Priya Shah · Annual leave                 LV-0007
+                         Mon 20 – Wed 22 October · 3 working days · sent 8 Oct
 
-┌─ Request ──────────────────────────┐ ┌─ Decision ─────────────────────┐
-│ Reason                             │ │ ⚠ Jev and the policy check     │
-│ "Family wedding in Ballarat."      │ │   disagree. Check before        │
-│                                    │ │   deciding.                     │
-│ Balance        2 annual days left  │ │                                 │
-│ Notice         12 days             │ │ ┌ ✦ Jev suggests ────────────┐ │
-│                                    │ │ │ Approve            74%     │ │
-│ Team that week                     │ │ │ ▓▓▓▓▓▓▓░░░                 │ │
-│        Mon  Tue  Wed  Thu  Fri     │ │ │ Rule: within policy         │ │
-│ Priya  ▒▒▒  ▒▒▒  ▒▒▒  ███  ███     │ │ │ Reason fits leave type      │ │
-│ Jonah  ███  ▒▒▒  ███  ███  ███     │ │ │ Urgency 2 of 5              │ │
-│ Lena   ███  ███  ███  ███  ███     │ │ └────────────────────────────┘ │
-│ ▒ requested   ░ on leave  █ shift  │ │ ┌ ⚖ Policy check ────────────┐ │
-│                                    │ │ │ Deny                        │ │
-│ Activity                           │ │ │ ✕ Insufficient balance      │ │
-│ 8 Oct 14:02  Priya sent request    │ │ │   3 days requested, 2 left  │ │
-│ 8 Oct 14:02  Reviewed by Jev       │ │ │ ⚠ Short notice (12 of 14)   │ │
-│                                    │ │ └────────────────────────────┘ │
-│                                    │ │                                 │
-│                                    │ │ Note (required to deny)         │
-│                                    │ │ [                            ] │
-│                                    │ │ [Deny]            [Approve]     │
-│                                    │ │ Flag Jev's suggestion           │
-└────────────────────────────────────┘ └─────────────────────────────────┘
+┌ Request ─────────────────────────────┐ ┌ Decision ──────────────────────────┐
+│ Reason                               │ │ ┌ ⚠ Jev and the policy check ────┐ │
+│ Family wedding in Ballarat.          │ │ │   disagree. Check before        │ │
+│                                      │ │ │   deciding.                     │ │
+│ Balance       2 annual days left     │ │ └─────────────────────────────────┘ │
+│ Notice        12 days                │ │                                     │
+│                                      │ │ ┌ ✦ Jev suggests ── orange Well ──┐ │
+│ Team that week                       │ │ │ Approve                    74%  │ │
+│          Mon  Tue  Wed  Thu  Fri     │ │ │ ▓▓▓▓▓▓▓░░░                      │ │
+│ Priya    ▒▒▒  ▒▒▒  ▒▒▒  ███  ███     │ │ │ Rule: within policy             │ │
+│ Jonah    ███  ▒▒▒  ███  ███  ███     │ │ │ Reason fits the leave type      │ │
+│ Lena     ███  ███  ███  ███  ███     │ │ │ Urgency 2 of 5                  │ │
+│ ▒ requested  ░ on leave  █ rostered  │ │ │ Suggestion only. Jev can't      │ │
+│                                      │ │ │ approve or deny.                │ │
+│ Activity                             │ │ └─────────────────────────────────┘ │
+│ 8 Oct 14:02  Priya sent request      │ │ ┌ ⚖ Policy check ── white Well ───┐ │
+│ 8 Oct 14:02  Reviewed by Jev         │ │ │ Deny                            │ │
+│ 8 Oct 14:02  Policy check ran        │ │ │ ✕ Insufficient balance          │ │
+│                                      │ │ │   3 days requested, 2 left      │ │
+│                                      │ │ │ ⚠ Short notice: 12 of 14 days   │ │
+│                                      │ │ └─────────────────────────────────┘ │
+│                                      │ │ Note (needed to deny)               │
+│                                      │ │ [                                 ] │
+│                                      │ │ [Deny]                  [Approve]   │
+│                                      │ │ Flag Jev's suggestion               │
+└──────────────────────────────────────┘ └─────────────────────────────────────┘
 ```
 
-- **Decision panel** is sticky on desktop so actions stay in view.
-- **Disagreement banner** only appears when Jev and policy differ: `--bad` text on `--lantern-100`, `alert-triangle` icon. When they agree, a quiet single line instead: "Jev and the policy check agree."
-- **Jev card**: `--jev-100` background, `--jev` left border 3 px, `sparkles` icon and "Jev suggests". Recommendation in `--text-lg`, confidence as a number and a thin bar in `--jev`. Below the threshold, the recommendation is replaced with "Jev isn't sure. Decide using the policy check." and the bar is grey. Under it, the rule it picked (using the rule's plain text), whether the reason fits, urgency. A one-line footnote: "Suggestion only. Jev can't approve or deny."
-- **Policy card**: white, `--line` border, `scale` icon. Outcome in `--text-lg` in its colour. Every rule that fired, each with an icon and the numbers behind it ("3 days requested, 2 left").
-- The two cards look clearly different (tinted vs plain), so the model's opinion is never mistaken for the rule.
-- **Team that week**: a compact grid, one row per person in the department, five weekday cells. Requested days hatched pine, approved leave light grey, shifts solid pine at 20%. It answers "can we cover this?" at a glance. Include a text legend; cells have `aria-label`s like "Jonah, Tuesday, requested leave".
-- **Actions**: Approve is primary (pine). Deny is destructive-secondary and needs the note. "Flag Jev's suggestion" is a text link that opens a small inline form: "What should Jev have suggested?" (radio: approve / deny / needs review) plus a note, and "Save flag". Flagging doesn't decide the request.
-- After deciding: redirect to the queue, the row collapses out, toast "Approved. Sent to HR." or "Denied. Priya has been told."
-- **Own request** (manager is the requester): the decision panel is replaced with "You can't decide your own request. It's gone to HR." No buttons.
+- **Decision column** is sticky on desktop so the buttons stay in view.
+- **Agreement line**: when they disagree, a `warning` InlineNotification. When they agree, a plain line with a green `check`: "Jev and the policy check agree."
+- **Jev Well** (orange): `sparkles` + "Jev suggests" in heading-6, the recommendation in heading-4, confidence as a number and a 6 px bar in `--color-orange-500`. Then the deciding rule in plain words from `leave-rules.json`, reason fit, urgency, and the fixed footnote. Below the threshold: "Jev isn't sure. Decide using the policy check." with a gray bar. If Jev was unavailable, the Well turns gray: "Jev couldn't review this request (error 401). Use the policy check."
+- **Policy Well** (white): `scale` + "Policy check", outcome in heading-4 in its status colour, then every rule that fired with its icon and the numbers behind it.
+- **Team that week**: a 5-column grid, one row per person in the department. Requested days hatched `--color-blue-400`, approved leave `--color-gray-300`, rostered shifts `--color-blue-100`. Text legend below; every cell has an `aria-label` such as "Jonah, Tuesday, requested leave".
+- **Actions**: Approve (primary), Deny (destructive; needs the note), "Flag Jev's suggestion" (tertiary). Flag opens an inline form: "What should Jev have suggested?" (approve / deny / needs review) and a note, then "Save flag". Flagging doesn't decide the request.
+- **After deciding**: back to the queue; the row collapses; toast "Approved. Sent to HR." or "Denied. Priya has been told."
+- **Own request**: the decision column shows an `informative` notification "You can't decide your own request. It has gone to HR." and no buttons.
 
 ## 7. HR screens
 
-HR uses the same components as the manager views. The differences are scope, one extra column, and the final decision.
+Same components, admin TitleBlock variant, all departments.
 
 ### 7.0 All leave (`GET /hr/leave`)
 
 ```
-All leave                                            [Export changes]
-Requests approved by managers, waiting for HR
+TitleBlock (admin, light gray):  ‹  All leave                     [Export changes]
+                                    Approved by managers, waiting for HR
+                                    All leave (4)   Export
 
-[ Waiting 4 ]  Approved   Declined   All
-Department: [All ▾]
+[ Waiting 4 ]  Approved  Declined  All          Department [ All ▾ ]
 
-│ Person   Dept        Dates      Days  Type    Manager          Jev        Policy   │
-│ Priya    Operations  20–22 Oct  3     Annual  ✓ Marcus Bell    ✦ Deny 88% ✕ Deny ✓ │
+│ Person   Department  Dates      Days  Manager           Jev          Policy    │
+│ Priya    Operations  20–22 Oct  3     ✓ Marcus Bell     ✦ Deny 88%  ✕ Deny  ✓ │
 ```
 
-- Extra columns: Department, and Manager decision (name with a check). Wider table; on screens under 1280 px the Type column folds into the Dates cell.
-- Department filter is a native `<select>`. Filters are in the URL (`?dept=Operations`) so views are shareable.
-- **Export changes** opens a small panel: how many balance changes are waiting, "Download JSON", and one line on what happens next: "Run leave-apply with a REQ number to update the HR file." This is the bridge to the script in the plan.
+- Extra columns: Department, and Manager (a green `check` and the manager's name). Under 1280 px, Days moves into the Dates cell.
+- Department filter is a native `<select>` styled as a Kaizen field. Filters live in the URL (`?dept=Operations`).
+- **Export changes** (secondary button on the light band) opens a small modal: how many balance changes are waiting, "Download JSON" (primary), and one line on what comes next: "Run leave-apply with a REQ number to update the HR file."
 
 ### 7.1 HR decision view (`GET /hr/leave/:ref`)
 
 Same layout as 6.1, with:
-- The stepper at the top of the request column showing Manager approved with the manager's name and note.
-- A third card in the decision panel, above Jev: **Manager decision**, white with a pine left border: "Approved by Marcus Bell, 9 Oct — 'Covered by Lena.'"
-- Buttons: "Approve and update balance" (primary) and "Decline".
-- **Own request** (Helen): "You can't approve your own leave. It needs another HR approver." Panel shows the conflict state in amber, no buttons. This is the separation-of-duties gap from the plan made visible.
+- the progress steps at the top of the request column showing "Manager approved" with the manager's name;
+- a **Manager decision Well** (blue) first in the decision column: "Approved by Marcus Bell, 9 Oct", followed by their note;
+- buttons "Approve and update balance" (primary) and "Decline" (destructive).
 
-## 8. Copy guide
+**Own request** (Helen): a `cautionary` notification "You can't approve your own leave. It needs another HR approver." and no buttons. This makes the separation-of-duties gap from the plan visible.
 
-- Sentence case everywhere. Plain words. No "Submit", "Process", or "Item".
-- Staff-facing: "Declined", "With manager", "Your manager and HR will read this."
-- Manager and HR-facing: name the person, the days and the rule. "Deny" is fine here.
-- Jev is always "Jev suggests", never "Jev decided" or "AI approved".
-- Errors say what to do: "Choose a leave type." "End date must be on or after the start date."
-- Numbers: "3 working days", "2 days left", "92%". Dates as "Mon 20 Oct" in lists, "Monday 20 October" in detail headers. Australian date order in inputs.
+## 8. Copy
 
-## 9. Accessibility checklist
+- Sentence case. Plain verbs. No "Submit", "Process" or "Item".
+- Staff see "Declined" and "With manager". Managers and HR see "Deny" and "Waiting for you".
+- Jev is always "Jev suggests". Never "Jev decided" or "AI approved".
+- Errors say what to do. Empty states say what will appear and offer the next action.
+- Numbers: "3 working days", "2 days left", "92%". Dates as "Mon 20 Oct" in tables and "Monday 20 October" in headers. Australian date order in inputs. `<html lang="en-AU">`.
 
-- AA contrast on all text; check `--ink-muted`, chips and the Jev card text with a contrast tool before shipping.
-- Visible focus on every interactive element (amber ring). Never remove outlines.
-- Everything works with the keyboard alone, including the side sheet (focus moves into it, `Esc` closes it, focus returns to the "Request leave" button).
-- The side sheet is a `<dialog>` with `aria-labelledby` on its title.
-- Tables use real `<table>`, `<th scope>`, and a visually hidden `<caption>`.
+## 9. Accessibility
+
+- Text meets WCAG AA. Kaizen's pairs (light background, `-700` text) are built for this; check the orange Jev Well and `--rs-ink-muted` with a contrast tool.
+- Every interactive element has a visible focus ring (2.3).
+- Full keyboard use, including the side sheet and modals (`<dialog>`, focus moves in, `Esc` closes, focus returns).
+- Real tables with captions and header scopes.
+- Status is always word + icon + colour.
 - Touch targets at least 44 × 44 px on mobile.
-- Status is text plus colour plus icon, never colour alone.
-- `prefers-reduced-motion` disables the slide and collapse animations.
-- Language set (`<html lang="en-AU">`).
+- Reduced motion respected.
 
-## 10. Build order for the agent
+## 10. Build order
 
-This slots into the plan without changing its phases:
-
-| Plan step | Build from this spec |
+| Plan step | From this spec |
 | --- | --- |
-| 3.0 – 3.2 | Sections 2, 3 and 4: tokens, fonts, icons, shell, buttons, chips, fields, toast |
+| 3.0 – 3.2 | Sections 1–4: install and serve tokens, Inter, aliases, global nav, TitleBlock, tabs, buttons, tags, wells, notifications, fields, table |
 | 4.0 – 4.2 | Section 5: My leave, request side sheet, request detail |
-| 7.0 – 7.1 | Section 6: queue and decision view |
-| 8.0 | Section 7: HR queue, HR decision view, export panel |
+| 7.0 – 7.1 | Section 6: Team requests and the decision view |
+| 8.0 | Section 7: All leave, HR decision view, export modal |
+| 10.5 | Section 1.2: README credit and `jev-03-ui-kaizen.md` |
 
-After each step, take a screenshot at 1440 px and 390 px wide, compare against the wireframes here, and save them to `evidence/phase-N/`.
+After each step, take screenshots at 1440 px and 390 px wide, compare them with the wireframes here, and save them to `evidence/phase-N/`. For reference while building, Kaizen's Storybook is at <https://cultureamp.design>.

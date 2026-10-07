@@ -120,7 +120,6 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const state = formState(me, employee, requests);
     render(req, res, me, {
       title: 'My leave',
-      context: 'Your balances and requests',
       action: requestAction(),
       current: '/leave',
       body: views.myLeaveBody({ balance: state.balance, requests, form: views.requestForm(state) }),
@@ -134,7 +133,6 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const state = formState(me, employee, myRequests(db, me.email));
     render(req, res, me, {
       title: 'Request leave',
-      context: 'Your manager and then HR decide.',
       current: '/leave',
       body: views.newLeaveBody({ form: views.requestForm({ ...state, standalone: true }) }),
     });
@@ -150,7 +148,6 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     if (result.errors.length) {
       return render(req, res, me, {
         title: 'Request leave',
-        context: 'Your manager and then HR decide.',
         current: '/leave',
         body: views.newLeaveBody({ form: views.requestForm({ ...state, value: result.value, errors: result.errors, standalone: true }) }),
       }, 400);
@@ -210,7 +207,6 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     }
     render(req, res, me, {
       title: 'My roster',
-      context: 'Your shifts. Approved leave releases the shift.',
       current: '/roster',
       body: views.rosterBody({ shifts, leaveDays }),
     });
@@ -221,10 +217,19 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const waiting = me.nav.waiting;
     render(req, res, me, {
       title: 'Team requests',
-      context: 'Leave waiting for your decision',
-      aside: `<span class="scope">${escapeHtml(me.department || '')}</span>`,
+      context: `${me.department || 'Your department'} · leave waiting for your decision`,
       current: '/admin/leave',
       body: `<section class="panel empty"><p>${waiting ? `${waiting} ${waiting === 1 ? 'request is' : 'requests are'} waiting from ${escapeHtml(me.department || 'your department')}.` : `Nothing waiting. New requests from ${escapeHtml(me.department || 'your department')} will appear here.`}</p><p class="helper">The decision queue is the next part to be built.</p></section>`,
+    });
+  });
+
+  app.get('/hr/export', requireHR, (req, res) => {
+    const me = viewer(req);
+    render(req, res, me, {
+      title: 'Export',
+      context: 'Balance changes waiting to be written back to the HR file',
+      current: '/hr/export',
+      body: '<section class="panel empty"><p>Nothing to export yet. Approved leave writes a balance change, and that list is built with the HR desk.</p></section>',
     });
   });
 
@@ -233,7 +238,7 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const waiting = me.nav.waiting;
     render(req, res, me, {
       title: 'All leave',
-      context: 'Requests approved by managers, waiting for HR',
+      context: 'Approved by managers, waiting for HR',
       current: '/hr/leave',
       body: `<section class="panel empty"><p>${waiting ? `${waiting} ${waiting === 1 ? 'request is' : 'requests are'} with HR.` : 'Nothing is waiting for HR.'}</p><p class="helper">The HR queue is built after the manager queue.</p></section>`,
     });
