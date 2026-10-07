@@ -25,6 +25,10 @@ Actor on the add event is Timothy Itayi via the Workflows Okta connection, not M
 
 `group.user_membership.remove` for Lena Ortiz / `APP-Rostr-Admins` is in [../system-log-group-membership.jsonl](../system-log-group-membership.jsonl) at `2026-10-07T03:06:20.435Z` (14:06:20 Sydney). Actor display name is Timothy itayi, client IP `35.82.175.79` (Workflows), same pattern as the add at `02:06:18Z`. One hour, to the second.
 
+## Closed
+
+Ticket `357784` is Closed. The closed list shows Date Closed `10/7/26 1:17 PM` and Closed By Admin Admin. The panel clock is UTC, so that is 00:17 on 8 October Sydney. [../../5.2-ticket-closed.png](../../5.2-ticket-closed.png). The shot is the list, not the thread, so it does not show a revoke note.
+
 ## Still not in this pack
 
-Workflows History URL on the ticket, and ticket `357784` Closed. Screenshots still needed: `evidence/5.2-flow-history.png`, `evidence/5.2-system-log-group-remove.png`, `evidence/5.2-ticket-closed.png`.
+The Workflows History URL for the 13:06 run. Screenshot still needed: `evidence/5.2-flow-history.png`. The remove itself is in the System Log JSONL above. A separate screenshot of that row was not saved.

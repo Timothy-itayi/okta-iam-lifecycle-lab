@@ -118,7 +118,7 @@
 
   <rect x="52" y="784" width="270" height="78" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
   <text x="68" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Access Request</text>
-  <text x="68" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">flow built. Ticket 357784 open</text>
+  <text x="68" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">flow built. Ticket 357784 closed</text>
 
   <rect x="346" y="784" width="270" height="78" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
   <text x="362" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Stale-Access</text>

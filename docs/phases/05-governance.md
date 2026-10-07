@@ -2,7 +2,7 @@
 
 Previous: [Phase 4 — Joiner, mover, and leaver](04-jml.md).
 
-osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06 and removed her at 14:06:20. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. Ticket `357784` is still Open. Access review REQ-0002 applied at 13:43. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. The audit pack and the OIG mapping are written.
+osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06 and removed her at 14:06:20. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. Ticket `357784` was closed by Admin on 8 October, 00:17 Sydney. Access review REQ-0002 applied at 13:43. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. The audit pack and the OIG mapping are written.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
 
@@ -19,7 +19,7 @@ Lena Ortiz, EMP-1005, asked for `APP-Rostr-Admins` for one hour. Marcus Bell, EM
 
 osTicket timestamps on those screens are 1:24–1:28, which is UTC in the container. The screenshot files are 12:24–12:28 +1100.
 
-The ticket is Open, unassigned, Help Topic Access Request, user `lena.ortiz@lanternfieldgoods.co.uk`. The lab id is `REQ-0001`. osTicket's number is `357784`. Leave it Open until she is in the group and, one hour later, out of it. Then Internal Note that it was revoked, then Close.
+The ticket was opened unassigned, Help Topic Access Request, user `lena.ortiz@lanternfieldgoods.co.uk`. The lab id is `REQ-0001`. osTicket's number is `357784`. It stayed Open through the grant and the 14:06 remove. Admin closed it on 8 October. The closed list shows Date Closed `10/7/26 1:17 PM`, which is UTC on this container, so 00:17 Sydney, Closed By Admin Admin: [evidence/5.2-ticket-closed.png](../../evidence/5.2-ticket-closed.png). The thread is not in that shot, so a revoke note and the Workflows History URL are not recorded.
 
 `hr-sync` is not used. `hr/employees.json` does not change.
 
@@ -41,11 +41,11 @@ Group membership was not enough to open the OIDC app until Rostr Admin was assig
 
 OIDC does not write `lastLogin`. Lena's row stayed empty. Jonah Hale's SAML time `2026-10-06T05:20:26.829Z` is unchanged. Samir Adeyemi and `test.joiner` are `active` no. Orphan Roster is still in the table.
 
-The 13:06 POST is the only trigger. Do not POST again. Wait For fired: `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is at `2026-10-07T03:06:20.435Z` (14:06:20 Sydney) in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Actor is the Workflows connection (display name Timothy itayi, IP `35.82.175.79`). The ticket is still Open until the History URL is pasted and it is Closed.
+The 13:06 POST is the only trigger. Do not POST again. Wait For fired: `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is at `2026-10-07T03:06:20.435Z` (14:06:20 Sydney) in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Actor is the Workflows connection (display name Timothy itayi, IP `35.82.175.79`). The ticket was closed the next night. The History URL is still not on it.
 
-## 5.2 Close-out (not done)
+## 5.2 Close-out
 
-Done when grant-after-approval and automatic remove show in all three records: ticket `357784`, Workflows History for the 13:06 run, System Log add and remove.
+The ticket is Closed. Grant and remove are in the System Log. The Workflows History URL for the 13:06 run is still not saved.
 
 The flow is **Not saving data**, same as Leaver. History will have the execution row and not the card outputs. That row's URL is still the run link. Copy it from Workflows → this flow → History. The 13:06 run should still be in progress until Wait For ends.
 
@@ -57,11 +57,11 @@ After ~14:06, in this order:
 4. osTicket `357784`, Internal Note, then Close. Note text: `REQ-0001` granted 13:06, removed automatically after one hour, paste the History run URL. Do not Close before the remove event exists.
 5. Save: History (completed run), System Log remove, ticket Closed with that note.
 
-| Evidence still needed | File |
+| Evidence | File |
 | --- | --- |
-| Workflows History, this run | `evidence/5.2-flow-history.png` |
-| `group.user_membership.remove` | `evidence/5.2-system-log-group-remove.png` |
-| Ticket Closed, note has the run link | `evidence/5.2-ticket-closed.png` |
+| Ticket Closed, Admin Admin, panel `10/7/26 1:17 PM` | [evidence/5.2-ticket-closed.png](../../evidence/5.2-ticket-closed.png) |
+| Workflows History, this run | Still needed: `evidence/5.2-flow-history.png` |
+| `group.user_membership.remove` screenshot | The JSONL row exists. A screenshot was not saved. |
 
 `APP-Rostr-Admins` group id `00g18dk6nvdMFQAgi698`. Close uses a dummy API Connector connection named `unused-close` with auth None, because Workflows stuffed Close under API Connector.
 
@@ -173,6 +173,6 @@ Done. The note is [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md). 
 | Stale-Access report, no deactivate | Usage in a campaign; Analyzer last-use | Okta SSO last-use, scheduled revoke |
 | Two groups as the only entitlements | Entitlements, bundles, collections, owners | Values finer than a group. Source labelled. |
 
-Checkpoint: for any staff member, who approved their access? Birthright has no named approver. The Keep on REQ-0002 is the approval of record. Lena's `APP-Rostr-Admins` hour was approved by Marcus Bell. The flow removed it at 14:06:20. The System Log actor is Workflows, not Marcus. Ticket `357784` is still Open.
+Checkpoint: for any staff member, who approved their access? Birthright has no named approver. The Keep on REQ-0002 is the approval of record. Lena's `APP-Rostr-Admins` hour was approved by Marcus Bell. The flow removed it at 14:06:20. The System Log actor is Workflows, not Marcus. Ticket `357784` was closed by Admin at 00:17 Sydney on 8 October.
 
 What to learn first on the job is in the mapping note: conditions before request types, campaign scope and auto-revoke, Policy vs Custom vs Bundle, and whether the org bought OIG at all.

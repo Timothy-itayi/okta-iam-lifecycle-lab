@@ -34,6 +34,7 @@ Lena Ortiz requested `APP-Rostr-Admins` for one hour. Marcus Bell approved. Work
 | [../5.1-osticket-staff-login.png](../5.1-osticket-staff-login.png) | CC6.1 / A.5.15 | IT admin authenticated to ticket system |
 | [../5.1-osticket-help-topics.png](../5.1-osticket-help-topics.png) | CC6.3 / A.5.18 | Access Request help topic exists |
 | [../5.1-osticket-ticket-list.png](../5.1-osticket-ticket-list.png) | CC6.3 / A.5.18 | Ticket `357784` opened by requester |
+| [../5.2-ticket-closed.png](../5.2-ticket-closed.png) | CC6.3 / A.5.18 | Ticket `357784` closed by Admin |
 | [../5.1-osticket-approval.png](../5.1-osticket-approval.png) | CC6.3 / A.5.18 | Manager approval recorded as Internal Note |
 | [../5.2-system-log-group-add.png](../5.2-system-log-group-add.png) | CC6.3 / A.5.18 | `group.user_membership.add` SUCCESS in System Log |
 | [../5.2-lena-in-app-rostr-admins.png](../5.2-lena-in-app-rostr-admins.png) | CC6.3 / A.5.18 | User in group after grant |
@@ -43,7 +44,7 @@ Lena Ortiz requested `APP-Rostr-Admins` for one hour. Marcus Bell approved. Work
 | [../5.2-access-request-flow-left.png](../5.2-access-request-flow-left.png) | CC6.3 / A.5.18 | Workflow: add, wait, remove |
 | [../5.2-access-request-flow-right.png](../5.2-access-request-flow-right.png) | CC6.3 / A.5.18 | Workflow: automatic revoke after timer |
 
-The remove is in `system-log-group-membership.jsonl` (`03:06:20Z`). Still missing from the pack: Workflows History URL and ticket `357784` Closed. Those are screenshots, not log rows.
+The remove is in `system-log-group-membership.jsonl` (`03:06:20Z`). Ticket `357784` is Closed: [../5.2-ticket-closed.png](../5.2-ticket-closed.png), panel Date Closed `10/7/26 1:17 PM` (UTC), Closed By Admin Admin. Still missing from the pack: the Workflows History URL. That is a screenshot, not a log row.
 
 ### Access review (REQ-0002)
 

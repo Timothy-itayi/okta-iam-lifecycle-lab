@@ -12,7 +12,7 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-The work so far took three days, 5 October through 7 October. Phases 0 through 4 and Phase 6 are done. Phase 5 is done except osTicket ticket `357784`, which is still Open after Lena Ortiz's one-hour admin grant. The lab report and the three practice accounts are written for a reader who was not in the lab. The CV lines and the teardown are not started.
+The documented lab is done. It took three days, 5 October through 7 October. osTicket ticket `357784` is Closed. The report and the three practice accounts are written for a reader who was not in the lab. The trial org is still up. Teardown was not run.
 
 The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Operations. Samir Adeyemi and Thomas Okeke are terminated. `APP-Rostr-Admins` is empty. An orphan row in Rostr was imported, matched nobody, and ignored. The finished account is [docs/report.md](docs/report.md).
 
@@ -23,9 +23,9 @@ The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Oper
 | 2 | SaaS onboarding: SAML and OIDC | 8 h | Done | [docs/phases/02-onboarding.md](docs/phases/02-onboarding.md) |
 | 3 | SCIM provisioning | 8 h | Done | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
 | 4 | Joiner, mover, and leaver | 7 h | Done | [docs/phases/04-jml.md](docs/phases/04-jml.md) |
-| 5 | Governance and audit evidence | 7.5 h | Nearly done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Ticket `357784` is still Open. |
+| 5 | Governance and audit evidence | 7.5 h | Done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Ticket `357784` is Closed. |
 | 6 | Failure drills | 6 h | Done | [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md) |
-| 7 | Write-up and teardown | 4 h | In progress | [docs/report.md](docs/report.md). Stories: [docs/interview-stories.md](docs/interview-stories.md). CV lines and teardown are not started. |
+| 7 | Write-up and teardown | 4 h | Done | [docs/report.md](docs/report.md) and [docs/interview-stories.md](docs/interview-stories.md). The org was not torn down. |
 
 ## Data flow
 
@@ -80,6 +80,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 11. [docs/decisions/oig-mapping.md](docs/decisions/oig-mapping.md)
 12. [docs/incidents/00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md)
 13. [docs/report.md](docs/report.md)
+14. [docs/interview-stories.md](docs/interview-stories.md)
 
 ## What is in place
 
@@ -90,7 +91,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 - Lost-phone reset: [docs/runbooks/mfa-reset.md](docs/runbooks/mfa-reset.md).
 - SaaS onboarding: [docs/runbooks/saas-onboarding.md](docs/runbooks/saas-onboarding.md).
 - Joiner, mover, and leaver: [docs/phases/04-jml.md](docs/phases/04-jml.md).
-- Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is still Open: [docs/phases/05-governance.md](docs/phases/05-governance.md).
+- Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is Closed: [docs/phases/05-governance.md](docs/phases/05-governance.md).
 - Six failure drills: [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md).
 - Lab report: [docs/report.md](docs/report.md). The PDF export is [okta-iam-lifecycle-lab-report.pdf](okta-iam-lifecycle-lab-report.pdf).
 - Three practice accounts: [docs/interview-stories.md](docs/interview-stories.md). The PDF export is [okta-iam-interview-stories.pdf](okta-iam-interview-stories.pdf).

@@ -373,7 +373,11 @@ Runbook 5.6. The audit pack is runbook 5.5. This log already used 5.5 for the OA
 
 ### Access Request close-out (remove only)
 
-Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is `2026-10-07T03:06:20.435Z` in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Ticket `357784` is still Open. Still needed: Workflows History URL on the ticket, Internal Note, Close, and the three screenshots.
+Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is `2026-10-07T03:06:20.435Z` in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). At the time of this note the ticket was still Open.
+
+### Access Request ticket closed
+
+8 October, 00:17 Sydney. osTicket closed list for `357784`, subject `REQ-0001 APP-Rostr-Admins`, From Lena Ortiz, Date Closed `10/7/26 1:17 PM` on the UTC panel clock, Closed By Admin Admin. [evidence/5.2-ticket-closed.png](../../evidence/5.2-ticket-closed.png). The Workflows History URL is still not on the ticket.
 
 ## Phase 6 — Failure drills
 
@@ -436,7 +440,7 @@ The CV lines are not written up. Nothing has been torn down. The reports were re
 
 ### 7.1 Final report — 18:29 to 18:55
 
-- [docs/report.md](../report.md). Opens with who the people are and what SAML, OIDC, SCIM, and a group rule mean in this lab. Then purpose, how it was built, why, risk management, incidents, outcome, and what production would add. Ticket `357784` is still Open. Teardown is not done.
+- [docs/report.md](../report.md). Opens with who the people are and what SAML, OIDC, SCIM, and a group rule mean in this lab. Then purpose, how it was built, why, risk management, incidents, outcome, and what production would add. Ticket `357784` was closed later, at 00:17 on 8 October. Teardown is not done.
 - PDF export at the repo root: [okta-iam-lifecycle-lab-report.pdf](../../okta-iam-lifecycle-lab-report.pdf).
 
 ### 7.2 README — 18:29 to 18:36

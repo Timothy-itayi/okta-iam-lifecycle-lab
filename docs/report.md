@@ -25,7 +25,7 @@ A joiner is a new hire. A mover is a person who changes department or job. A lea
 | Priya Shah | The clean department move, Sales to Operations. |
 | Samir Adeyemi | The first leaver. Deactivated in Okta and in Rostr. |
 | Thomas Okeke | The joiner. Later deactivated in Okta while Rostr was left active on purpose, then deactivated in Rostr on a second try. |
-| Lena Ortiz | Filed the one-hour request for admin access. The ticket is still open. |
+| Lena Ortiz | Filed the one-hour request for admin access. Ticket `357784` was closed by Admin on 8 October. |
 | Drill Scim | A throwaway user for the provisioning failure. Deactivated afterwards. Not in the HR file. |
 
 ## Purpose
@@ -111,7 +111,7 @@ The 6.1 success sign-in overwrote Jonah's planted stale `lastLogin`. The Phase 5
 | SAML and OIDC can be explained from captures | Done. Jonah completed both. [docs/phases/02-onboarding.md](phases/02-onboarding.md) |
 | SCIM shows create, update, and deactivate | Done. The app sends PUT, including `active: false`. [docs/phases/03-scim.md](phases/03-scim.md) |
 | Group and attribute mappings are tested | Done, with a gap: a failed create's retry did not re-read a mapping that was fixed afterwards. The profile edit did. [docs/incidents/05-scim-mapping.md](incidents/05-scim-mapping.md) |
-| An access request and a review | The grant and the hour-later remove are in the System Log. Ticket `357784` is still Open. REQ-0002 revoked leftover group membership. [docs/phases/05-governance.md](phases/05-governance.md) |
+| An access request and a review | The grant and the hour-later remove are in the System Log. Ticket `357784` is Closed. REQ-0002 revoked leftover group membership. [docs/phases/05-governance.md](phases/05-governance.md) |
 | An evidence pack | [evidence/audit-pack/README.md](../evidence/audit-pack/README.md) |
 | Six deliberate failures written up | Done. Incidents 02 through 07, plus the two earlier incidents. |
 | Teardown | Not done. |
@@ -128,4 +128,4 @@ Deactivate Users has to stay on. Turning it off does not fail the Okta deactivat
 
 `userName` would not be the email if addresses change. This lab used the email on purpose.
 
-The trial org, the open ticket, the ignored orphan, and the stale-access report that no longer matches `lastLogin` would not be left as the record of the directory. Teardown, or a renewal decision, is still outstanding.
+The trial org, the ignored orphan, and the stale-access report that no longer matches `lastLogin` would not be left as the record of the directory. Ticket `357784` is closed. Teardown, or a renewal decision, is still outstanding.

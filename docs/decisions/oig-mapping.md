@@ -31,7 +31,7 @@ For staff in `hr/employees.json`, this is the honest answer today:
 
 `test.joiner` is lab debris, Revoke on `unmanaged.csv`. Orphan Roster is not an Okta user.
 
-Birthright has a source (HR + rules) and no approver. That is the gap Access Certifications closes: the manager's Keep is the approval on the record. Exception access for Lena has an approver. The System Log actor on both the add (`02:06:18Z`) and the remove (`03:06:20Z`) is the Workflows connection, not Marcus. Ticket `357784` is still Open, so the ticket record does not yet show the revoke.
+Birthright has a source (HR + rules) and no approver. That is the gap Access Certifications closes: the manager's Keep is the approval on the record. Exception access for Lena has an approver. The System Log actor on both the add (`02:06:18Z`) and the remove (`03:06:20Z`) is the Workflows connection, not Marcus. Ticket `357784` was closed by Admin at 00:17 Sydney on 8 October. The closed-list screenshot does not show a revoke note, so the ticket close and the System Log remove are still two records.
 
 ## What to learn first on the job
 
