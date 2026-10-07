@@ -4,7 +4,7 @@ const { icon } = require('./icons');
 const ROLE_CHIP = { staff: 'Staff', admin: 'Manager', hr: 'HR' };
 // Helen's browser cached the /app.css 404 from before public/ was in the image.
 // Cloudflare rewrites the cache header to 4 hours, so the URL has to change.
-const ASSET_VERSION = '9';
+const ASSET_VERSION = '10';
 
 function asset(path) {
   return `${path}?v=${ASSET_VERSION}`;
@@ -46,9 +46,14 @@ function identityFacts({ department, jobTitle, groups, role }) {
 }
 
 function accountMeta({ department, jobTitle, groups, role }) {
-  const line = [ROLE_CHIP[role] || '', department, jobTitle].filter(Boolean).join(' · ');
   const names = groupItems(groups);
-  return `${line ? `<p class="account-meta">${escapeHtml(line)}</p>` : ''}${names.length ? `<p class="account-groups">${escapeHtml(names.join(', '))}</p>` : ''}`;
+  const rows = [
+    ['Department', department || 'Not recorded'],
+    ['Title', jobTitle || 'Not recorded'],
+    ['Groups', names.length ? names.join(', ') : 'None in this sign-in'],
+    ['Role', ROLE_CHIP[role] || 'Staff'],
+  ];
+  return `<dl class="account-facts">${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>`;
 }
 
 function personName(user) {

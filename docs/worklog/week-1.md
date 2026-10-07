@@ -35,7 +35,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Leave apply | 2026-10-08 05:42 → 05:45 | 3 min |
 | Week grid and Jev flag | 2026-10-08 05:48 → 05:54 | 6 min |
 | Account menu | 2026-10-08 06:11 → 06:12 | 1 min |
-| **Worked** | | **23 h 4 min** |
+| Account menu labels | 2026-10-08 06:17 → 06:20 | 3 min |
+| **Worked** | | **23 h 7 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -602,3 +603,8 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 
 - The menu was the page's identity block squeezed into a dropdown: four labels and group pills. It is now the name, one line for role, department, and title, the groups as text, then Profile, My leave, and Sign out. The page header is unchanged.
 - Stylesheets are `?v=9`. Container rebuilt, which drops in-memory sessions.
+
+### Account menu labels — 06:17 to 06:20, 3 min
+
+- The menu names each field: Department, Title, Groups, Role. A line sits under the name and under each field. Groups are text, not pills. The page header is unchanged.
+- Stylesheets are `?v=10`. Container rebuilt, which drops in-memory sessions.
