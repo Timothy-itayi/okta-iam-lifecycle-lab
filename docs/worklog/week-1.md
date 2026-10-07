@@ -25,7 +25,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Leave hub reskin onto Kaizen tokens | 2026-10-08 03:55 → 04:10 | 15 min |
 | Stylesheet cache bust | 2026-10-08 04:03 → 04:08 | 5 min |
 | Profile, photo, and identity row | 2026-10-08 04:09 → 04:14 | 5 min |
-| **Worked** | | **22 h 7 min** |
+| Stretch phase 5, policy engine | 2026-10-08 04:25 → 04:38 | 13 min |
+| **Worked** | | **22 h 20 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -529,3 +530,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - A photo is resized in the browser and stored in `localStorage` under the sign-in email. Rostr never receives the file. Removing it restores the initials.
 - The sign-in claim table stays on the profile, so `lastLogin` and the raw groups string are still there.
 - Rostr tests 61 passed. Stylesheets are `?v=3`. Container recreated, which drops in-memory sessions. A fixture on the tunnel showed Helen's row, a stored photo on both avatars, and removal. The fixture was deleted.
+
+### 5. Policy engine — 04:25 to 04:38, 13 min
+
+- `rostr/policy/leave-rules.json` holds the six rules. `evaluate` returns every rule that fired. A deny beats a needs-review. `within_policy` is only added when nothing else fired.
+- Cover counts other people in the department whose leave is `with_hr` or `approved`. A request still with the manager does not count. Remaining balance is the HR file minus that person's other open requests of the same type.
+- Changing `minDays` or `maxOffPerDept` on the rules object changes the outcome. The form's 14-day notice reads the same `minDays`. `POST /leave` still does not run the check. Phase 6 stores it next to Jev.
+- Priya's 3 days against 2 left, with Jonah already approved on those dates, is a deny plus a cover review. Rostr tests 66 passed. Record: [docs/leave/05-policy.md](../leave/05-policy.md).

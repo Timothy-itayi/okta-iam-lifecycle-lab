@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "inactive_employee",
+      "outcome": "deny",
+      "text": "Terminated or inactive employees cannot request leave."
+    },
+    {
+      "id": "insufficient_balance",
+      "outcome": "deny",
+      "text": "Requested working days exceed the remaining balance for that leave type."
+    },
+    {
+      "id": "short_notice_annual",
+      "outcome": "needs_review",
+      "params": { "minDays": 14 },
+      "text": "Annual leave needs at least 14 days' notice."
+    },
+    {
+      "id": "cover_conflict",
+      "outcome": "needs_review",
+      "params": { "maxOffPerDept": 1 },
+      "text": "No more than one person in a department off on the same day."
+    },
+    {
+      "id": "long_sick",
+      "outcome": "needs_review",
+      "params": { "days": 3 },
+      "text": "Sick leave over 3 days needs a medical certificate."
+    },
+    {
+      "id": "within_policy",
+      "outcome": "approve",
+      "text": "Balance available, notice met, cover available."
+    }
+  ]
+}

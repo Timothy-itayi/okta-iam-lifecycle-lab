@@ -281,6 +281,19 @@ function updateLeaveStatus(db, id, status) {
   db.prepare('UPDATE leave_requests SET status = ? WHERE id = ?').run(status, id);
 }
 
+function listCoverRequests(db, { department, start, end, excludeEmail }) {
+  if (!department || !start || !end) return [];
+  return db.prepare(`
+    SELECT * FROM leave_requests
+    WHERE department = @department COLLATE NOCASE
+      AND status IN ('with_hr', 'approved')
+      AND email <> @excludeEmail COLLATE NOCASE
+      AND start_day <= @end
+      AND end_day >= @start
+    ORDER BY start_day, id
+  `).all({ department, start, end, excludeEmail: excludeEmail || '' });
+}
+
 function listLeaveRequestsByEmail(db, email) {
   return db.prepare(`
     SELECT * FROM leave_requests WHERE email = ? COLLATE NOCASE ORDER BY created_at DESC, id DESC
@@ -358,6 +371,7 @@ module.exports = {
   insertLeaveRequest,
   findLeaveRequestByRef,
   updateLeaveStatus,
+  listCoverRequests,
   listLeaveRequestsByEmail,
   countLeaveWaiting,
   insertLeaveEvent,

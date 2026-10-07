@@ -9,12 +9,23 @@ const {
   departmentAdmins,
 } = require('./db');
 
+const fs = require('fs');
+const path = require('path');
+
 const LEAVE_TYPES = ['annual', 'sick', 'personal'];
 const TYPE_LABEL = { annual: 'Annual', sick: 'Sick', personal: 'Personal' };
 // The HR file holds what is left. The yearly amount is the lab default every row started from.
 const ENTITLEMENT = { annual: 15, sick: 8, personal: 2 };
-const ANNUAL_NOTICE_DAYS = 14;
+const RULES_FILE = path.join(__dirname, '..', 'policy', 'leave-rules.json');
 const REASON_MAX = 500;
+
+function annualNoticeDays() {
+  const parsed = JSON.parse(fs.readFileSync(RULES_FILE, 'utf8'));
+  const rule = parsed.rules.find((item) => item.id === 'short_notice_annual');
+  const days = Number(rule && rule.params && rule.params.minDays);
+  if (!Number.isInteger(days)) throw new Error('short_notice_annual minDays must be an integer');
+  return days;
+}
 const MAX_SPAN_DAYS = 366;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -77,8 +88,9 @@ function noticesFor({ type, days, start }, { balance, openDays, today }) {
     const already = openDays[type] ? ` after the ${openDays[type]} already requested` : '';
     notices.push(`This is ${over} ${over === 1 ? 'day' : 'days'} more than your ${type} balance${already}. You can still send it; your approver will see this.`);
   }
-  if (type === 'annual' && start && daysBetween(today, start) < ANNUAL_NOTICE_DAYS) {
-    notices.push(`Annual leave needs ${ANNUAL_NOTICE_DAYS} days' notice. You can still send it.`);
+  const noticeDays = annualNoticeDays();
+  if (type === 'annual' && start && daysBetween(today, start) < noticeDays) {
+    notices.push(`Annual leave needs ${noticeDays} days' notice. You can still send it.`);
   }
   return notices;
 }
@@ -178,7 +190,7 @@ module.exports = {
   LEAVE_TYPES,
   TYPE_LABEL,
   ENTITLEMENT,
-  ANNUAL_NOTICE_DAYS,
+  annualNoticeDays,
   REASON_MAX,
   sydneyToday,
   parseDay,

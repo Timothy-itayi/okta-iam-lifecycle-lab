@@ -10,6 +10,7 @@ RUN npm ci --omit=dev
 COPY index.js ./
 COPY src ./src
 COPY public ./public
+COPY policy ./policy
 
 FROM node:22-bookworm-slim
 

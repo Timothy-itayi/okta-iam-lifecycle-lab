@@ -1,6 +1,6 @@
 const { escapeHtml, shortDay, listRange, longRange, sydneyStamp, sydneyShort, plural } = require('./format');
 const { icon } = require('./icons');
-const { LEAVE_TYPES, TYPE_LABEL, ENTITLEMENT, ANNUAL_NOTICE_DAYS, REASON_MAX } = require('../leave');
+const { LEAVE_TYPES, TYPE_LABEL, ENTITLEMENT, annualNoticeDays, REASON_MAX } = require('../leave');
 const { OPEN } = require('../leave-state');
 
 const TYPE_ICON = { annual: 'plane', sick: 'thermometer', personal: 'user' };
@@ -85,7 +85,7 @@ function errorSummary(errors) {
 }
 
 function requestForm({ value = {}, errors = [], notices = [], balance, openDays, route, today, standalone = false }) {
-  const data = escapeHtml(JSON.stringify({ balance, openDays, today, notice: ANNUAL_NOTICE_DAYS }));
+  const data = escapeHtml(JSON.stringify({ balance, openDays, today, notice: annualNoticeDays() }));
   const summary = value.days ? `${plural(value.days, 'working day')} · ${longRange(value.start_day, value.end_day)}` : 'Choose a start and end date.';
   const reason = value.reason || '';
   const closeHref = '/leave';
