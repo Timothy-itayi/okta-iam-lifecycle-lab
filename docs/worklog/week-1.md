@@ -40,7 +40,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Flagged tab | 2026-10-08 06:39 → 06:43 | 4 min |
 | Export window | 2026-10-08 06:49 → 06:51 | 2 min |
 | Untrack resvg cache | 2026-10-08 07:11 → 07:14 | 3 min |
-| **Worked** | | **23 h 19 min** |
+| Decision page spacing | 2026-10-08 07:27 → 07:30 | 3 min |
+| **Worked** | | **23 h 22 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -632,3 +633,7 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 ### Untrack resvg cache — 07:11 to 07:14, 3 min
 
 - `.resvg-Yeyb` is a Node compile cache that had been committed. `git status` and `git push` died while reading it: `Operation canceled` and `mmap failed`. It is removed from the index and ignored. The three commits ahead of origin do not need it.
+
+### Decision page spacing — 07:27 to 07:30, 3 min
+
+- The week grid gave the name column all the spare width, so Monday to Friday was a thin strip. The day columns are equal now. Activity times sit next to the sentence. Stylesheets are `?v=12`. Container rebuilt, which drops in-memory sessions.

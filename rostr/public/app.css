@@ -361,8 +361,8 @@ input[type="date"]:focus-visible, textarea:focus-visible { outline: var(--border
 .step-declined .step-sub { color: var(--rs-bad); font-weight: 600; }
 
 .reason { margin: 0; max-width: 780px; }
-.activity { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-.activity li { display: grid; grid-template-columns: 120px 1fr; gap: 16px; font-size: var(--typography-paragraph-small-font-size, .875rem); }
+.activity { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+.activity li { display: grid; grid-template-columns: 7.25rem minmax(0, 1fr); gap: 12px; align-items: baseline; font-size: var(--typography-paragraph-small-font-size, .875rem); }
 .activity time { color: var(--rs-ink-muted); }
 .photo-row { display: flex; align-items: center; gap: var(--spacing-md); }
 .photo-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
@@ -440,10 +440,11 @@ input[type="date"]:focus-visible, textarea:focus-visible { outline: var(--border
 .decide label span { font-weight: 400; color: var(--rs-ink-muted); }
 .decide textarea { width: 100%; margin-top: 8px; }
 .decide-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; }
-.week { width: 100%; }
-.week th, .week td { height: 36px; padding: 4px 6px; white-space: nowrap; border: 1px solid var(--rs-line); }
-.week td { width: 48px; }
-.week th:first-child, .week td:first-child { text-align: left; width: auto; }
+.week { width: 100%; table-layout: fixed; }
+.week th, .week td { height: 44px; padding: 0; text-align: center; white-space: nowrap; border: 1px solid var(--rs-line); }
+.week th:first-child, .week td:first-child { width: 38%; text-align: left; padding: 0 12px; }
+.week th:not(:first-child), .week td:not(:first-child) { width: 12.4%; }
+.decision-side { align-self: start; }
 .cell-empty { background: var(--rs-surface); }
 .cell-requested { background: repeating-linear-gradient(-45deg, var(--color-blue-400), var(--color-blue-400) 2px, var(--color-blue-100) 2px, var(--color-blue-100) 6px); }
 .cell-leave { background: var(--color-gray-300); }
