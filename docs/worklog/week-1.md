@@ -41,7 +41,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Export window | 2026-10-08 06:49 → 06:51 | 2 min |
 | Untrack resvg cache | 2026-10-08 07:11 → 07:14 | 3 min |
 | Decision page spacing | 2026-10-08 07:27 → 07:30 | 3 min |
-| **Worked** | | **23 h 22 min** |
+| Phase 9 setup | 2026-10-08 07:40 → 07:42 | 2 min |
+| **Worked** | | **23 h 24 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -637,3 +638,8 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 ### Decision page spacing — 07:27 to 07:30, 3 min
 
 - The week grid gave the name column all the spare width, so Monday to Friday was a thin strip. The day columns are equal now. Activity times sit next to the sentence. Stylesheets are `?v=12`. Container rebuilt, which drops in-memory sessions.
+
+### Phase 9 setup — 07:40 to 07:42, 2 min
+
+- Priya Shah's annual balance is 2 again. LV-0002 stays approved on 22–23 October, so a new request must use other dates. The container already has the TypeSafe key and `JEV_MIN_CONFIDENCE` 0.7. `rostr/.env` now names that confidence so the later "Jev is down" drill has a knob. The key value is not in Git.
+- Record: [docs/leave/12-drills.md](../leave/12-drills.md).
