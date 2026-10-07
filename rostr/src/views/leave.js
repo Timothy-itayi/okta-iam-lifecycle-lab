@@ -337,6 +337,10 @@ function detailHeader(request) {
   };
 }
 
+function progressHtml(request, events) {
+  return stepper(stepsFor(request, events));
+}
+
 function rosterBody({ shifts, leaveDays }) {
   if (!shifts.length) {
     return '<section class="panel empty"><p>No shifts on your roster yet.</p></section>';
@@ -367,5 +371,6 @@ module.exports = {
   detailBody,
   detailHeader,
   stepsFor,
+  progressHtml,
   rosterBody,
 };

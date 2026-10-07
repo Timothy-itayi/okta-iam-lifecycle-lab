@@ -313,6 +313,37 @@ function listLeaveByDepartment(db, department) {
   `).all(department);
 }
 
+function listAllLeave(db) {
+  return db.prepare(`
+    SELECT leave_requests.*,
+      leave_reviews.policy_outcome,
+      leave_reviews.policy_rules,
+      leave_reviews.jev_outcome,
+      leave_reviews.jev_rule,
+      leave_reviews.jev_confidence,
+      leave_reviews.jev_reason_fit,
+      leave_reviews.jev_urgency,
+      leave_reviews.agree,
+      (SELECT actor FROM leave_events WHERE request_id = leave_requests.id AND action = 'to_hr' ORDER BY id DESC LIMIT 1) AS manager_actor,
+      (SELECT at FROM leave_events WHERE request_id = leave_requests.id AND action = 'to_hr' ORDER BY id DESC LIMIT 1) AS manager_at,
+      (SELECT note FROM leave_events WHERE request_id = leave_requests.id AND action = 'to_hr' ORDER BY id DESC LIMIT 1) AS manager_note
+    FROM leave_requests
+    LEFT JOIN leave_reviews ON leave_reviews.request_id = leave_requests.id
+    ORDER BY leave_requests.created_at, leave_requests.id
+  `).all();
+}
+
+function insertBalanceChange(db, change) {
+  db.prepare(`
+    INSERT INTO balance_changes (ref, email, leave_type, days, exported)
+    VALUES (@ref, @email, @leave_type, @days, 0)
+  `).run(change);
+}
+
+function listBalanceChanges(db) {
+  return db.prepare('SELECT * FROM balance_changes WHERE exported = 0 ORDER BY id').all();
+}
+
 function listLeaveRequestsByEmail(db, email) {
   return db.prepare(`
     SELECT * FROM leave_requests WHERE email = ? COLLATE NOCASE ORDER BY created_at DESC, id DESC
@@ -418,6 +449,9 @@ module.exports = {
   updateLeaveStatus,
   listCoverRequests,
   listLeaveByDepartment,
+  listAllLeave,
+  insertBalanceChange,
+  listBalanceChanges,
   listLeaveRequestsByEmail,
   countLeaveWaiting,
   insertLeaveReview,

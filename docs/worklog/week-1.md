@@ -30,7 +30,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Confirmation window instead of the toast | 2026-10-08 04:49 → 04:53 | 4 min |
 | Manager queue, request chain, tab mark | 2026-10-08 05:09 → 05:17 | 8 min |
 | Marcus approves LV-0002 | 2026-10-08 05:19 → 05:20 | 1 min |
-| **Worked** | | **22 h 39 min** |
+| HR queue | 2026-10-08 05:23 → 05:31 | 8 min |
+| **Worked** | | **22 h 47 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -567,3 +568,10 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Priya sent LV-0002 at 05:04. Two annual days, 22–23 October, reason "R&R". Policy `within_policy` approve. Jev approve, confidence 1, urgency 1.79 of 5. `agree` is 1.
 - Marcus approved it at 05:19. The window said "Sent to HR". Status is `with_hr`. Event `to_hr` at `2026-10-07T18:19:08.463Z`, actor Marcus.
 - [evidence/leave/07-marcus-lv0002-sent.png](../../evidence/leave/07-marcus-lv0002-sent.png), [evidence/leave/07-marcus-lv0002-decision.png](../../evidence/leave/07-marcus-lv0002-decision.png).
+
+### HR queue — 05:23 to 05:31, 8 min
+
+- `GET /hr/leave` lists waiting, approved, declined, and all, with a department filter. Waiting is `with_hr`. Approve moves that to `approved` and writes a `balance_changes` row. Decline needs a note. The HR file is not edited.
+- `GET /hr/export` lists unexported changes. The JSON download returns the same rows twice. `exported` stays 0.
+- Helen's own LV-0001 stays on the waiting list with no buttons. The header count leaves it out. LV-0002 is still waiting for her. The week grid, the Jev flag, and the script that applies the download are not built.
+- Rostr tests 74 passed. Checked in a local browser as Helen: queue, decision, approve window, export, and her own request. Stylesheets are `?v=6`. Container rebuilt, which drops in-memory sessions. Record: [docs/leave/08-hr.md](../leave/08-hr.md).

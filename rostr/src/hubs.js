@@ -7,6 +7,8 @@ const {
   findLeaveRequestByRef,
   findLeaveReview,
   findUserByUserName,
+  listAllLeave,
+  listBalanceChanges,
   listLeaveByDepartment,
   listLeaveEvents,
   listShiftsByEmail,
@@ -22,6 +24,7 @@ const {
   createLeaveRequest,
   cancelLeaveRequest,
   decideLeaveRequest,
+  hrDecideLeave,
   myRequests,
   weekdaysIn,
 } = require('./leave');
@@ -30,6 +33,7 @@ const { longRange } = require('./views/format');
 const { reviewLeave } = require('./review');
 const views = require('./views/leave');
 const queue = require('./views/queue');
+const hrViews = require('./views/hr');
 const { profileBody } = require('./views/profile');
 
 const REF = /^LV-\d{4,}$/i;
@@ -337,25 +341,113 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     }
   });
 
+  const HR_VIEWS = new Set(['waiting', 'approved', 'declined', 'all']);
+
+  app.get('/hr/export.json', requireHR, (req, res) => {
+    const changes = listBalanceChanges(db).map((row) => ({
+      ref: row.ref,
+      email: row.email,
+      leave_type: row.leave_type,
+      days: row.days,
+    }));
+    res.set('Content-Disposition', 'attachment; filename="balance-changes.json"');
+    res.json(changes);
+  });
+
   app.get('/hr/export', requireHR, (req, res) => {
     const me = viewer(req);
+    const changes = listBalanceChanges(db);
+    const names = {};
+    for (const row of changes) names[row.email] = personNameFor(row.email);
     render(req, res, me, {
       title: 'Export',
       context: 'Balance changes waiting to be written back to the HR file',
       current: '/hr/export',
-      body: '<section class="panel empty"><p>Nothing to export yet. Approved leave writes a balance change, and that list is built with the HR desk.</p></section>',
+      body: hrViews.exportBody(changes, names),
     });
   });
 
   app.get('/hr/leave', requireHR, (req, res) => {
     const me = viewer(req);
-    const waiting = me.nav.waiting;
+    const rows = listAllLeave(db);
+    const view = HR_VIEWS.has(req.query.view) ? req.query.view : 'waiting';
+    const dept = String(req.query.dept || '');
+    const names = {};
+    for (const row of rows) {
+      names[row.email] = personNameFor(row.email);
+      if (row.manager_actor && row.manager_actor !== 'rostr') names[row.manager_actor] = personNameFor(row.manager_actor);
+    }
     render(req, res, me, {
       title: 'All leave',
       context: 'Approved by managers, waiting for HR',
       current: '/hr/leave',
-      body: `<section class="panel empty"><p>${waiting ? `${waiting} ${waiting === 1 ? 'request is' : 'requests are'} with HR.` : 'Nothing is waiting for HR.'}</p><p class="helper">The HR queue is built after the manager queue.</p></section>`,
+      action: '<a class="btn secondary" href="/hr/export">Export changes</a>',
+      body: hrViews.hrQueueBody({ rows, view, dept, names }),
     });
+  });
+
+  function hrRequest(req, res, me) {
+    const ref = String(req.params.ref || '');
+    const request = REF.test(ref) ? findLeaveRequestByRef(db, ref) : null;
+    if (!request) {
+      render(req, res, me, { title: 'Request not found', current: '/hr/leave', body: '<section class="panel empty"><p>There is no request with that number.</p><a class="btn secondary" href="/hr/leave">Back to all leave</a></section>' }, 404);
+      return null;
+    }
+    return request;
+  }
+
+  function hrPage(req, res, me, request, error, status) {
+    const review = findLeaveReview(db, request.id);
+    const events = listLeaveEvents(db, request.id);
+    const facts = factsFor(db, hr, request, { today: today() });
+    const names = {};
+    for (const event of events) {
+      if (event.actor && event.actor !== 'rostr' && event.actor !== 'policy' && event.actor !== 'jev') {
+        names[event.actor] = personNameFor(event.actor);
+      }
+    }
+    names[request.email] = personNameFor(request.email);
+    render(req, res, me, {
+      title: `${names[request.email]} · ${TYPE_LABEL[request.leave_type] || request.leave_type} leave`,
+      context: `${longRange(request.start_day, request.end_day)} · ${request.ref}`,
+      current: '/hr/leave',
+      body: hrViews.hrDecisionBody({
+        request,
+        review,
+        facts,
+        events,
+        names,
+        own: request.email.toLowerCase() === me.email.toLowerCase(),
+        error,
+      }),
+    }, status);
+  }
+
+  app.get('/hr/leave/:ref', requireHR, (req, res) => {
+    const me = viewer(req);
+    const request = hrRequest(req, res, me);
+    if (!request) return;
+    hrPage(req, res, me, request);
+  });
+
+  app.post('/hr/leave/:ref', requireHR, form, (req, res) => {
+    const me = viewer(req);
+    const request = hrRequest(req, res, me);
+    if (!request) return;
+    const action = String((req.body && req.body.action) || '');
+    try {
+      hrDecideLeave(db, { ref: request.ref, actor: me.email, action, note: req.body && req.body.note });
+      const name = personNameFor(request.email);
+      req.session.flash = action === 'approve'
+        ? { title: 'Balance change recorded', text: `Approved. ${request.ref} is approved. Export the balance change when you are ready.` }
+        : { title: 'Request declined', text: `Declined. ${name} will see it on the request.` };
+      req.session.save(() => res.redirect(303, action === 'approve' ? '/hr/leave?view=approved' : '/hr/leave?view=declined'));
+    } catch (error) {
+      if (error.message === 'note required') return hrPage(req, res, me, request, 'Write a note to decline this request.', 400);
+      if (error.message === 'own request') return hrPage(req, res, me, request);
+      req.session.flash = { title: 'Already decided', text: `${request.ref} is no longer waiting for HR.` };
+      req.session.save(() => res.redirect(303, '/hr/leave'));
+    }
   });
 }
 

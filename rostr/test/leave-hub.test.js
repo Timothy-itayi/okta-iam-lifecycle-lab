@@ -278,6 +278,70 @@ test('Marcus opens the waiting request, and a deny without a note does not decid
   }
 });
 
+test('Helen decides the request Marcus sent and records a balance change', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const { app, db, dir } = appWithSession();
+  const { server, base } = listen(app);
+  try {
+    const priya = await sessionFor(base, PEOPLE.priya);
+    await postForm(base, '/leave', priya, {
+      leave_type: 'annual', start_day: '2026-10-20', end_day: '2026-10-22', reason: 'Family wedding in Ballarat.',
+    });
+    const marcus = await sessionFor(base, PEOPLE.marcus);
+    await postForm(base, '/admin/leave/LV-0001', marcus, { action: 'approve' });
+    assert.equal((await fetch(`${base}/hr/leave`, { headers: { cookie: marcus } })).status, 403);
+
+    const helen = await sessionFor(base, PEOPLE.helen);
+    const queue = await (await fetch(`${base}/hr/leave`, { headers: { cookie: helen } })).text();
+    assert.match(queue, /Priya Shah/);
+    assert.match(queue, /href="\/hr\/leave\/LV-0001"/);
+    assert.match(queue, /Marcus Bell/);
+    assert.match(queue, /Export changes/);
+
+    const page = await (await fetch(`${base}/hr/leave/LV-0001`, { headers: { cookie: helen } })).text();
+    assert.match(page, /Approved by Marcus Bell/);
+    assert.match(page, /Approve and update balance/);
+    assert.match(page, /aria-current="page">All leave/);
+
+    const declined = await postForm(base, '/hr/leave/LV-0001', helen, { action: 'deny' });
+    assert.equal(declined.status, 400);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'with_hr');
+
+    const approved = await postForm(base, '/hr/leave/LV-0001', helen, { action: 'approve' });
+    assert.equal(approved.status, 303);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'approved');
+    assert.deepEqual(
+      db.prepare('SELECT ref, email, leave_type, days, exported FROM balance_changes').all(),
+      [{ ref: 'LV-0001', email: PEOPLE.priya.email, leave_type: 'annual', days: 3, exported: 0 }],
+    );
+    const hrFile = JSON.parse(fs.readFileSync(path.join(dir, 'employees.json'), 'utf8'));
+    assert.equal(hrFile.find((person) => person.email === PEOPLE.priya.email).leave.annual, 2);
+
+    const download = await fetch(`${base}/hr/export.json`, { headers: { cookie: helen } });
+    assert.match(download.headers.get('content-disposition') || '', /balance-changes\.json/);
+    assert.deepEqual(await download.json(), [{
+      ref: 'LV-0001', email: PEOPLE.priya.email, leave_type: 'annual', days: 3,
+    }]);
+    assert.equal((await (await fetch(`${base}/hr/export.json`, { headers: { cookie: helen } })).json()).length, 1);
+
+    const detail = await (await fetch(`${base}/leave/LV-0001`, { headers: { cookie: priya } })).text();
+    assert.match(detail, /HR approved it/);
+
+    const own = await postForm(base, '/leave', helen, {
+      leave_type: 'personal', start_day: '2026-10-26', end_day: '2026-10-26', reason: 'School concert.',
+    });
+    assert.equal(own.status, 303);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0002').status, 'with_hr');
+    const ownPage = await (await fetch(`${base}/hr/leave/LV-0002`, { headers: { cookie: helen } })).text();
+    assert.match(ownPage, /can&#39;t approve your own leave|can't approve your own leave/);
+    assert.doesNotMatch(ownPage, /Approve and update balance/);
+  } finally {
+    await close(server);
+    db.close();
+  }
+});
+
 test('My roster lists the person\'s own shifts', async () => {
   const { app, db } = appWithSession();
   insertShift(db, { email: PEOPLE.priya.email, day: '2026-10-12', start: '09:00', end: '17:00' });

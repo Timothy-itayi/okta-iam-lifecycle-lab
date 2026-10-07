@@ -143,4 +143,4 @@ function decisionBody({ request, review, facts, own, error }) {
   </div>`;
 }
 
-module.exports = { queueBody, decisionBody };
+module.exports = { queueBody, decisionBody, jevWell, policyWell, agreement };
