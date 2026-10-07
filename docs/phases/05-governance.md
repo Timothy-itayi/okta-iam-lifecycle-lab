@@ -1,6 +1,6 @@
 # Phase 5 — Governance
 
-osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/admin/users` has not been proven. The one-hour remove has not fired. Stale-Access is not started.
+osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. The one-hour remove has not fired. Stale-Access is not started.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
 
@@ -32,10 +32,14 @@ A first POST returned 404 from Add User to Group: the flow was ON but the canvas
 | `group.user_membership.add` SUCCESS, actor Timothy Itayi (Workflows Okta connection), target Lena Ortiz / `APP-Rostr-Admins` | 13:06:18 | [evidence/5.2-system-log-group-add.png](../../evidence/5.2-system-log-group-add.png) |
 | Group Push of that membership to Rostr | 13:06:18 | same log |
 | Lena in `APP-Rostr-Admins`, Active, Managed Manually | 13:07 | [evidence/5.2-lena-in-app-rostr-admins.png](../../evidence/5.2-lena-in-app-rostr-admins.png) |
+| Incognito `/oidc/login` as Lena, `/me` shows `aud` `0oa18egjva6o5FpoP698`, `sub` `00u18dk3t6entw6Kv698`, `groups` `APP-Rostr-Users, APP-Rostr-Admins` | 13:19 | [evidence/5.2-lena-oidc-me.png](../../evidence/5.2-lena-oidc-me.png) |
+| Same session, `/admin/users` renders the Rostr users table | 13:23 | [evidence/5.2-lena-admin-users.png](../../evidence/5.2-lena-admin-users.png) |
 
-OIDC `/admin/users` was not a 200. Express `Cannot GET` is a missing route, not the admin gate. `/admin/users` with no session returns `401 Not signed in.` `/oidc/login` only exists if OIDC is mounted. Open a private window, go to `https://rostr.lanternfieldgoods.co.uk/oidc/login`, sign in as Lena (Any two factors), then open `/admin/users`. Do not paste `/admin/users` as the first URL.
+Group membership was not enough to open the OIDC app until Rostr Admin was assigned to `APP-Rostr-Admins`. That group assignment is now on the app at priority 1: [evidence/5.2-rostr-admin-group-assignment.png](../../evidence/5.2-rostr-admin-group-assignment.png). An Individual assignment of Lena was used to get `/oidc/login` working. Remove that People row if it is type Individual. Do not unassign the group, and do not take her out of `APP-Rostr-Admins`. Wait For only removes the group membership. An Individual row would survive the revoke.
 
-The ticket stays Open until she is removed. Wait For is one hour from the successful POST, so revoke is due around 14:06. Then Internal Note, then Close.
+OIDC does not write `lastLogin`. Lena's row stayed empty. Jonah Hale's SAML time `2026-10-06T05:20:26.829Z` is unchanged. Samir Adeyemi and `test.joiner` are `active` no. Orphan Roster is still in the table.
+
+The ticket stays Open until she is removed. Wait For is one hour from the successful POST, so revoke is due around 14:06. Then: System Log `group.user_membership.remove`, `/admin/users` 403 as Lena, Internal Note on `357784`, Close.
 
 `APP-Rostr-Admins` group id `00g18dk6nvdMFQAgi698`. Close uses a dummy API Connector connection named `unused-close` with auth None, because Workflows stuffed Close under API Connector.
 

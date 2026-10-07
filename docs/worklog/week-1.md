@@ -275,13 +275,14 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 1 h 25 min, 11:46 to 13:11. Staff login through grant. OIDC `/admin/users` not proven. Revoke still waiting.
+About 1 h 37 min, 11:46 to 13:23. Staff login through OIDC `/admin/users`. Revoke still waiting.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
 | 5.1 osTicket staff login | 11:46 → 12:15 | 29 min |
 | 5.1 Help topic, ticket, approval | 12:15 → 12:28 | 13 min |
 | 5.2 Access Request flow and grant | 12:31 → 13:11 | 40 min |
+| 5.2 OIDC as Lena | 13:11 → 13:23 | 12 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -307,4 +308,6 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - First POST 404: flow ON, canvas not saved, User ID still `email`. `hr-sync --ticket REQ-0001` dry-run `no changes`. Second POST after Save: HTTP 200 `{}` about 13:06.
 - 13:06:18 System Log `group.user_membership.add` SUCCESS, Lena / `APP-Rostr-Admins`, actor Timothy Itayi (the Workflows Okta connection). Group Push to Rostr the same second. [evidence/5.2-system-log-group-add.png](../../evidence/5.2-system-log-group-add.png).
 - 13:07: Lena in the group, Active, Managed Manually. [evidence/5.2-lena-in-app-rostr-admins.png](../../evidence/5.2-lena-in-app-rostr-admins.png).
-- OIDC `/admin/users` was `Cannot GET`, not 401/403. That is a missing Express route or OIDC not mounted, not the admin gate. Ticket `357784` still Open. Revoke due around 14:06.
+- First OIDC attempt was a 400 from Okta, not a missing Express route. `/oidc/login` 302s. Group membership was already in Okta, Rostr, and SCIM. Lena was not assigned to the Rostr Admin OIDC app. An Individual assignment unblocked sign-in. That assignment is still the wrong grant: the app should be assigned to `APP-Rostr-Admins` only.
+- 13:19: incognito `/oidc/login` as Lena. `/me` `aud` `0oa18egjva6o5FpoP698`, `sub` `00u18dk3t6entw6Kv698`, `groups` `APP-Rostr-Users, APP-Rostr-Admins`. [evidence/5.2-lena-oidc-me.png](../../evidence/5.2-lena-oidc-me.png).
+- 13:23: `/admin/users` rendered. Lena `lastLogin` empty (OIDC does not write it). [evidence/5.2-lena-admin-users.png](../../evidence/5.2-lena-admin-users.png). Ticket `357784` still Open. Revoke due around 14:06.
