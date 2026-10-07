@@ -148,7 +148,7 @@ function exportBody(changes, names = {}) {
     <td class="num">${row.days}</td>
   </tr>`).join('');
   return `<section class="panel">
-      <p>Each row is working days to take off that balance. Downloading does not change the HR file.</p>
+      <p>Each row is working days to take off that balance. Downloading does not change the HR file. Run leave-apply with a REQ number, and pass --apply once the dry-run is right.</p>
       <p class="export-action"><a class="btn primary" href="/hr/export.json">Download JSON</a></p>
     </section>
     <section class="panel table-panel"><table>

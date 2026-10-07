@@ -1,0 +1,155 @@
+#!/usr/bin/env node
+// Take a balance-changes JSON download and subtract those days in hr/employees.json.
+// Dry-run is the default. --apply writes the file and marks the Rostr rows exported.
+
+const fs = require('fs');
+const path = require('path');
+const { openDatabase } = require('../rostr/src/db');
+
+const TICKET = /^REQ-\d{4}$/;
+const REF = /^LV-\d{4}$/;
+const TYPES = new Set(['annual', 'sick', 'personal']);
+
+function parseTicket(value) {
+  if (typeof value !== 'string' || !TICKET.test(value)) throw new Error('Ticket must match REQ-####');
+  return value;
+}
+
+function parseArgs(argv) {
+  const args = { apply: false, hr: null, db: null, input: null, ticket: null };
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (token === '--apply') {
+      args.apply = true;
+      continue;
+    }
+    if (token === '--ticket') args.ticket = parseTicket(argv[++i]);
+    else if (token === '--in') args.input = argv[++i];
+    else if (token === '--hr') args.hr = argv[++i];
+    else if (token === '--db') args.db = argv[++i];
+    else throw new Error(`Unknown argument ${token}`);
+  }
+  if (!args.ticket) throw new Error('Ticket must match REQ-####');
+  if (!args.input) throw new Error('Pass --in with the balance-changes JSON');
+  return args;
+}
+
+function readChanges(file) {
+  const parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (!Array.isArray(parsed) || !parsed.length) throw new Error('The download must be a non-empty JSON array');
+  const seen = new Set();
+  return parsed.map((row) => {
+    if (!row || typeof row !== 'object') throw new Error('Each row must be an object');
+    const ref = String(row.ref || '');
+    const email = String(row.email || '').trim().toLowerCase();
+    const leaveType = String(row.leave_type || '');
+    const days = row.days;
+    if (!REF.test(ref)) throw new Error(`${ref || 'row'} is not an LV-#### reference`);
+    if (seen.has(ref)) throw new Error(`${ref} is listed twice`);
+    seen.add(ref);
+    if (!email.includes('@')) throw new Error(`${ref} has no email`);
+    if (!TYPES.has(leaveType)) throw new Error(`${ref} has a leave type Rostr does not store`);
+    if (!Number.isInteger(days) || days < 1) throw new Error(`${ref} days must be a positive integer`);
+    return { ref, email, leave_type: leaveType, days };
+  });
+}
+
+function plan(employees, changes) {
+  if (!Array.isArray(employees)) throw new Error('HR file must be a JSON array');
+  const lines = [];
+  const updates = [];
+  for (const change of changes) {
+    const person = employees.find((row) => String(row.email || '').toLowerCase() === change.email);
+    if (!person) throw new Error(`No HR row for ${change.email}`);
+    const before = person.leave && person.leave[change.leave_type];
+    if (!Number.isInteger(before)) throw new Error(`${person.employeeId} has no ${change.leave_type} balance`);
+    const after = before - change.days;
+    lines.push(`${change.ref} ${person.employeeId} ${change.leave_type} ${before} -> ${after}`);
+    updates.push({ ...change, before, after });
+  }
+  return { lines, updates };
+}
+
+function replaceBalance(text, email, type, before, after) {
+  const emailAt = text.toLowerCase().indexOf(`"email": "${email}"`);
+  if (emailAt < 0) throw new Error(`HR file has no ${email}`);
+  const leaveAt = text.indexOf('"leave"', emailAt);
+  const nextPerson = text.indexOf('"employeeId"', emailAt + 1);
+  const regionEnd = nextPerson === -1 ? text.length : nextPerson;
+  if (leaveAt < 0 || leaveAt > regionEnd) throw new Error(`HR file has no leave block for ${email}`);
+  const needle = `"${type}": ${before}`;
+  const hit = text.indexOf(needle, leaveAt);
+  if (hit < 0 || hit > regionEnd) throw new Error(`Could not find ${type} ${before} for ${email}`);
+  return `${text.slice(0, hit)}"${type}": ${after}${text.slice(hit + needle.length)}`;
+}
+
+function applyText(text, updates) {
+  return updates.reduce((current, update) => replaceBalance(current, update.email, update.leave_type, update.before, update.after), text);
+}
+
+function assertWaiting(db, changes) {
+  const find = db.prepare(`
+    SELECT id FROM balance_changes
+    WHERE ref = @ref AND email = @email COLLATE NOCASE AND leave_type = @leave_type AND days = @days AND exported = 0
+  `);
+  for (const change of changes) {
+    if (!find.get(change)) throw new Error(`${change.ref} is not an unexported balance change`);
+  }
+}
+
+function markExported(db, changes) {
+  const update = db.prepare(`
+    UPDATE balance_changes SET exported = 1
+    WHERE ref = @ref AND email = @email COLLATE NOCASE AND leave_type = @leave_type AND days = @days AND exported = 0
+  `);
+  const mark = db.transaction((rows) => {
+    for (const change of rows) {
+      if (update.run(change).changes !== 1) throw new Error(`${change.ref} is not an unexported balance change`);
+    }
+  });
+  mark(changes);
+}
+
+function formatPlan(ticket, mode, lines) {
+  return [`ticket ${ticket}`, mode, ...lines].join('\n');
+}
+
+function main(argv, paths = {}) {
+  const args = parseArgs(argv);
+  const root = paths.root || process.cwd();
+  const hrPath = path.resolve(root, args.hr || paths.hr || 'hr/employees.json');
+  const dbPath = path.resolve(root, args.db || paths.db || 'rostr/data/rostr.sqlite');
+  const changes = readChanges(path.resolve(root, args.input));
+  const original = fs.readFileSync(hrPath, 'utf8');
+  const { lines, updates } = plan(JSON.parse(original), changes);
+  const db = openDatabase(dbPath);
+  try {
+    assertWaiting(db, changes);
+    const mode = args.apply ? 'apply' : 'dry-run';
+    if (args.apply) {
+      const updated = applyText(original, updates);
+      fs.writeFileSync(hrPath, updated);
+      try {
+        markExported(db, changes);
+      } catch (error) {
+        fs.writeFileSync(hrPath, original);
+        throw error;
+      }
+    }
+    return { code: 0, text: formatPlan(args.ticket, mode, lines) };
+  } finally {
+    db.close();
+  }
+}
+
+if (require.main === module) {
+  try {
+    const result = main(process.argv.slice(2));
+    console.log(result.text);
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+}
+
+module.exports = { parseTicket, parseArgs, readChanges, plan, applyText, main };

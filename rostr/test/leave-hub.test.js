@@ -325,6 +325,8 @@ test('Helen decides the request Marcus sent and records a balance change', async
     const hrFile = JSON.parse(fs.readFileSync(path.join(dir, 'employees.json'), 'utf8'));
     assert.equal(hrFile.find((person) => person.email === PEOPLE.priya.email).leave.annual, 2);
 
+    const exportPage = await (await fetch(`${base}/hr/export`, { headers: { cookie: helen } })).text();
+    assert.match(exportPage, /leave-apply/);
     const download = await fetch(`${base}/hr/export.json`, { headers: { cookie: helen } });
     assert.match(download.headers.get('content-disposition') || '', /balance-changes\.json/);
     assert.deepEqual(await download.json(), [{

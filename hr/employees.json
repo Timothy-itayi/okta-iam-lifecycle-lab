@@ -36,7 +36,7 @@
     "status": "active",
     "startDate": "2025-06-02",
     "endDate": null,
-    "leave": { "annual": 2, "sick": 8, "personal": 2 }
+    "leave": { "annual": 0, "sick": 8, "personal": 2 }
   },
   {
     "employeeId": "EMP-1004",

@@ -32,7 +32,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Marcus approves LV-0002 | 2026-10-08 05:19 → 05:20 | 1 min |
 | HR queue | 2026-10-08 05:23 → 05:31 | 8 min |
 | HR queue rows | 2026-10-08 05:35 → 05:42 | 7 min |
-| **Worked** | | **22 h 54 min** |
+| Leave apply | 2026-10-08 05:42 → 05:45 | 3 min |
+| **Worked** | | **22 h 57 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -582,3 +583,9 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - The All leave table wrapped names and "Approve · 100%" onto a second line, and the section tab said 1 while Waiting said 2. Dates in that table are now `22–23 Oct`. The row stays one line. The tab count matches Waiting, including Helen's own request.
 - Helen approved LV-0002 at 05:33. Balance change is 2 annual days for Priya, not yet written to the HR file.
 - Rostr tests 74 passed. Checked the queue in a local browser at 1200 px wide. Stylesheets are `?v=7`. Container rebuilt, which drops in-memory sessions.
+
+### Leave apply — 05:42 to 05:45, 3 min
+
+- `scripts/leave-apply` reads the JSON download. Dry-run prints the new balance. `--apply` writes that number and marks the Rostr row exported, so the same file cannot be applied twice.
+- REQ-0010: LV-0002, Priya Shah, annual 2 → 0. `hr-sync` then printed `no changes`. The export page names the command.
+- Rostr tests 74 passed. leave-apply tests 3 passed. Container rebuilt for the export sentence, which drops in-memory sessions. Record: [docs/leave/09-apply.md](../leave/09-apply.md).
