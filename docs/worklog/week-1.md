@@ -14,8 +14,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 02:23 → 11:46 | 9 h 23 min |
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
 | Break | 15:02 → 16:59 | 1 h 57 min |
-| Afternoon, drills 6.1 to 6.4 | 2026-10-07 16:59 → 18:07 | 1 h 8 min |
-| **Worked** | | **18 h 48 min** |
+| Afternoon, drills 6.1 to 6.5 | 2026-10-07 16:59 → 18:17 | 1 h 18 min |
+| **Worked** | | **18 h 58 min** |
 
 ## Phase 0 — Prep
 
@@ -375,7 +375,7 @@ Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is 
 
 ## Phase 6 — Failure drills (started)
 
-About 1 h 8 min, 16:59 to 18:07. Rostr was already up. Local and public `/health` were 200. 6.4 is closed.
+About 1 h 18 min, 16:59 to 18:17. Rostr was already up. Local and public `/health` were 200. 6.4 and 6.5 are closed.
 
 ### 6.1 SAML ACS mismatch — 16:59 to 17:12, 13 min
 
@@ -412,3 +412,11 @@ About 1 h 8 min, 16:59 to 18:07. Rostr was already up. Local and public `/health
 - Mapping put back as `user.department`, create and update. [evidence/6.4-department-mapping.png](../../evidence/6.4-department-mapping.png). Retry at `07:00:21.831Z` was `POST` 201, Rostr id `e4aaf631-250f-4fe8-b8c0-3df1394665f2`. The body still had no department. Okta logged the push as SUCCESS. Assignments shows no error: [evidence/6.4-assignments-no-error.png](../../evidence/6.4-assignments-no-error.png). His Okta department is still `Sales`.
 - Title set to `Drill` at 18:06. `PUT` `07:06:38.644Z` carried `title` `Drill` and enterprise `department` `Sales`. The retry create had not re-read the mapping. Deactivated at 18:07. `PUT` `07:07:31.523Z` set `active` false and kept title and department. He was not deleted. The user slot is free.
 - Record: [docs/incidents/05-scim-mapping.md](../incidents/05-scim-mapping.md). The open-incident commit is [49db231](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/49db231).
+
+### 6.5 Mover leaves the admin grant — 18:09 to 18:17, 8 min
+
+- Jonah Hale added by hand to `APP-Rostr-Admins`. Okta user `00u18dk3t4h0G1k9I698`. The Mover canvas is API Endpoint, Read User, Get User Groups, Update User, and Wait For. No card removes a group or an individual app assignment. The flow was not edited.
+- [b2b36a1](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/b2b36a1) changes only his `department` from `Sales` to `Operations`. Dry-run: `mover EMP-1002 department`.
+- `--apply` `REQ-0007` returned HTTP 504 after 61 seconds. No `logs/jml.csv` row. Profile was already `Operations`. `DEPT-Sales` gone, `DEPT-Operations` and `APP-Rostr-Users` from rules, `APP-Rostr-Admins` still `individual`. SCIM user `PUT` `07:14:40.069Z`, department `Operations`, Rostr id `810dde51-dd11-41ac-afda-5400f831d908`. Before: [evidence/06-mover-residue.csv](../../evidence/06-mover-residue.csv).
+- Removed from `APP-Rostr-Admins` only. Members API empty. Second export has no admin row: [evidence/06-mover-residue-after.csv](../../evidence/06-mover-residue-after.csv). Group `PUT` `07:17:38.677Z` sent `members` `[]`. [evidence/6.5-jonah-removed.png](../../evidence/6.5-jonah-removed.png). He stays Operations.
+- Record: [docs/incidents/06-mover-residue.md](../incidents/06-mover-residue.md).
