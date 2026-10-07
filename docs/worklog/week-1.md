@@ -2,7 +2,7 @@
 
 Times are Australia/Sydney (+1100). Duration is from the first clock we have for that task to the last. A stretch with no commit and no evidence is a break.
 
-Three days so far, from the night of 5 October through the evening of 7 October. The clocked work is the total below. The gaps are breaks, not extra days of work. Night of 5–6 October, afternoon and night of 6 October into 7 October, then the whole of 7 October.
+Three days for the lab, from the night of 5 October through the evening of 7 October. Stretch phase 1 started in the early morning of 8 October. The clocked work is the total below. The gaps are breaks.
 
 | Session | Clock | Duration |
 | --- | --- | --- |
@@ -16,8 +16,10 @@ Three days so far, from the night of 5 October through the evening of 7 October.
 | Break | 15:02 → 16:59 | 1 h 57 min |
 | Afternoon, drills 6.1 to 6.6 | 2026-10-07 16:59 → 18:26 | 1 h 27 min |
 | Evening, report, README, and stories | 2026-10-07 18:29 → 18:55 | 26 min |
-| **Worked** | | **19 h 33 min** |
-| **Elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
+| Break | 18:55 → 2026-10-08 01:38 | 6 h 43 min |
+| Stretch phase 1, Okta groups and the TypeSafe key | 2026-10-08 01:38 → 02:11 | 33 min |
+| **Worked** | | **20 h 6 min** |
+| **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
 
@@ -453,3 +455,16 @@ The CV lines are not written up. Nothing has been torn down. The reports were re
 
 - Three accounts, each with the record and a two-minute telling: SAML sign-in, Priya's mover, and the department provisioning failure. [docs/interview-stories.md](../interview-stories.md). PDF: [okta-iam-interview-stories.pdf](../../okta-iam-interview-stories.pdf).
 - The CV wording from the runbook is not in the repo.
+
+## Stretch — Rostr leave hub (started)
+
+Phase 1 only. No leave screens, no HR-file change, no new Workflow.
+
+### 1. Okta groups and the TypeSafe key — 8 October, 01:38 to 02:11, 33 min
+
+- `APP-Rostr-HR` created and Rostr assigned. [evidence/leave/app-rostr-hr-rostr-assigned.png](../../evidence/leave/app-rostr-hr-rostr-assigned.png). Push Groups is not in the shots.
+- `groups` claim still `starts with APP-Rostr`, ID token, Always. That filter already matches `APP-Rostr-HR`. [evidence/leave/groups-claim.png](../../evidence/leave/groups-claim.png).
+- By hand: Marcus Bell and Ava Nguyen in `APP-Rostr-Admins`. Helen Cho in `APP-Rostr-HR`. [evidence/leave/app-rostr-admins-members.png](../../evidence/leave/app-rostr-admins-members.png), [evidence/leave/app-rostr-hr-helen.png](../../evidence/leave/app-rostr-hr-helen.png).
+- `TYPESAFE_API_KEY` is set in `rostr/.env`. The value is not recorded. The name is in `rostr/.env.example`.
+- Decisions: [docs/decisions/jev-01-leave-workflow.md](../decisions/jev-01-leave-workflow.md), [docs/decisions/jev-02-decision-model.md](../decisions/jev-02-decision-model.md). Record: [docs/leave/01-okta.md](../leave/01-okta.md).
+- `/me` as Helen and as Marcus is not checked yet.

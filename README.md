@@ -14,6 +14,8 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 The documented lab is done. It took three days, 5 October through 7 October. osTicket ticket `357784` is Closed. The report and the three practice accounts are written for a reader who was not in the lab. The trial org is still up. Teardown was not run.
 
+A stretch started on 8 October: a leave hub inside Rostr, with Jev recommending and people approving. Phase 1 is the Okta groups and the TypeSafe key. [docs/leave/01-okta.md](docs/leave/01-okta.md).
+
 The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Operations. Samir Adeyemi and Thomas Okeke are terminated. `APP-Rostr-Admins` is empty. An orphan row in Rostr was imported, matched nobody, and ignored. The finished account is [docs/report.md](docs/report.md).
 
 | Phase | Focus | Time box | Status | Where to read it |
