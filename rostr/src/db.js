@@ -256,6 +256,69 @@ function insertShift(db, shift) {
   return findShift(db, shift.email, shift.day) || { id: info.lastInsertRowid };
 }
 
+function listShiftsByEmail(db, email) {
+  return db.prepare('SELECT * FROM shifts WHERE email = ? COLLATE NOCASE ORDER BY day, start').all(email);
+}
+
+function nextLeaveRef(db) {
+  const row = db.prepare('SELECT COALESCE(MAX(id), 0) + 1 AS next FROM leave_requests').get();
+  return `LV-${String(row.next).padStart(4, '0')}`;
+}
+
+function insertLeaveRequest(db, request) {
+  const info = db.prepare(`
+    INSERT INTO leave_requests (ref, email, department, leave_type, start_day, end_day, days, reason, status, created_at)
+    VALUES (@ref, @email, @department, @leave_type, @start_day, @end_day, @days, @reason, @status, @created_at)
+  `).run(request);
+  return db.prepare('SELECT * FROM leave_requests WHERE id = ?').get(info.lastInsertRowid);
+}
+
+function findLeaveRequestByRef(db, ref) {
+  return db.prepare('SELECT * FROM leave_requests WHERE ref = ?').get(String(ref || '').toUpperCase());
+}
+
+function updateLeaveStatus(db, id, status) {
+  db.prepare('UPDATE leave_requests SET status = ? WHERE id = ?').run(status, id);
+}
+
+function listLeaveRequestsByEmail(db, email) {
+  return db.prepare(`
+    SELECT * FROM leave_requests WHERE email = ? COLLATE NOCASE ORDER BY created_at DESC, id DESC
+  `).all(email);
+}
+
+function countLeaveWaiting(db, status, { department, excludeEmail } = {}) {
+  const clauses = ['status = @status'];
+  if (department) clauses.push('department = @department COLLATE NOCASE');
+  if (excludeEmail) clauses.push('email <> @excludeEmail COLLATE NOCASE');
+  return db.prepare(`SELECT COUNT(*) AS total FROM leave_requests WHERE ${clauses.join(' AND ')}`)
+    .get({ status, department: department || null, excludeEmail: excludeEmail || null }).total;
+}
+
+function insertLeaveEvent(db, event) {
+  db.prepare(`
+    INSERT INTO leave_events (request_id, at, actor, action, note)
+    VALUES (@request_id, @at, @actor, @action, @note)
+  `).run({ note: null, ...event });
+}
+
+function listLeaveEvents(db, requestId) {
+  return db.prepare('SELECT * FROM leave_events WHERE request_id = ? ORDER BY at, id').all(requestId);
+}
+
+function departmentAdmins(db, department) {
+  if (!department) return [];
+  return db.prepare(`
+    SELECT users.* FROM users
+    JOIN group_members ON group_members.userId = users.id
+    JOIN groups ON groups.id = group_members.groupId
+    WHERE groups.displayName = 'APP-Rostr-Admins' COLLATE NOCASE
+      AND users.active = 1
+      AND users.department = ? COLLATE NOCASE
+    ORDER BY users.familyName, users.givenName
+  `).all(department);
+}
+
 function deleteGroup(db, id) {
   if (!findGroupById(db, id)) return false;
   const clear = db.prepare('DELETE FROM group_members WHERE groupId = ?');
@@ -290,4 +353,14 @@ module.exports = {
   deleteGroup,
   findShift,
   insertShift,
+  listShiftsByEmail,
+  nextLeaveRef,
+  insertLeaveRequest,
+  findLeaveRequestByRef,
+  updateLeaveStatus,
+  listLeaveRequestsByEmail,
+  countLeaveWaiting,
+  insertLeaveEvent,
+  listLeaveEvents,
+  departmentAdmins,
 };

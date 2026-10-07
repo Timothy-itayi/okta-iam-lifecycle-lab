@@ -85,7 +85,7 @@ The request-ID cache is in memory. If Rostr restarts between `/saml/login` and `
 Routes:
 
 - `GET /saml/login` redirects to Okta with a `SAMLRequest`.
-- `POST /saml/acs` validates the response. On success it upserts the user, regenerates the session, logs `success`, and redirects to `/me`.
+- `POST /saml/acs` validates the response. On success it upserts the user, regenerates the session, logs `success`, and redirects to `/me`. Since the leave hub, stretch phase 4 on 8 October, it redirects to `/`, which opens the person's hub. `/me` still exists. [docs/leave/04-staff.md](../leave/04-staff.md).
 - `GET /saml/metadata` returns the SP metadata, with `WantAssertionsSigned="true"` and the ACS location.
 
 The upsert is keyed on `userName`, which is the NameID (email). It sets `givenName`, `familyName`, `email`, `department`, and `lastLogin`. A new row gets a random id. A sign-in never changes `id`, `active`, `title`, or `licensed`. Those belong to SCIM. If the row already exists with `active` 0, the sign-in is refused and the failure is logged.

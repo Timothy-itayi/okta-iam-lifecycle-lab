@@ -5,6 +5,7 @@ const { findUserByUserName, upsertSignIn } = require('./db');
 const { recordSignIn } = require('./auth-log');
 
 const ADMIN_GROUP = 'APP-Rostr-Admins';
+const HR_GROUP = 'APP-Rostr-HR';
 
 function toList(value) {
   if (value == null) return [];
@@ -12,7 +13,9 @@ function toList(value) {
 }
 
 function roleFromGroups(groups) {
-  return toList(groups).includes(ADMIN_GROUP) ? 'admin' : 'staff';
+  const list = toList(groups);
+  if (list.includes(HR_GROUP)) return 'hr';
+  return list.includes(ADMIN_GROUP) ? 'admin' : 'staff';
 }
 
 function samlOptions({ baseUrl, entryPoint, idpIssuer, idpCert }) {
@@ -90,7 +93,7 @@ function mountSaml(app, { db, authLogPath, saml }) {
         if (regenerateError) return next(regenerateError);
         req.session.user = user;
         recordSignIn(authLogPath, { protocol: 'saml', user: user.userName, outcome: 'success' });
-        req.session.save((saveError) => (saveError ? next(saveError) : res.redirect('/me')));
+        req.session.save((saveError) => (saveError ? next(saveError) : res.redirect('/')));
       });
     })(req, res, next);
   };

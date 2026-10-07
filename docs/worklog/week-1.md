@@ -21,7 +21,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Stretch phase 2, leave data model | 2026-10-08 02:19 → 02:30 | 11 min |
 | Stretch phase 3, hub shell | 2026-10-08 02:30 → 02:50 | 20 min |
 | Rostr sign-in: FastPass, then a stale password | 2026-10-08 02:50 → 03:15 | 25 min |
-| **Worked** | | **21 h 2 min** |
+| Stretch phase 4, staff screens | 2026-10-08 03:15 → 03:55 | 40 min |
+| **Worked** | | **21 h 42 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -497,3 +498,12 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - Marcus Bell at 03:11: `/me` groups `APP-Rostr-Users, APP-Rostr-Admins`, role admin, `lastLogin` `2026-10-07T16:11:13.471Z`. Admin hub shows Operations and badge Admin. [evidence/leave/marcus-me.png](../../evidence/leave/marcus-me.png), [evidence/leave/marcus-admin-leave.png](../../evidence/leave/marcus-admin-leave.png).
 - Helen Cho at 03:12: `/me` groups `APP-Rostr-Users, APP-Rostr-HR`, department Finance, `lastLogin` `2026-10-07T16:12:37.768Z`. The role line says staff. `roleFromGroups` has no HR case. The HR hub badge is HR. [evidence/leave/helen-me.png](../../evidence/leave/helen-me.png), [evidence/leave/helen-hr-leave.png](../../evidence/leave/helen-hr-leave.png).
 - Record: [docs/incidents/08-rostr-sign-on.md](../incidents/08-rostr-sign-on.md).
+
+### 4. Staff screens — 03:15 to 03:55, 40 min
+
+- Built to [docs/leave/design-spec.md](../leave/design-spec.md) sections 2 to 5. Pine and lantern tokens, self-hosted Bricolage Grotesque and Instrument Sans, Lucide icons, sidebar by role, chips, toast.
+- `/leave` balances from the HR file, `/leave/new` and the side sheet, `POST /leave`, `/leave/:ref` with stepper and cancel, `/roster`. Over-balance and 14-day notice are warnings. Bad input is 400 with the values kept. Overlap, no HR row, terminated, and an OIDC session with no email are refused.
+- A request goes to the department's `APP-Rostr-Admins` members from SCIM, minus the requester. Priya's goes to Marcus. Marcus's own goes straight to HR.
+- `/app.css` had been 404 since phase 3. The Dockerfile did not copy `public/`. Helen's request list at 03:18 showed it, and showed `/` sending her to `/hr/leave`. That screenshot is not committed because it holds a Google session value.
+- `GET /` with no session starts SAML. SAML success goes to `/`. `/me` says `hr` for `APP-Rostr-HR`.
+- Rostr tests 59 passed. Container rebuilt, `/app.css` 200 on the tunnel. Screens checked at 1440 and 390 px on a throwaway preview with a copy of the database. [evidence/leave/04-my-leave-1440.png](../../evidence/leave/04-my-leave-1440.png) and the other `04-` files. A live request through Okta is not done. Record: [docs/leave/04-staff.md](../leave/04-staff.md).

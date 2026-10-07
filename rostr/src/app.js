@@ -75,7 +75,7 @@ function signIn(req, authLogPath, event) {
   req.session.user = event.attributes || { user: event.user };
 }
 
-function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim }) {
+function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr, today }) {
   if (!sessionSecret) {
     throw new Error('SESSION_SECRET is required');
   }
@@ -104,7 +104,7 @@ function createApp({ db, authLogPath, sessionSecret, saml, oidc, scim }) {
     next();
   });
   app.use(express.static(path.join(__dirname, '..', 'public')));
-  mountHubs(app, db);
+  mountHubs(app, { db, hr, today, signInPath: saml || !oidc ? '/saml/login' : '/oidc/login' });
   app.get('/me', (req, res) => {
     res.type('html').send(renderMe(req.session.user));
   });

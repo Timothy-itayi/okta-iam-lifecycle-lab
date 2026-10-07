@@ -52,7 +52,8 @@ test('SAML options: audience URI as issuer, signed assertions, 30 second skew', 
   assert.equal(options.acceptedClockSkewMs, 30000);
 });
 
-test('APP-Rostr-Admins maps to admin, anything else to staff', () => {
+test('APP-Rostr-HR maps to hr, APP-Rostr-Admins to admin, anything else to staff', () => {
+  assert.equal(roleFromGroups(['APP-Rostr-Users', 'APP-Rostr-HR']), 'hr');
   assert.equal(roleFromGroups(['APP-Rostr-Users', 'APP-Rostr-Admins']), 'admin');
   assert.equal(roleFromGroups('APP-Rostr-Admins'), 'admin');
   assert.equal(roleFromGroups('APP-Rostr-Users'), 'staff');

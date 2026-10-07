@@ -72,14 +72,15 @@ Promise.all([loadSaml(), loadOidc()])
     const scim = loadScim();
     const db = openDatabase(dbPath);
     const hrFile = process.env.HR_FILE || '/app/hr/employees.json';
+    const hr = createHrReader(hrFile);
     try {
-      const priya = createHrReader(hrFile).getEmployeeByEmail('priya.shah@lanternfieldgoods.co.uk');
+      const priya = hr.getEmployeeByEmail('priya.shah@lanternfieldgoods.co.uk');
       const annual = priya && priya.leave ? priya.leave.annual : 'missing';
       console.log(`HR file ${hrFile}, priya annual ${annual}`);
     } catch (error) {
       console.warn(`HR file not read (${hrFile}): ${error.message}`);
     }
-    const app = createApp({ db, authLogPath, sessionSecret, saml, oidc, scim });
+    const app = createApp({ db, authLogPath, sessionSecret, saml, oidc, scim, hr });
     app.listen(port, '0.0.0.0', () => {
       console.log(`Rostr listening on ${port}`);
     });
