@@ -1,5 +1,7 @@
 # Phase 4 — Joiner, mover, and leaver
 
+Previous: [Phase 3 — SCIM provisioning](03-scim.md).
+
 An HR change created Thomas Okeke, moved Priya Shah from Sales to Operations, and deactivated Samir Adeyemi. Group rules filled access. SCIM created Thomas in Rostr, updated Priya, and set Samir inactive. A second Leaver run on Samir did nothing further.
 
 The comparison is [evidence/04-jml/comparison.md](../../evidence/04-jml/comparison.md). Before: [evidence/04-jml/before.csv](../../evidence/04-jml/before.csv). After: [evidence/04-jml/after.csv](../../evidence/04-jml/after.csv).

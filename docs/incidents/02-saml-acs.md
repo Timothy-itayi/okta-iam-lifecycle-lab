@@ -1,5 +1,7 @@
 # SAML single sign-on URL mismatch
 
+Previous: [osTicket staff login Access denied](01-osticket-staff-login.md).
+
 Date: 2026-10-07, 16:59–17:12 Sydney. Drill 6.1. The Rostr SAML app `0oa18eddmjpNG4dNl698` had its single sign-on URL changed from `/saml/acs` to `/saml/acs2`. The checkbox **Use this for Recipient URL and Destination URL** was left ticked, so Okta rewrote all three. The audience stayed `https://rostr.lanternfieldgoods.co.uk/saml/metadata`.
 
 ## What we saw

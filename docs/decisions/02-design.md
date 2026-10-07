@@ -1,5 +1,7 @@
 # 02 — Design
 
+Previous: [02 — Break-glass account](02-break-glass.md).
+
 Decision date: 2026-10-06
 
 The org allows 10 active users and 5 Workflows. Deactivated users do not count. This note spends both budgets before anything else is built. Addresses are the `.co.uk` plan in [00-domain.md](00-domain.md).

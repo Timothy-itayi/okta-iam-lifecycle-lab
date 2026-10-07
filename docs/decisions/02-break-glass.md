@@ -1,5 +1,7 @@
 # 02 — Break-glass account
 
+Previous: [01 — Okta org](01-org.md).
+
 Decision date: 2026-10-06
 
 ## Why it exists

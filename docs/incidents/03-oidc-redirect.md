@@ -1,5 +1,7 @@
 # OIDC redirect URI mismatch
 
+Previous: [SAML single sign-on URL mismatch](02-saml-acs.md).
+
 Date: 2026-10-07, 17:13–17:18 Sydney. Drill 6.2. Rostr Admin `0oa18egjva6o5FpoP698` had its sign-in redirect URI changed from `https://rostr.lanternfieldgoods.co.uk/oidc/callback` to `https://rostr.lanternfieldgoods.co.uk/oidc/callback-wrong`. The sign-out redirect URI was left on the real callback. The client secret was not regenerated.
 
 ## What we saw

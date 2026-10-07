@@ -1,5 +1,7 @@
 # Leaver leaves Rostr active
 
+Previous: [Mover leaves a manual admin grant](06-mover-residue.md).
+
 Date: 2026-10-07, 18:21–18:26 Sydney. Drill 6.6. Deactivate Users was turned off on the Rostr SAML app, then Thomas Okeke, EMP-1008, was terminated from the HR file. Okta deactivated him. Rostr stayed active until Deactivate Users was turned back on and he was deactivated a second time.
 
 ## What we saw

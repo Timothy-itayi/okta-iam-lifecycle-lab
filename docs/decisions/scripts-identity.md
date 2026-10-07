@@ -1,5 +1,7 @@
 # Service identity
 
+Previous: [02 — Design](02-design.md).
+
 Decision date: 2026-10-06
 
 `hr-sync` calls Okta as its own app, `svc-jml-sync`. It does not use the daily admin's session. The private key is not in this repository.

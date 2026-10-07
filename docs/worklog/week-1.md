@@ -15,7 +15,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
 | Break | 15:02 → 16:59 | 1 h 57 min |
 | Afternoon, drills 6.1 to 6.6 | 2026-10-07 16:59 → 18:26 | 1 h 27 min |
-| **Worked** | | **19 h 7 min** |
+| Evening, report and README | 2026-10-07 18:29 → 18:36 | 7 min |
+| **Worked** | | **19 h 14 min** |
 
 ## Phase 0 — Prep
 
@@ -427,3 +428,18 @@ About 1 h 27 min, 16:59 to 18:26. Rostr was already up. Local and public `/healt
 - [fdacc1d](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/fdacc1d) sets only Thomas Okeke, EMP-1008, to `terminated` with `endDate` `2026-10-07`. Dry-run: `leaver EMP-1008 status`. `--apply` `REQ-0008` returned in about 4 seconds. `logs/jml.csv` `07:22:37.812Z`. Okta `DEPROVISIONED`, user `00u18f077u3WXcjuY698`. Still in `DEPT-Operations` and `APP-Rostr-Users`. No Okta SCIM write. Rostr id `bd5b32ef-eccb-4b1a-af38-fdae04c82da1` stayed `active` true.
 - Deactivate Users ticked again. Save probe `07:24:54.705Z`. Activated him. `PUT` `07:25:13.946Z` `active` true. Deactivated again. `PUT` `07:26:41.087Z` `active` false, title and department kept. Okta `DEPROVISIONED`. He was not deleted.
 - Record: [docs/incidents/07-leaver-downstream.md](../incidents/07-leaver-downstream.md). [87ae6a0](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/87ae6a0eb9e290941d392cd7b0208041dcdeaa3d) (`Record the leaver that left Thomas active in Rostr.`).
+
+## Phase 7 — Write-up and teardown (started)
+
+7.3 and 7.4 are not started. The CV notes stay out of the repo. Nothing has been torn down.
+
+### 7.1 Final report — 18:29 to 18:36
+
+- [docs/report.md](../report.md). Sections are purpose, how it was built, why, risk management, incidents, outcome, and what production would add. It says the lab is not production experience. Ticket `357784` is still Open. Teardown is not done.
+- PDF export at the repo root: [okta-iam-lifecycle-lab-report.pdf](../../okta-iam-lifecycle-lab-report.pdf). Figures are existing evidence screenshots.
+
+### 7.2 README — 18:29 to 18:36
+
+- Phase table marks 2 done, 6 done, and 7 in progress. Run instructions for Rostr name the env vars and say not to pass `-v`.
+- Data flow diagram is in the README. [docs/built-so-far.svg](../built-so-far.svg) now shows the six drills written and teardown still open.
+- Numbered files link to the previous one, from [docs/decisions/00-domain.md](../decisions/00-domain.md) through the report.

@@ -1,5 +1,7 @@
 # OIG mapping
 
+Previous: [Phase 5 — Governance](../phases/05-governance.md).
+
 Okta Identity Governance is a subscription. This trial does not have it. The lab did Access Requests, access review, entitlements, and stale-access by hand. This note is how the product would do the same work, from Okta's docs on [Identity Governance](https://help.okta.com/oie/en-us/content/topics/identity-governance/iga.htm), [Access Requests](https://help.okta.com/oie/en-us/content/topics/identity-governance/access-requests/ar-overview.htm), [Access Certifications](https://help.okta.com/oie/en-us/content/topics/identity-governance/access-certification/iga-access-cert.htm), and [Entitlement Management](https://help.okta.com/en-us/Content/Topics/identity-governance/em/entitlement-policy.htm).
 
 OIG here is Access Governance (Access Requests, Access Certifications, Entitlement Management) sitting on Lifecycle Management and Workflows. The lab already has the last two.

@@ -1,5 +1,7 @@
 # Phase 3 — SCIM provisioning
 
+Previous: [Phase 2 — SaaS onboarding](02-onboarding.md).
+
 ## 3.1 SCIM contract
 
 Read on 2026-10-06:

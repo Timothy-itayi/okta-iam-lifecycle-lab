@@ -25,14 +25,14 @@
   <rect x="476" y="112" width="200" height="92" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
   <text x="490" y="146" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Okta Workflows</text>
   <text x="490" y="168" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">Joiner, Mover, Leaver</text>
-  <text x="490" y="186" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1d4a28">three of five flows</text>
+  <text x="490" y="186" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#1d4a28">plus Access Request</text>
 
   <line x1="676" y1="158" x2="698" y2="158" stroke="#3d6f9c" stroke-width="1.5"/>
   <polygon points="698,152 698,164 710,158" fill="#3d6f9c"/>
 
   <rect x="712" y="108" width="220" height="100" rx="8" fill="#f8d7a8" stroke="#b86a1d" stroke-width="1.5"/>
   <text x="728" y="142" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="700" fill="#5c3308">Okta org</text>
-  <text x="728" y="164" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">9 of 10 active users</text>
+  <text x="728" y="164" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">cap of 10 active users</text>
   <text x="728" y="182" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#5c3308">trial-7464750</text>
   <text x="728" y="198" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#5c3308">groups, policies, System Log</text>
 
@@ -105,33 +105,33 @@
 
   <rect x="644" y="564" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
   <text x="660" y="592" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Incidents</text>
-  <text x="660" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">00-duplicate-rostr-admin.md</text>
+  <text x="660" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">incidents 00 through 07</text>
 
   <rect x="940" y="564" width="280" height="72" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
   <text x="956" y="592" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Evidence</text>
-  <text x="956" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">tasks 0.2 to 4.6</text>
+  <text x="956" y="614" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">tasks 0.2 to 6.6</text>
 
-  <text x="52" y="668" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">week-1.md is the session log. saas-onboarding.md is the Rostr runbook. entitlements.js writes the 4.6 CSVs.</text>
+  <text x="52" y="668" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">week-1.md is the session log. saas-onboarding.md is the Rostr runbook. entitlements.js writes the review CSVs.</text>
 
-  <rect x="32" y="732" width="1216" height="220" rx="12" fill="#ffffff" stroke="#8a8494" stroke-dasharray="7 5"/>
-  <text x="52" y="760" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">NOT BUILT. TBC</text>
+  <rect x="32" y="732" width="1216" height="220" rx="12" fill="#ffffff" stroke="#d9d0e2"/>
+  <text x="52" y="760" font-family="Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#6b6474">LATER WORK. TEARDOWN IS STILL OPEN</text>
 
-  <rect x="52" y="784" width="270" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="68" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Access Request</text>
-  <text x="68" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">flow 4 of 5. Phase 5</text>
+  <rect x="52" y="784" width="270" height="78" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="68" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Access Request</text>
+  <text x="68" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">flow built. Ticket 357784 open</text>
 
-  <rect x="346" y="784" width="270" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="362" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Stale-Access</text>
-  <text x="362" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">flow 5 of 5. Phase 5</text>
+  <rect x="346" y="784" width="270" height="78" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="362" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Stale-Access</text>
+  <text x="362" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">a script, not a Workflow</text>
 
   <rect x="640" y="784" width="270" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="656" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Phase notes 5-7</text>
-  <text x="656" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">governance, drills, teardown</text>
+  <text x="656" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Teardown</text>
+  <text x="656" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">not started. Phase 7.4</text>
 
-  <rect x="934" y="784" width="282" height="78" rx="8" fill="#ffffff" stroke="#8a8494" stroke-dasharray="6 4"/>
-  <text x="950" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#3f3a46">Phase 6 incidents</text>
-  <text x="950" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#3f3a46">six drills not started</text>
+  <rect x="934" y="784" width="282" height="78" rx="8" fill="#d9f2df" stroke="#3d8b4f"/>
+  <text x="950" y="814" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#1d4a28">Phase 6 incidents</text>
+  <text x="950" y="836" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#1d4a28">six drills written</text>
 
-  <text x="52" y="894" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">hr-sync is a script, not one of the five flows. Access Request joins at Okta from a ticket. Stale-Access is a later schedule, not this arrow.</text>
-  <text x="52" y="918" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">Samir Adeyemi is deactivated. Thomas Okeke is the joiner. Priya Shah moved to Operations. Active count is 9 of 10.</text>
+  <text x="52" y="894" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">hr-sync is a script, not one of the flows. Access Request joins at Okta from a ticket. Stale-Access does not sit on the arrow above.</text>
+  <text x="52" y="918" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#6b6474">Samir and Thomas are deactivated. Jonah and Priya are in Operations. The CV notes and the teardown are not done.</text>
 </svg>

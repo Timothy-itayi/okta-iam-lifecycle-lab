@@ -1,5 +1,7 @@
 # Phase 2 — SaaS onboarding
 
+Previous: [Phase 1 — Okta foundation](01-foundation.md).
+
 ## 2.1 Scaffold Rostr
 
 Rostr is an Express app in `rostr/`. It uses `better-sqlite3` and `express-session`. The users table columns are `id`, `userName`, `givenName`, `familyName`, `email`, `department`, `title`, `active`, `lastLogin`, and `licensed`. `id` is text. `userName` is unique.

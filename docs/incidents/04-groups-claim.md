@@ -1,5 +1,7 @@
 # Missing groups claim
 
+Previous: [OIDC redirect URI mismatch](03-oidc-redirect.md).
+
 Date: 2026-10-07, 17:20–17:34 Sydney. Drill 6.3. The `groups` claim on the default authorization server was changed from Starts with `APP-Rostr` to Starts with `APP-Rostrx`. It stayed included in the ID token. Jonah Hale was added to `APP-Rostr-Admins` for the drill. His Rostr Admin assignment was the group, not a People row.
 
 ## What we saw

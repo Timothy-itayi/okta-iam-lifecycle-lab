@@ -1,5 +1,7 @@
 # Mover leaves a manual admin grant
 
+Previous: [SCIM department missing on create](05-scim-mapping.md).
+
 Date: 2026-10-07, 18:09–18:17 Sydney. Drill 6.5. Jonah Hale, EMP-1002, was moved from Sales to Operations. He had been added to `APP-Rostr-Admins` by hand before the move. The Mover flow does not remove that membership. Group rules moved the department group and left the admin grant in place.
 
 ## What we saw

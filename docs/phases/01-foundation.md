@@ -1,5 +1,7 @@
 # Phase 1 — Okta foundation
 
+Previous: [Service identity](../decisions/scripts-identity.md).
+
 ## 1.1 Profile attributes
 
 Checked 2026-10-06 in Directory › Profile Editor › User (default). The profile is the Okta user type, variable `user`. The Profile Editor view was not saved into `evidence/`.

@@ -1,5 +1,7 @@
 # Duplicate Rostr Admin app
 
+Previous: [OIG mapping](../decisions/oig-mapping.md).
+
 Date: 2026-10-06. Two OIDC apps were created with the same name, `Rostr Admin`. Token Preview lists clients by name, so the dropdown showed two identical entries. Assignment, redirect URIs, and the client ID lived on one of them. A preview against the other returned "User is not assigned to the client application."
 
 ## What we saw

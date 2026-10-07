@@ -1,5 +1,7 @@
 # osTicket staff login Access denied
 
+Previous: [Duplicate Rostr Admin app](00-duplicate-rostr-admin.md).
+
 Date: 2026-10-07. Phase 5 needs the staff control panel at `http://127.0.0.1:8080/scp` to create an Access Request help topic. The guest form loaded. Staff login returned **Access denied**. osTicket is `rinkp/osticket-dockerized:1.18.4` in a separate itops compose stack (`itops-osticket`, `itops-mariadb`), not this repo's `rostr/` compose. The install ticket in the panel is dated 29 September, so this is a leftover homelab volume, not a fresh Phase 5 install.
 
 ## What we saw

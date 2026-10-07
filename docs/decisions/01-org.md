@@ -1,5 +1,7 @@
 # 01 — Okta org
 
+Previous: [00 — Domain and email](00-domain.md).
+
 Decision date: 2026-10-06
 
 ## Org

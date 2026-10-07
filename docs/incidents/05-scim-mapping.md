@@ -1,5 +1,7 @@
 # SCIM department missing on create
 
+Previous: [Missing groups claim](04-groups-claim.md).
+
 Date: 2026-10-07, 17:35–18:07 Sydney. Drill 6.4. Rostr's create route was changed so a user with no department returned 400, the department mapping was removed, and `drill.scim@lanternfieldgoods.co.uk` was created in Okta with department `Sales`. The refusal is in the log. The retry create is not the fix: Okta marked it successful, and the body still had no department. A later profile edit pushed the department, and deactivation set Rostr `active` to false.
 
 ## What we saw

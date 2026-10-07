@@ -1,5 +1,7 @@
 # Phase 5 — Governance
 
+Previous: [Phase 4 — Joiner, mover, and leaver](04-jml.md).
+
 osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06 and removed her at 14:06:20. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. Ticket `357784` is still Open. Access review REQ-0002 applied at 13:43. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. The audit pack and the OIG mapping are written.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
