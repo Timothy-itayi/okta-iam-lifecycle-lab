@@ -411,7 +411,7 @@ About 1 h 27 min, 16:59 to 18:26. Rostr was already up. Local and public `/healt
 - `06:44:14.139Z` `POST /Users` 400, `department is required`. System Log `application.provision.user.push` FAILURE at `06:44:14.247Z`, same text. [evidence/6.4-drill-scim-error.png](../../evidence/6.4-drill-scim-error.png).
 - Mapping put back as `user.department`, create and update. [evidence/6.4-department-mapping.png](../../evidence/6.4-department-mapping.png). Retry at `07:00:21.831Z` was `POST` 201, Rostr id `e4aaf631-250f-4fe8-b8c0-3df1394665f2`. The body still had no department. Okta logged the push as SUCCESS. Assignments shows no error: [evidence/6.4-assignments-no-error.png](../../evidence/6.4-assignments-no-error.png). His Okta department is still `Sales`.
 - Title set to `Drill` at 18:06. `PUT` `07:06:38.644Z` carried `title` `Drill` and enterprise `department` `Sales`. The retry create had not re-read the mapping. Deactivated at 18:07. `PUT` `07:07:31.523Z` set `active` false and kept title and department. He was not deleted. The user slot is free.
-- Record: [docs/incidents/05-scim-mapping.md](../incidents/05-scim-mapping.md). The open-incident commit is [49db231](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/49db231).
+- Record: [docs/incidents/05-scim-mapping.md](../incidents/05-scim-mapping.md). The open-incident commit is [49db231](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/49db231). Closed in [ea9a631](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/ea9a6319d1ee55dc267b2a5f2a4e865dcd4fa2f8) (`Close the SCIM department drill after the update and deactivation.`).
 
 ### 6.5 Mover leaves the admin grant — 18:09 to 18:17, 8 min
 
@@ -419,11 +419,11 @@ About 1 h 27 min, 16:59 to 18:26. Rostr was already up. Local and public `/healt
 - [b2b36a1](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/b2b36a1) changes only his `department` from `Sales` to `Operations`. Dry-run: `mover EMP-1002 department`.
 - `--apply` `REQ-0007` returned HTTP 504 after 61 seconds. No `logs/jml.csv` row. Profile was already `Operations`. `DEPT-Sales` gone, `DEPT-Operations` and `APP-Rostr-Users` from rules, `APP-Rostr-Admins` still `individual`. SCIM user `PUT` `07:14:40.069Z`, department `Operations`, Rostr id `810dde51-dd11-41ac-afda-5400f831d908`. Before: [evidence/06-mover-residue.csv](../../evidence/06-mover-residue.csv).
 - Removed from `APP-Rostr-Admins` only. Members API empty. Second export has no admin row: [evidence/06-mover-residue-after.csv](../../evidence/06-mover-residue-after.csv). Group `PUT` `07:17:38.677Z` sent `members` `[]`. [evidence/6.5-jonah-removed.png](../../evidence/6.5-jonah-removed.png). He stays Operations.
-- Record: [docs/incidents/06-mover-residue.md](../incidents/06-mover-residue.md).
+- Record: [docs/incidents/06-mover-residue.md](../incidents/06-mover-residue.md). [e884488](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/e884488f74b63f44a5e55010ed3f97a5198c0d3f) (`Record the mover that left Jonah in APP-Rostr-Admins.`).
 
 ### 6.6 Leaver leaves Rostr active — 18:21 to 18:26, 5 min
 
 - Rostr SAML app, To App: Deactivate Users unticked. Create Users and Update User Attributes left on. [evidence/6.6-deactivate-users-off.png](../../evidence/6.6-deactivate-users-off.png). Save probed `GET /Users?count=2` at `07:20:59.640Z`.
 - [fdacc1d](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/fdacc1d) sets only Thomas Okeke, EMP-1008, to `terminated` with `endDate` `2026-10-07`. Dry-run: `leaver EMP-1008 status`. `--apply` `REQ-0008` returned in about 4 seconds. `logs/jml.csv` `07:22:37.812Z`. Okta `DEPROVISIONED`, user `00u18f077u3WXcjuY698`. Still in `DEPT-Operations` and `APP-Rostr-Users`. No Okta SCIM write. Rostr id `bd5b32ef-eccb-4b1a-af38-fdae04c82da1` stayed `active` true.
 - Deactivate Users ticked again. Save probe `07:24:54.705Z`. Activated him. `PUT` `07:25:13.946Z` `active` true. Deactivated again. `PUT` `07:26:41.087Z` `active` false, title and department kept. Okta `DEPROVISIONED`. He was not deleted.
-- Record: [docs/incidents/07-leaver-downstream.md](../incidents/07-leaver-downstream.md).
+- Record: [docs/incidents/07-leaver-downstream.md](../incidents/07-leaver-downstream.md). [87ae6a0](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/87ae6a0eb9e290941d392cd7b0208041dcdeaa3d) (`Record the leaver that left Thomas active in Rostr.`).
