@@ -21,7 +21,7 @@ Phase 0, Phase 1, Phase 3, and Phase 4 are done. Staff are in Okta, department g
 | 2 | SaaS onboarding: SAML and OIDC | 8 h | In progress | [docs/phases/02-onboarding.md](docs/phases/02-onboarding.md) |
 | 3 | SCIM provisioning | 8 h | Done | [docs/phases/03-scim.md](docs/phases/03-scim.md) |
 | 4 | Joiner, mover, and leaver | 7 h | Done | [docs/phases/04-jml.md](docs/phases/04-jml.md) |
-| 5 | Governance and audit evidence | 7.5 h | Started | [docs/phases/05-governance.md](docs/phases/05-governance.md). Access review, Stale-Access, and OAuth review done. Access Request close-out waiting on Wait For. |
+| 5 | Governance and audit evidence | 7.5 h | Nearly done | [docs/phases/05-governance.md](docs/phases/05-governance.md). Access review, Stale-Access, OAuth review, audit pack, and OIG mapping done. Access Request close-out waiting on Wait For. |
 | 6 | Failure drills | 6 h | Not started | |
 | 7 | Write-up and teardown | 4 h | Not started | Milestone M3 |
 
@@ -40,19 +40,21 @@ Solid nodes exist. Dashed nodes are TBC. The top row is the running path: `hr/em
 - Lost-phone reset: [docs/runbooks/mfa-reset.md](docs/runbooks/mfa-reset.md).
 - SaaS onboarding: [docs/runbooks/saas-onboarding.md](docs/runbooks/saas-onboarding.md).
 - Joiner, mover, and leaver: [docs/phases/04-jml.md](docs/phases/04-jml.md).
-- Access Request grant, access review, and Stale-Access findings (Access Request revoke outstanding): [docs/phases/05-governance.md](docs/phases/05-governance.md).
+- Access Request grant, access review, Stale-Access, OAuth review, audit pack, OIG mapping (Access Request revoke outstanding): [docs/phases/05-governance.md](docs/phases/05-governance.md).
+- OIG mapping: [docs/decisions/oig-mapping.md](docs/decisions/oig-mapping.md).
+- Audit evidence pack: [evidence/audit-pack/README.md](evidence/audit-pack/README.md).
 
 ## Repository
 
 | Path | Holds | Now |
 | --- | --- | --- |
-| [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design, service identity |
+| [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design, service identity, OIG mapping |
 | [docs/phases](docs/phases) | One note per phase | [01-foundation.md](docs/phases/01-foundation.md), [02-onboarding.md](docs/phases/02-onboarding.md), [03-scim.md](docs/phases/03-scim.md), [04-jml.md](docs/phases/04-jml.md), [05-governance.md](docs/phases/05-governance.md) |
 | [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md), [oauth-review.md](docs/runbooks/oauth-review.md) |
 | [docs/incidents](docs/incidents) | Failure records | [00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md), [01-osticket-staff-login.md](docs/incidents/01-osticket-staff-login.md). Phase 6 drills are not started |
 | [docs/worklog](docs/worklog) | Session log | [week-1.md](docs/worklog/week-1.md) |
-| [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, 3.2 through 3.7, 4.1 through 4.6, 5.1 osTicket, 5.2 grant plus OIDC, 5.3 access review, and 5.4 stale-access |
+| [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 2.7, 3.2 through 3.7, 4.1 through 4.6, 5.1 osTicket, 5.2 grant plus OIDC, 5.3 access review, 5.4 stale-access, 5.5 oauth-review, audit-pack |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |
 | [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Okta pushes users and the two `APP-Rostr` groups |
-| [scripts](scripts) | Test scripts, `hr-sync`, and review exports | [scim-tests.sh](scripts/scim-tests.sh), [hr-sync](scripts/hr-sync), [entitlements.js](scripts/entitlements.js), [access-review](scripts/access-review), [stale-access](scripts/stale-access), [oauth-review](scripts/oauth-review) |
+| [scripts](scripts) | Test scripts, `hr-sync`, and review exports | [scim-tests.sh](scripts/scim-tests.sh), [hr-sync](scripts/hr-sync), [entitlements.js](scripts/entitlements.js), [access-review](scripts/access-review), [stale-access](scripts/stale-access), [oauth-review](scripts/oauth-review), [audit-log-export.js](scripts/audit-log-export.js) |
 | [.env.example](.env.example) | Placeholder names only | No secrets |

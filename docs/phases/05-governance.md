@@ -136,3 +136,39 @@ Runbook: [docs/runbooks/oauth-review.md](../runbooks/oauth-review.md). Script: `
 Found: [evidence/5.5/oauth-review-found.md](../../evidence/5.5/oauth-review-found.md). Four manage scopes on an unrecorded service app. After revoke: [evidence/5.5/oauth-review.md](../../evidence/5.5/oauth-review.md). Grants DELETE 204 × 4, deactivate HTTP 200. Disposition: grants revoked, deactivated.
 
 Take Super Administrator off `svc-jml-sync` now. Leave Application Administrator and the apps/grants scopes if a later review needs them, or drop grants scopes if you want the app back to users/groups/logs only.
+
+## 5.6 Audit pack
+
+`evidence/audit-pack/` holds what an auditor would ask for. Each file is indexed to SOC 2 CC6.1–CC6.3 and ISO 27001:2022 A.5.15–A.5.18, A.8.2, A.8.5.
+
+```
+node scripts/audit-log-export.js --out evidence/audit-pack
+```
+
+That script pulls System Log by event family (`user.lifecycle.*`, `group.user_membership.*`, `application.user_membership.*`, `user.mfa.factor.*`), redacts secrets, and writes JSONL plus a count summary. Rate-limited on this trial; backoff is 60 s per 429.
+
+| Subfolder | Contents | Control |
+| --- | --- | --- |
+| (root) | System Log JSONL, counts CSV | CC6.1–CC6.3 |
+| `access-request/` | REQ-0001 timeline and screenshots | CC6.3 / A.5.18 |
+| `access-review/` | Manager CSVs and revocation log | CC6.3 / A.8.2 |
+| `stale-access/` | Findings and plant data | CC6.3 / A.8.2 |
+| `oauth-review/` | Before and after integration tables | CC6.2 / A.8.5 |
+
+Index: [evidence/audit-pack/README.md](../../evidence/audit-pack/README.md).
+
+## 5.7 OIG mapping
+
+[docs/decisions/oig-mapping.md](../decisions/oig-mapping.md). Table of lab process vs Okta Identity Governance: Access Requests (conditions and request types), Access Certifications (campaigns and security access reviews), Entitlement Management (policies, bundles, resource collections). What to learn first on the job.
+
+Checkpoint: for any staff member, who approved their access?
+
+| Person | Birthright | Exception | Recertification |
+| --- | --- | --- | --- |
+| Department heads (Ava, Helen, Marcus) | CSV import + group rules, no named approver | — | Keep, `no-manager.csv` |
+| Jonah Hale | same | — | Keep, Ava Nguyen |
+| Lena Ortiz | same | `APP-Rostr-Admins`: Marcus Bell, ticket `357784` | Keep, Marcus Bell |
+| Priya Shah, Thomas Okeke | import / Joiner flow | — | Keep, Marcus Bell |
+| Samir Adeyemi | import, then Leaver | — | Revoke, Helen Cho |
+
+Birthright has no approver. The manager's Keep on the access review is the approval of record. Exception access for Lena has an approver; the grant actor in System Log is still Workflows.

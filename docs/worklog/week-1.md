@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5 osTicket through OAuth review | 2026-10-07 11:46 → 14:12 | 2 h 26 min |
-| **Worked** | | **16 h 50 min** |
+| Morning, Phase 5 osTicket through audit pack | 2026-10-07 11:46 → 14:36 | 2 h 50 min |
+| **Worked** | | **17 h 14 min** |
 
 ## Phase 0 — Prep
 
@@ -275,7 +275,7 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 2 h 26 min, 11:46 to 14:12. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. Access Request Wait For was due around 14:06.
+About 2 h 50 min, 11:46 to 14:36. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. Audit pack assembled with control mapping. OIG mapping written. Access Request close-out still waiting.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
@@ -287,6 +287,8 @@ About 2 h 26 min, 11:46 to 14:12. Staff login through OIDC `/admin/users`. Acces
 | 5.3 Access review | 13:35 → 13:43 | 8 min |
 | 5.4 Stale-Access | 13:46 → 13:49 | 3 min |
 | 5.5 OAuth review | 13:52 → 14:12 | 20 min |
+| 5.6 Audit pack | 14:15 → 14:36 | 21 min |
+| 5.7 OIG mapping | 14:15 → 14:31 | 16 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -339,3 +341,21 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - **Fix:** Granted `okta.apps.manage` on `svc-jml-sync` and assigned Application Administrator. Token then included `okta.apps.manage`. `/api/v1/apps` 200.
 - Plant created `legacy-report-tool` `0oa18g5mzseAfusVa698`. `POST /apps/{id}/grants` 403. Super Administrator at 14:05 did not fix it: token still omitted `okta.appGrants.manage`. Role and scope are separate.
 - **Fix 2:** Granted `okta.appGrants.manage` and `okta.appGrants.read`. `GET /grants` 200. Planted four manage scopes. Found: [evidence/5.5/oauth-review-found.md](../../evidence/5.5/oauth-review-found.md). Revoke `--apply`: four grant DELETE 204, deactivate 200. After: [evidence/5.5/oauth-review.md](../../evidence/5.5/oauth-review.md). Take Super Admin off `svc-jml-sync`. Runbook: [docs/runbooks/oauth-review.md](../runbooks/oauth-review.md).
+
+### 5.6 Audit pack — 14:15 to 14:36, 21 min
+
+- `scripts/audit-log-export.js` pulls System Log by event family, redacts secrets, writes JSONL + counts CSV. DPoP auth via `svc-jml-sync`.
+- Trial org rate-limited `/api/v1/logs` (429). Script backs off 60 s per retry.
+- Copied access-review CSVs, access-request records, stale-access findings, oauth-review tables into `evidence/audit-pack/` subdirs.
+- Wrote `evidence/audit-pack/README.md`: index of every file, mapped to SOC 2 CC6.1–CC6.3 and ISO 27001:2022 A.5.15–A.5.18, A.8.2, A.8.5.
+- Record: [docs/phases/05-governance.md](../phases/05-governance.md).
+
+### 5.7 OIG mapping — 14:15 to 14:31, 16 min (parallel with 5.6)
+
+- Fetched Okta docs on Identity Governance, Access Requests, Access Certifications, Entitlement Management.
+- Wrote [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md): lab process vs how OIG does it, what OIG adds, checkpoint "who approved whose access", what to learn first on the job.
+- Trial does not have OIG. The lab proved the processes OIG is sold to replace.
+
+### Access Request close-out (still outstanding)
+
+Wait For was due around 14:06. Ticket `357784` still Open. Evidence still needed: `group.user_membership.remove` in System Log, Workflows History URL on ticket, ticket Closed.

@@ -1,0 +1,4 @@
+login,department,manager,groups,assignmentSource,lastRostrSignIn,decision
+ava.nguyen@lanternfieldgoods.co.uk,Sales,,APP-Rostr-Users|DEPT-Sales|Everyone,group,,Keep
+helen.cho@lanternfieldgoods.co.uk,Finance,,APP-Rostr-Users|DEPT-Finance|Everyone,group,,Keep
+marcus.bell@lanternfieldgoods.co.uk,Operations,,APP-Rostr-Users|DEPT-Operations|Everyone,group,,Keep

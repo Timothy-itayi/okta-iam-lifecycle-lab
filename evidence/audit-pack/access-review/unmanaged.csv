@@ -1,0 +1,3 @@
+login,department,manager,groups,assignmentSource,lastRostrSignIn,decision
+orphan.roster@example.invalid,,,,none,,Keep
+test.joiner@lanternfieldgoods.co.uk,,,APP-Rostr-Users|DEPT-Sales|Everyone,group,,Revoke
