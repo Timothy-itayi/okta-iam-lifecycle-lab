@@ -385,6 +385,7 @@ About 19 min, 16:59 to 17:18. Rostr was already up. Local and public `/health` w
 - Restored `/saml/acs` the same way. Jonah's dashboard tile reached `/me` at `2026-10-07T06:12:09.466Z`. Auth log `06:12:09.478Z`, `protocol` `saml`, `outcome` `success`. [evidence/6.1-jonah-me.png](../../evidence/6.1-jonah-me.png).
 - That success overwrote the planted stale `lastLogin`. The Phase 5 stale-access report no longer matches Rostr.
 - Record: [docs/incidents/02-saml-acs.md](../incidents/02-saml-acs.md).
+- [e51a3c1](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/e51a3c1372519e717aab75e94f1ce3d74e16da2a) (`Record the SAML ACS mismatch drill.`) at 17:13.
 
 ### 6.2 OIDC redirect mismatch — 17:13 to 17:18, 5 min
 
@@ -392,3 +393,4 @@ About 19 min, 16:59 to 17:18. Rostr was already up. Local and public `/health` w
 - Private window `/oidc/login`. Okta 400 `invalid_request` on `/oauth2/default/v1/authorize`. Client id in the URL was the real app. [evidence/6.2-oidc-400.jpg](../../evidence/6.2-oidc-400.jpg). No new OIDC line in `logs/rostr-auth.jsonl`.
 - Put the sign-in URI back. API shows both lists on the real callback. The next open of `/oidc/login` showed the Okta sign-in form instead of the 400. [evidence/6.2-oidc-signin-restored.jpg](../../evidence/6.2-oidc-signin-restored.jpg). Did not finish as Helen Cho. She is not in `APP-Rostr-Admins`.
 - Record: [docs/incidents/03-oidc-redirect.md](../incidents/03-oidc-redirect.md).
+- [e76f762](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/e76f7622b306b1b6418a556425d4abbf1d41b90b) (`Record the OIDC redirect mismatch drill.`) at 17:19.
