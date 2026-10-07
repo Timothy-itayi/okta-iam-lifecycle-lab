@@ -141,6 +141,34 @@ function hrDecisionBody({ request, review, facts, events, names, own, error, wee
   </div>`;
 }
 
+function exportDialog(count) {
+  const n = Number(count) || 0;
+  const waiting = n === 0
+    ? 'Nothing is waiting to export. An HR approval writes a balance change.'
+    : `${n} balance ${n === 1 ? 'change is' : 'changes are'} waiting.`;
+  const download = n ? '<a class="btn primary" href="/hr/export.json">Download JSON</a>' : '';
+  return `<dialog class="prompt" id="export-dialog" aria-labelledby="export-title">
+    <h2 id="export-title">Export changes</h2>
+    <p>${waiting}</p>
+    <p>Run leave-apply with a REQ number to update the HR file.</p>
+    <div class="prompt-actions">
+      <button type="button" class="btn secondary" data-export-close>Close</button>
+      ${download}
+    </div>
+  </dialog>
+  <script>
+    var box = document.getElementById('export-dialog');
+    var opener = document.querySelector('[data-export-open]');
+    if (box && opener && box.showModal) {
+      opener.addEventListener('click', function () { box.showModal(); });
+      box.querySelectorAll('[data-export-close]').forEach(function (button) {
+        button.addEventListener('click', function () { box.close(); });
+      });
+      box.addEventListener('click', function (event) { if (event.target === box) box.close(); });
+    }
+  </script>`;
+}
+
 function exportBody(changes, names = {}) {
   if (!changes.length) {
     return '<section class="panel empty"><p>Nothing to export. An HR approval writes a balance change here.</p></section>';
@@ -162,4 +190,4 @@ function exportBody(changes, names = {}) {
     </table></section>`;
 }
 
-module.exports = { hrQueueBody, hrDecisionBody, exportBody };
+module.exports = { hrQueueBody, hrDecisionBody, exportBody, exportDialog };

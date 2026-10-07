@@ -453,8 +453,8 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
       title: 'All leave',
       context: 'Approved by managers, waiting for HR',
       current: '/hr/leave',
-      action: '<a class="btn secondary" href="/hr/export">Export changes</a>',
-      body: hrViews.hrQueueBody({ rows, view, dept, names }),
+      action: '<button type="button" class="btn secondary" data-export-open>Export changes</button>',
+      body: hrViews.hrQueueBody({ rows, view, dept, names }) + hrViews.exportDialog(listBalanceChanges(db).length),
     });
   });
 

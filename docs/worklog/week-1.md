@@ -38,7 +38,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Account menu labels | 2026-10-08 06:17 → 06:20 | 3 min |
 | Header spacing and decision activity | 2026-10-08 06:24 → 06:27 | 3 min |
 | Flagged tab | 2026-10-08 06:39 → 06:43 | 4 min |
-| **Worked** | | **23 h 14 min** |
+| Export window | 2026-10-08 06:49 → 06:51 | 2 min |
+| **Worked** | | **23 h 16 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -621,3 +622,8 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 
 - Team requests has Waiting, Decided, and Flagged. Flagged lists department requests that have a `jev_flags` row. The request stays on Waiting or Decided. A flag still does not change the status.
 - Container rebuilt, which drops in-memory sessions. Record: [docs/leave/10-grid.md](../leave/10-grid.md).
+
+### Export window — 06:49 to 06:51, 2 min
+
+- Export changes on All leave opens a window on that page. It says how many balance changes are waiting, and Download JSON is there when the count is not zero. The line under that names leave-apply and a REQ number. The Export tab still lists the rows. A download still does not mark them exported.
+- Container rebuilt, which drops in-memory sessions. Record: [docs/leave/11-export.md](../leave/11-export.md).

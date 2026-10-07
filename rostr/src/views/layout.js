@@ -94,7 +94,7 @@ function promptHtml(flash) {
   const message = typeof flash === 'string' ? { text: flash } : flash;
   const title = message.title || 'Notice';
   const view = message.href ? `<a class="btn secondary" href="${escapeHtml(message.href)}">View request</a>` : '';
-  return `<dialog class="prompt" open aria-labelledby="prompt-title">
+  return `<dialog class="prompt" data-flash open aria-labelledby="prompt-title">
     <h2 id="prompt-title">${escapeHtml(title)}</h2>
     <p>${escapeHtml(message.text)}</p>
     <div class="prompt-actions">
@@ -103,7 +103,7 @@ function promptHtml(flash) {
     </div>
   </dialog>
   <script>
-    var prompt = document.querySelector('.prompt');
+    var prompt = document.querySelector('dialog.prompt[data-flash]');
     if (prompt && typeof prompt.showModal === 'function') {
       if (prompt.open) prompt.close();
       prompt.showModal();

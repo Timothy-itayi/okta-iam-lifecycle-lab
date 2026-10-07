@@ -331,7 +331,10 @@ test('Helen decides the request Marcus sent and records a balance change', async
     assert.match(queue, /Priya Shah/);
     assert.match(queue, /href="\/hr\/leave\/LV-0001"/);
     assert.match(queue, /Marcus Bell/);
-    assert.match(queue, /Export changes/);
+    assert.match(queue, /data-export-open/);
+    assert.match(queue, /id="export-dialog"/);
+    assert.match(queue, /Nothing is waiting to export/);
+    assert.match(queue, /leave-apply with a REQ number/);
     assert.match(queue, /aria-label="2 waiting"/);
     assert.match(queue, /Waiting <span class="tab-count">\(2\)<\/span>/);
     assert.match(queue, /20–22 Oct/);
@@ -357,6 +360,9 @@ test('Helen decides the request Marcus sent and records a balance change', async
     const hrFile = JSON.parse(fs.readFileSync(path.join(dir, 'employees.json'), 'utf8'));
     assert.equal(hrFile.find((person) => person.email === PEOPLE.priya.email).leave.annual, 2);
 
+    const after = await (await fetch(`${base}/hr/leave?view=approved`, { headers: { cookie: helen } })).text();
+    assert.match(after, /1 balance change is waiting/);
+    assert.match(after, /href="\/hr\/export.json"/);
     const exportPage = await (await fetch(`${base}/hr/export`, { headers: { cookie: helen } })).text();
     assert.match(exportPage, /leave-apply/);
     const download = await fetch(`${base}/hr/export.json`, { headers: { cookie: helen } });
