@@ -39,7 +39,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Header spacing and decision activity | 2026-10-08 06:24 → 06:27 | 3 min |
 | Flagged tab | 2026-10-08 06:39 → 06:43 | 4 min |
 | Export window | 2026-10-08 06:49 → 06:51 | 2 min |
-| **Worked** | | **23 h 16 min** |
+| Untrack resvg cache | 2026-10-08 07:11 → 07:14 | 3 min |
+| **Worked** | | **23 h 19 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -627,3 +628,7 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 
 - Export changes on All leave opens a window on that page. It says how many balance changes are waiting, and Download JSON is there when the count is not zero. The line under that names leave-apply and a REQ number. The Export tab still lists the rows. A download still does not mark them exported.
 - Container rebuilt, which drops in-memory sessions. Record: [docs/leave/11-export.md](../leave/11-export.md).
+
+### Untrack resvg cache — 07:11 to 07:14, 3 min
+
+- `.resvg-Yeyb` is a Node compile cache that had been committed. `git status` and `git push` died while reading it: `Operation canceled` and `mmap failed`. It is removed from the index and ignored. The three commits ahead of origin do not need it.

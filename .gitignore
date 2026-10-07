@@ -6,6 +6,7 @@ logs/
 evidence-raw/
 node_modules/
 resvg-tmp/
+.resvg-*/
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
