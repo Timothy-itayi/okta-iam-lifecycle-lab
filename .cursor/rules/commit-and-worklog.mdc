@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Commit and worklog
 
-When a phase, drill, or stretch slice is finished, update `docs/worklog/week-1.md` in the same change and commit it. Do not wait to be asked again.
+When a lab phase or drill is finished, update `docs/worklog/week-1.md` in the same change and commit it. When a leave-hub slice from `rostr-leave-jev-report.pdf` is finished, update `docs/worklog/leave-hub.md` instead. Do not wait to be asked again. Do not put leave-hub time back into the lab log.
 
 The worklog entry names what changed, the evidence, and the clock in Australia/Sydney. Keep the session table in step with that entry.
 
