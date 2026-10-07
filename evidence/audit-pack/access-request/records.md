@@ -21,6 +21,10 @@ osTicket is the ticket, not the provisioner. Fulfilment is a POST to the Access 
 
 Actor on the add event is Timothy Itayi via the Workflows Okta connection, not Marcus. Marcus approved the ticket. The flow granted the group.
 
-## Gap
+## Remove
 
-Wait For was due around 14:06. Close-out is not in this pack: no `group.user_membership.remove`, no Workflows History URL on the ticket, ticket `357784` still Open. Screenshots still needed: `evidence/5.2-flow-history.png`, `evidence/5.2-system-log-group-remove.png`, `evidence/5.2-ticket-closed.png`.
+`group.user_membership.remove` for Lena Ortiz / `APP-Rostr-Admins` is in [../system-log-group-membership.jsonl](../system-log-group-membership.jsonl) at `2026-10-07T03:06:20.435Z` (14:06:20 Sydney). Actor display name is Timothy itayi, client IP `35.82.175.79` (Workflows), same pattern as the add at `02:06:18Z`. One hour, to the second.
+
+## Still not in this pack
+
+Workflows History URL on the ticket, and ticket `357784` Closed. Screenshots still needed: `evidence/5.2-flow-history.png`, `evidence/5.2-system-log-group-remove.png`, `evidence/5.2-ticket-closed.png`.

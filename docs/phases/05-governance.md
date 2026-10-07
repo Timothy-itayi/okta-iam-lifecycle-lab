@@ -39,7 +39,7 @@ Group membership was not enough to open the OIDC app until Rostr Admin was assig
 
 OIDC does not write `lastLogin`. Lena's row stayed empty. Jonah Hale's SAML time `2026-10-06T05:20:26.829Z` is unchanged. Samir Adeyemi and `test.joiner` are `active` no. Orphan Roster is still in the table.
 
-The ticket stays Open until she is removed. The 13:06 POST already triggered the flow with `REQ-0001`. Do not POST again. Wait For is one hour from that call, so revoke is due around 14:06.
+The 13:06 POST is the only trigger. Do not POST again. Wait For fired: `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is at `2026-10-07T03:06:20.435Z` (14:06:20 Sydney) in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Actor is the Workflows connection (display name Timothy itayi, IP `35.82.175.79`). The ticket is still Open until the History URL is pasted and it is Closed.
 
 ## 5.2 Close-out (not done)
 
@@ -145,7 +145,7 @@ Take Super Administrator off `svc-jml-sync` now. Leave Application Administrator
 node scripts/audit-log-export.js --out evidence/audit-pack
 ```
 
-That script pulls System Log by event family (`user.lifecycle.*`, `group.user_membership.*`, `application.user_membership.*`, `user.mfa.factor.*`), redacts secrets, and writes JSONL plus a count summary. Rate-limited on this trial; backoff is 60 s per 429.
+That script pulls System Log by event family (`user.lifecycle.*`, `group.user_membership.*`, `application.user_membership.*`, `user.mfa.factor.*`), redacts secrets, and writes JSONL plus a count summary. The log API allows 60 requests a minute. Two overlapping runs sat on 429 until they were killed. A single run at 15:00 returned 27 lifecycle, 29 group, 46 app, and 61 MFA events. Okta sends a next link on the last page; the script stops when that page is empty.
 
 | Subfolder | Contents | Control |
 | --- | --- | --- |

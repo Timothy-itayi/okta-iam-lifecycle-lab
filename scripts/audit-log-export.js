@@ -79,19 +79,36 @@ function logsClient({ org, token, privateKey, nonce, fetchImpl, stdout }) {
   const state = { nonce };
   async function get(url) {
     const target = url.startsWith('http') ? url : `${org}${url}`;
-    for (let attempt = 0; attempt < 20; attempt += 1) {
-      const response = await fetchImpl(target, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `DPoP ${token}`,
-          DPoP: dpopProof({
-            privateKey, method: 'GET', url: target, nonce: state.nonce, accessToken: token,
-          }),
-        },
-      });
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      stdout(`GET ${target.split('?')[0]} ${new URL(target).searchParams.get('filter')}`);
+      let response;
+      try {
+        response = await fetchImpl(target, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `DPoP ${token}`,
+            DPoP: dpopProof({
+              privateKey, method: 'GET', url: target, nonce: state.nonce, accessToken: token,
+            }),
+          },
+          signal: AbortSignal.timeout(30000),
+        });
+      } catch (error) {
+        if (error.name === 'TimeoutError' || error.name === 'AbortError') {
+          stdout(`logs request timed out, waiting 5s`);
+          await sleep(5000);
+          continue;
+        }
+        throw error;
+      }
       state.nonce = response.headers.get('dpop-nonce') || state.nonce;
+      stdout(`  HTTP ${response.status} remaining=${response.headers.get('x-rate-limit-remaining') ?? '?'}`);
       if (response.status === 429) {
-        const waitSec = Number(response.headers.get('retry-after')) || 60;
+        const reset = Number(response.headers.get('x-rate-limit-reset'));
+        const retryAfter = Number(response.headers.get('retry-after'));
+        const waitSec = Number.isFinite(reset) && reset > 0
+          ? Math.max(1, reset - Math.floor(Date.now() / 1000) + 1)
+          : (retryAfter || 60);
         stdout(`429 from logs, waiting ${waitSec}s`);
         await sleep(waitSec * 1000);
         continue;
@@ -113,15 +130,20 @@ async function getJson(client, url) {
   return { body: await response.json(), next: nextLink(response.headers.get('link')) };
 }
 
-async function getAll(client, url) {
+async function getAll(client, url, stdout) {
   const rows = [];
   let page = url;
-  while (page) {
+  const seen = new Set();
+  while (page && seen.size < 15) {
+    if (seen.has(page)) break;
+    seen.add(page);
     const { body, next } = await getJson(client, page);
     if (!Array.isArray(body)) throw new Error(`Expected a list from ${url.split('?')[0]}`);
     rows.push(...body);
+    stdout(`  page ${seen.size}: ${body.length} events`);
+    if (!body.length || !next) break;
     page = next;
-    if (page) await sleep(1000);
+    await sleep(1200);
   }
   return rows;
 }
@@ -163,7 +185,8 @@ async function main(argv, io = {}) {
     const filter = `eventType sw "${family.prefix}"`;
     const events = (await getAll(
       client,
-      `/api/v1/logs?filter=${encodeURIComponent(filter)}&since=${encodeURIComponent(SINCE)}&limit=1000&sortOrder=ASCENDING`,
+      `/api/v1/logs?filter=${encodeURIComponent(filter)}&since=${encodeURIComponent(SINCE)}&limit=200&sortOrder=ASCENDING`,
+      stdout,
     )).map(slim);
     const file = path.join(outDir, family.file);
     fs.writeFileSync(file, events.map((event) => JSON.stringify(event)).join('\n') + (events.length ? '\n' : ''));

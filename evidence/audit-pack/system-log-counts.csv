@@ -1,0 +1,12 @@
+family,eventType,count
+user.lifecycle,user.lifecycle.activate,12
+user.lifecycle,user.lifecycle.create,12
+user.lifecycle,user.lifecycle.deactivate,3
+group.user_membership,group.user_membership.add,21
+group.user_membership,group.user_membership.remove,5
+group.user_membership,group.user_membership.rule.trigger,3
+application.user_membership,application.user_membership.add,23
+application.user_membership,application.user_membership.remove,5
+application.user_membership,application.user_membership.update,18
+user.mfa.factor,user.mfa.factor.activate,58
+user.mfa.factor,user.mfa.factor.deactivate,3

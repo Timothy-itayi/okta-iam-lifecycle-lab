@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5 osTicket through audit pack | 2026-10-07 11:46 → 14:36 | 2 h 50 min |
-| **Worked** | | **17 h 14 min** |
+| Morning, Phase 5 osTicket through audit pack | 2026-10-07 11:46 → 15:00 | 3 h 14 min |
+| **Worked** | | **17 h 38 min** |
 
 ## Phase 0 — Prep
 
@@ -275,7 +275,7 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 2 h 50 min, 11:46 to 14:36. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. Audit pack assembled with control mapping. OIG mapping written. Access Request close-out still waiting.
+About 3 h 14 min, 11:46 to 15:00. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. OAuth review revoked `legacy-report-tool`. Audit pack assembled with control mapping. System Log JSONL exported at 15:00. OIG mapping written. Access Request remove is in the log; the ticket is not Closed.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
@@ -287,7 +287,7 @@ About 2 h 50 min, 11:46 to 14:36. Staff login through OIDC `/admin/users`. Acces
 | 5.3 Access review | 13:35 → 13:43 | 8 min |
 | 5.4 Stale-Access | 13:46 → 13:49 | 3 min |
 | 5.5 OAuth review | 13:52 → 14:12 | 20 min |
-| 5.6 Audit pack | 14:15 → 14:36 | 21 min |
+| 5.6 Audit pack | 14:15 → 15:00 | 45 min |
 | 5.7 OIG mapping | 14:15 → 14:31 | 16 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
@@ -345,7 +345,8 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 ### 5.6 Audit pack — 14:15 to 14:36, 21 min
 
 - `scripts/audit-log-export.js` pulls System Log by event family, redacts secrets, writes JSONL + counts CSV. DPoP auth via `svc-jml-sync`.
-- Trial org rate-limited `/api/v1/logs` (429). Script backs off 60 s per retry.
+- **Problem:** `/api/v1/logs` is 60 requests a minute. The first run was killed in the shell and the node process kept going. A second run started on top of it. Both sat on 429, and one `sw` query followed Okta's next link onto an empty page and would have looped.
+- **Fix:** Killed every `audit-log-export` process, waited out the window, capped pages, stopped on an empty page. One run at 15:00: 27 lifecycle, 29 group, 46 app, 61 MFA. Lena's `APP-Rostr-Admins` remove is `2026-10-07T03:06:20Z`.
 - Copied access-review CSVs, access-request records, stale-access findings, oauth-review tables into `evidence/audit-pack/` subdirs.
 - Wrote `evidence/audit-pack/README.md`: index of every file, mapped to SOC 2 CC6.1–CC6.3 and ISO 27001:2022 A.5.15–A.5.18, A.8.2, A.8.5.
 - Record: [docs/phases/05-governance.md](../phases/05-governance.md).
@@ -356,6 +357,6 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - Wrote [docs/decisions/oig-mapping.md](../decisions/oig-mapping.md): lab process vs how OIG does it, what OIG adds, checkpoint "who approved whose access", what to learn first on the job.
 - Trial does not have OIG. The lab proved the processes OIG is sold to replace.
 
-### Access Request close-out (still outstanding)
+### Access Request close-out (remove only)
 
-Wait For was due around 14:06. Ticket `357784` still Open. Evidence still needed: `group.user_membership.remove` in System Log, Workflows History URL on ticket, ticket Closed.
+Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is `2026-10-07T03:06:20.435Z` in [evidence/audit-pack/system-log-group-membership.jsonl](../../evidence/audit-pack/system-log-group-membership.jsonl). Ticket `357784` is still Open. Still needed: Workflows History URL on the ticket, Internal Note, Close, and the three screenshots.

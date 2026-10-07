@@ -14,25 +14,15 @@ Assembled 2026-10-07. This folder collects what an auditor would ask for from th
 
 ### System Log exports
 
-**Gap:** JSONL files not generated. Trial org rate-limited `/api/v1/logs` (429) for several minutes. The script (`scripts/audit-log-export.js`) backs off 60 s per retry but could not complete before timeout.
+Pulled 2026-10-07 with `node scripts/audit-log-export.js --out evidence/audit-pack`. `since` is `2026-10-05T00:00:00.000Z`. Each row is slimmed (uuid, time, type, outcome, actor, targets). Tokens, JWTs, and secret-shaped fields are stripped. The trial log API is 60 requests a minute; two earlier runs overlapped and sat on 429 until they were killed.
 
-When rate limits clear, run:
-
-```
-node scripts/audit-log-export.js --out evidence/audit-pack
-```
-
-Expected files (redacted, secrets stripped):
-
-| File | Event family | Control | What it proves |
+| File | Events | Control | What it proves |
 | --- | --- | --- | --- |
-| `system-log-user-lifecycle.jsonl` | `user.lifecycle.*` | CC6.1 / A.5.15 | User creation, activation, suspension, deactivation, password resets |
-| `system-log-group-membership.jsonl` | `group.user_membership.*` | CC6.3 / A.5.18 | Group adds and removes (manual and rule-based) |
-| `system-log-app-membership.jsonl` | `application.user_membership.*` | CC6.3 / A.5.18 | App assignments and unassignments |
-| `system-log-mfa-factor.jsonl` | `user.mfa.factor.*` | CC6.2 / A.5.17 | MFA enrolment, reset, and removal |
-| `system-log-counts.csv` | — | — | Event counts by type |
-
-Meanwhile, `evidence/5.2-system-log-group-add.png` shows the `group.user_membership.add` for Lena's Access Request grant.
+| `system-log-user-lifecycle.jsonl` | 27: create 12, activate 12, deactivate 3 | CC6.1 / A.5.15, A.5.16 | Accounts were created, activated, and deactivated. Joiner and Leaver left a row. |
+| `system-log-group-membership.jsonl` | 29: add 21, remove 5, rule trigger 3 | CC6.3 / A.5.18 | Group grants and revokes, including rule-driven `DEPT-*` / `APP-Rostr-Users`. Lena Ortiz added to `APP-Rostr-Admins` at `2026-10-07T02:06:18Z` and removed at `2026-10-07T03:06:20Z` (14:06 Sydney). Access-review removes for Samir Adeyemi and `test.joiner` are at `02:43:30Z` and `02:43:31Z`, actor `svc-jml-sync`. |
+| `system-log-app-membership.jsonl` | 46: add 23, remove 5, update 18 | CC6.3 / A.5.18 | App assignment followed group membership. This is the record that a person was actually on the app, not only in a group. |
+| `system-log-mfa-factor.jsonl` | 61: activate 58, deactivate 3 | CC6.2 / A.5.17, A.8.5 | Factors were enrolled, and the three deactivates are the lost-phone resets. |
+| `system-log-counts.csv` | — | — | Counts above, by event type. |
 
 ### Access Request (REQ-0001)
 
@@ -53,7 +43,7 @@ Lena Ortiz requested `APP-Rostr-Admins` for one hour. Marcus Bell approved. Work
 | [../5.2-access-request-flow-left.png](../5.2-access-request-flow-left.png) | CC6.3 / A.5.18 | Workflow: add, wait, remove |
 | [../5.2-access-request-flow-right.png](../5.2-access-request-flow-right.png) | CC6.3 / A.5.18 | Workflow: automatic revoke after timer |
 
-**Gap:** Close-out evidence (remove event, History URL, ticket Closed) is not in this pack. Wait For was due around 14:06.
+The remove is in `system-log-group-membership.jsonl` (`03:06:20Z`). Still missing from the pack: Workflows History URL and ticket `357784` Closed. Those are screenshots, not log rows.
 
 ### Access review (REQ-0002)
 
