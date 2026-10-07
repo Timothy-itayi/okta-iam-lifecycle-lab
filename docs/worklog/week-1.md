@@ -14,8 +14,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 02:23 → 11:46 | 9 h 23 min |
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
 | Break | 15:02 → 16:59 | 1 h 57 min |
-| Afternoon, drills 6.1 to 6.3 | 2026-10-07 16:59 → 17:34 | 35 min |
-| **Worked** | | **18 h 15 min** |
+| Afternoon, drills 6.1 to 6.4 | 2026-10-07 16:59 → 18:01 | 1 h 2 min |
+| **Worked** | | **18 h 42 min** |
 
 ## Phase 0 — Prep
 
@@ -375,7 +375,7 @@ Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is 
 
 ## Phase 6 — Failure drills (started)
 
-About 35 min, 16:59 to 17:34. Rostr was already up. Local and public `/health` were 200.
+About 1 h 2 min, 16:59 to 18:01. Rostr was already up. Local and public `/health` were 200. 6.4 is not closed.
 
 ### 6.1 SAML ACS mismatch — 16:59 to 17:12, 13 min
 
@@ -403,3 +403,12 @@ About 35 min, 16:59 to 17:34. Rostr was already up. Local and public `/health` w
 - Filter restored to `APP-Rostr`. New private window. `/me` showed `APP-Rostr-Users, APP-Rostr-Admins`. Auth log `2026-10-07T06:34:02.105Z`. [evidence/6.3-me-groups-restored.png](../../evidence/6.3-me-groups-restored.png).
 - Record: [docs/incidents/04-groups-claim.md](../incidents/04-groups-claim.md). Jonah is still in `APP-Rostr-Admins` until he is removed after this record.
 - [1cfc9c8](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/1cfc9c8dc1e2f6d0a9f19e739e4b8063c7201c3f) (`Record the missing groups claim drill.`) at 17:35.
+
+### 6.4 SCIM department missing — 17:35 to 18:01, 26 min
+
+- `APP-Rostr-Admins` members were cleared at `06:35:43Z`, before this drill. Create on Rostr was made to return 400 when `department` was absent. That check was not committed. The container was rebuilt, then the check was removed and the container rebuilt again before the retry.
+- Department mapping removed on the Rostr SAML app. Drill Scim created, department set to `Sales`, group rules put him in `DEPT-Sales` and `APP-Rostr-Users`. Okta user `00u18gcp8vmAocAtp698`.
+- `06:44:14.139Z` `POST /Users` 400, `department is required`. System Log `application.provision.user.push` FAILURE at `06:44:14.247Z`, same text. [evidence/6.4-drill-scim-error.png](../../evidence/6.4-drill-scim-error.png).
+- Mapping put back as `user.department`, create and update. [evidence/6.4-department-mapping.png](../../evidence/6.4-department-mapping.png). Retry at `07:00:21.831Z` was `POST` 201, Rostr id `e4aaf631-250f-4fe8-b8c0-3df1394665f2`. The body still had no department. Okta logged the push as SUCCESS. Assignments shows no error: [evidence/6.4-assignments-no-error.png](../../evidence/6.4-assignments-no-error.png). His Okta department is still `Sales`.
+- Not closed. The next `PUT` has to carry enterprise `department` `Sales`. He is still active.
+- Record: [docs/incidents/05-scim-mapping.md](../incidents/05-scim-mapping.md).
