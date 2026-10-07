@@ -1,7 +1,7 @@
 const { escapeHtml, shortRange, plural, sydneyShort } = require('./format');
 const { icon } = require('./icons');
 const { TYPE_LABEL } = require('../leave');
-const { jevWell, policyWell, agreement } = require('./queue');
+const { jevWell, policyWell, agreement, weekGrid, flagBlock } = require('./queue');
 const { progressHtml } = require('./leave');
 
 const VIEWS = [
@@ -96,7 +96,7 @@ function managerWell(events, names) {
   return `<section class="well well-manager"><h2>${icon('check')} Manager</h2><p>Approved by ${escapeHtml(name)}${when ? `, ${escapeHtml(when)}` : ''}.</p>${note}</section>`;
 }
 
-function hrDecisionBody({ request, review, facts, events, names, own, error }) {
+function hrDecisionBody({ request, review, facts, events, names, own, error, week, flag, flagError }) {
   const form = own || request.status !== 'with_hr'
     ? ''
     : `<form method="post" action="/hr/leave/${escapeHtml(request.ref)}" class="decide">
@@ -124,6 +124,7 @@ function hrDecisionBody({ request, review, facts, events, names, own, error }) {
         <div><dt>Notice</dt><dd>${facts.noticeDays} days</dd></div>
         <div><dt>Length</dt><dd>${plural(request.days, 'working day')}</dd></div>
       </dl>
+      ${weekGrid(week)}
     </section>
     <section class="panel decision-side">
       ${ownNote}
@@ -133,6 +134,7 @@ function hrDecisionBody({ request, review, facts, events, names, own, error }) {
       ${policyWell(review)}
       ${form}
       ${closed}
+      ${flagBlock({ action: `/hr/leave/${request.ref}/flag`, flag, own, error: flagError })}
     </section>
   </div>`;
 }

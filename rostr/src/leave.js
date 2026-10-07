@@ -51,6 +51,53 @@ function daysBetween(from, to) {
   return Math.round((parseDay(to) - parseDay(from)) / DAY_MS);
 }
 
+function weekdaysOfWeek(day) {
+  const date = new Date(`${day}T00:00:00Z`);
+  const dow = date.getUTCDay();
+  date.setUTCDate(date.getUTCDate() + (dow === 0 ? -6 : 1 - dow));
+  const days = [];
+  for (let i = 0; i < 5; i += 1) {
+    const next = new Date(date);
+    next.setUTCDate(date.getUTCDate() + i);
+    days.push(next.toISOString().slice(0, 10));
+  }
+  return days;
+}
+
+function weeksCovering(start, end) {
+  const weeks = [];
+  let cursor = start;
+  while (cursor <= end && weeks.length < 8) {
+    const days = weekdaysOfWeek(cursor);
+    weeks.push(days);
+    const after = new Date(`${days[4]}T00:00:00Z`);
+    after.setUTCDate(after.getUTCDate() + 3);
+    cursor = after.toISOString().slice(0, 10);
+  }
+  return weeks;
+}
+
+const OPEN_LEAVE = new Set(['submitted', 'with_admin', 'with_hr']);
+
+function cellState(email, day, requests, shifts) {
+  const key = String(email || '').toLowerCase();
+  const rows = requests.filter((row) => String(row.email).toLowerCase() === key && row.start_day <= day && row.end_day >= day);
+  if (rows.some((row) => OPEN_LEAVE.has(row.status))) return 'requested';
+  if (rows.some((row) => row.status === 'approved')) return 'leave';
+  if (shifts.some((row) => String(row.email).toLowerCase() === key && row.day === day)) return 'rostered';
+  return '';
+}
+
+function teamWeek({ people, request, requests, shifts }) {
+  return weeksCovering(request.start_day, request.end_day).map((days) => ({
+    days,
+    rows: people.map((person) => ({
+      name: person.name,
+      cells: days.map((day) => cellState(person.email, day, requests, shifts)),
+    })),
+  }));
+}
+
 function weekdaysIn(start, end) {
   const from = parseDay(start);
   const to = parseDay(end);
@@ -252,6 +299,9 @@ module.exports = {
   sydneyToday,
   parseDay,
   weekdaysIn,
+  weekdaysOfWeek,
+  weeksCovering,
+  teamWeek,
   daysBetween,
   openDaysByType,
   validateLeave,

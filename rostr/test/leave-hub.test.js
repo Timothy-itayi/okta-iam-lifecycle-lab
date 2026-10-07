@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { insertShift, listLeaveEvents, findLeaveRequestByRef, findLeaveReview } = require('../src/db');
-const { validateLeave, weekdaysIn } = require('../src/leave');
+const { validateLeave, weekdaysIn, weekdaysOfWeek } = require('../src/leave');
 const { shortRange, longRange, shortDay } = require('../src/views/format');
 const { appWithSession, listen, close, sessionFor, postForm, PEOPLE } = require('./helpers');
 
@@ -10,6 +10,11 @@ const BALANCE = { annual: 2, sick: 8, personal: 2 };
 function check(input, requests = [], today = '2026-10-08') {
   return validateLeave(input, { requests, balance: BALANCE, today });
 }
+
+test('a request week is Monday to Friday around the start date', () => {
+  assert.deepEqual(weekdaysOfWeek('2026-10-22'), ['2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23']);
+  assert.deepEqual(weekdaysOfWeek('2026-10-19'), ['2026-10-19', '2026-10-20', '2026-10-21', '2026-10-22', '2026-10-23']);
+});
 
 test('working days skip weekends and count both ends', () => {
   assert.deepEqual(weekdaysIn('2026-10-23', '2026-10-27'), ['2026-10-23', '2026-10-26', '2026-10-27']);
@@ -253,7 +258,9 @@ test('Marcus opens the waiting request, and a deny without a note does not decid
       leave_type: 'annual', start_day: '2026-10-20', end_day: '2026-10-22', reason: 'Family wedding in Ballarat.',
     });
     assert.equal((await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: priya } })).status, 403);
+    assert.equal((await postForm(base, '/admin/leave/LV-0001/flag', priya, { suggested: 'deny' })).status, 403);
 
+    insertShift(db, { email: PEOPLE.jonah.email, day: '2026-10-19', start: '09:00', end: '17:00' });
     const marcus = await sessionFor(base, PEOPLE.marcus);
     const page = await (await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: marcus } })).text();
     assert.match(page, /Priya Shah · Annual leave/);
@@ -261,6 +268,23 @@ test('Marcus opens the waiting request, and a deny without a note does not decid
     assert.match(page, /Jev couldn't review this request/);
     assert.match(page, /Policy check/);
     assert.match(page, /aria-current="page">Team requests/);
+    assert.match(page, /Team that week/);
+    assert.match(page, /Priya Shah, Tuesday, requested leave/);
+    assert.match(page, /Jonah Hale, Monday, rostered/);
+    assert.doesNotMatch(page, /Thomas Okeke/);
+    assert.match(page, /Flag Jev's suggestion/);
+
+    const flagged = await postForm(base, '/admin/leave/LV-0001/flag', marcus, {});
+    assert.equal(flagged.status, 400);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'with_admin');
+    const saved = await postForm(base, '/admin/leave/LV-0001/flag', marcus, { suggested: 'deny', note: 'The reason is a wedding, not a cover problem.' });
+    assert.equal(saved.status, 303);
+    assert.equal(findLeaveRequestByRef(db, 'LV-0001').status, 'with_admin');
+    const after = await (await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: marcus } })).text();
+    assert.match(after, /Flagged. You said Jev should have suggested Deny/);
+    assert.match(after, /still waiting/);
+    const staff = await (await fetch(`${base}/leave/LV-0001`, { headers: { cookie: priya } })).text();
+    assert.doesNotMatch(staff, /Flagged/);
 
     const denied = await postForm(base, '/admin/leave/LV-0001', marcus, { action: 'deny' });
     assert.equal(denied.status, 400);
@@ -308,6 +332,8 @@ test('Helen decides the request Marcus sent and records a balance change', async
 
     const page = await (await fetch(`${base}/hr/leave/LV-0001`, { headers: { cookie: helen } })).text();
     assert.match(page, /Approved by Marcus Bell/);
+    assert.match(page, /Team that week/);
+    assert.match(page, /Flag Jev's suggestion/);
     assert.match(page, /Approve and update balance/);
     assert.match(page, /aria-current="page">All leave/);
 
@@ -341,6 +367,7 @@ test('Helen decides the request Marcus sent and records a balance change', async
     const ownPage = await (await fetch(`${base}/hr/leave/LV-0002`, { headers: { cookie: helen } })).text();
     assert.match(ownPage, /can&#39;t approve your own leave|can't approve your own leave/);
     assert.doesNotMatch(ownPage, /Approve and update balance/);
+    assert.doesNotMatch(ownPage, /Flag Jev's suggestion/);
   } finally {
     await close(server);
     db.close();

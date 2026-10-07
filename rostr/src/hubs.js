@@ -11,7 +11,11 @@ const {
   listBalanceChanges,
   listLeaveByDepartment,
   listLeaveEvents,
+  listLeaveInRange,
   listShiftsByEmail,
+  listShiftsInRange,
+  insertJevFlag,
+  latestJevFlag,
 } = require('./db');
 const {
   sydneyToday,
@@ -26,6 +30,8 @@ const {
   decideLeaveRequest,
   hrDecideLeave,
   myRequests,
+  teamWeek,
+  weeksCovering,
   weekdaysIn,
 } = require('./leave');
 const { factsFor } = require('./policy');
@@ -303,7 +309,23 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     return request;
   }
 
-  function decisionPage(req, res, me, request, error, status) {
+  function weekFor(request) {
+    const days = weeksCovering(request.start_day, request.end_day).flat();
+    const start = days[0];
+    const end = days[days.length - 1];
+    const people = (hr ? hr.listEmployees() : [])
+      .filter((person) => person.status === 'active' && String(person.department || '').toLowerCase() === String(request.department || '').toLowerCase())
+      .sort((a, b) => String(a.lastName).localeCompare(String(b.lastName)) || String(a.firstName).localeCompare(String(b.firstName)))
+      .map((person) => ({ email: person.email, name: `${person.firstName} ${person.lastName}`.trim() }));
+    return teamWeek({
+      people,
+      request,
+      requests: listLeaveInRange(db, { department: request.department, start, end }),
+      shifts: listShiftsInRange(db, { start, end }),
+    });
+  }
+
+  function decisionPage(req, res, me, request, error, status, flagError) {
     const review = findLeaveReview(db, request.id);
     const facts = factsFor(db, hr, request, { today: today() });
     const own = request.email.toLowerCase() === me.email.toLowerCase();
@@ -311,7 +333,16 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
       title: `${personNameFor(request.email)} · ${TYPE_LABEL[request.leave_type] || request.leave_type} leave`,
       context: `${longRange(request.start_day, request.end_day)} · ${request.ref}`,
       current: '/admin/leave',
-      body: queue.decisionBody({ request, review, facts, own, error }),
+      body: queue.decisionBody({
+        request,
+        review,
+        facts,
+        own,
+        error,
+        week: weekFor(request),
+        flag: latestJevFlag(db, request.id),
+        flagError,
+      }),
     }, status);
   }
 
@@ -320,6 +351,37 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const request = teamRequest(req, res, me);
     if (!request) return;
     decisionPage(req, res, me, request);
+  });
+
+  function saveFlag(req, res, me, request, redraw, back) {
+    const suggested = String((req.body && req.body.suggested) || '');
+    if (!['approve', 'deny', 'needs_review'].includes(suggested)) {
+      return redraw(req, res, me, request, null, 400, 'Choose what Jev should have suggested.');
+    }
+    const note = String((req.body && req.body.note) || '').trim();
+    insertJevFlag(db, {
+      request_id: request.id,
+      at: new Date().toISOString(),
+      actor: me.email,
+      suggested,
+      note: note || null,
+    });
+    const waiting = request.status === 'with_admin' || request.status === 'with_hr';
+    req.session.flash = {
+      title: 'Flag saved',
+      text: waiting
+        ? `Jev's suggestion was not changed. ${request.ref} is still waiting.`
+        : `Jev's suggestion was not changed.`,
+    };
+    req.session.save(() => res.redirect(303, back));
+  }
+
+  app.post('/admin/leave/:ref/flag', requireAdmin, form, (req, res) => {
+    const me = viewer(req);
+    const request = teamRequest(req, res, me);
+    if (!request) return;
+    if (request.email.toLowerCase() === me.email.toLowerCase()) return decisionPage(req, res, me, request);
+    saveFlag(req, res, me, request, decisionPage, `/admin/leave/${request.ref}`);
   });
 
   app.post('/admin/leave/:ref', requireAdmin, form, (req, res) => {
@@ -396,7 +458,7 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     return request;
   }
 
-  function hrPage(req, res, me, request, error, status) {
+  function hrPage(req, res, me, request, error, status, flagError) {
     const review = findLeaveReview(db, request.id);
     const events = listLeaveEvents(db, request.id);
     const facts = factsFor(db, hr, request, { today: today() });
@@ -419,6 +481,9 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
         names,
         own: request.email.toLowerCase() === me.email.toLowerCase(),
         error,
+        week: weekFor(request),
+        flag: latestJevFlag(db, request.id),
+        flagError,
       }),
     }, status);
   }
@@ -428,6 +493,14 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
     const request = hrRequest(req, res, me);
     if (!request) return;
     hrPage(req, res, me, request);
+  });
+
+  app.post('/hr/leave/:ref/flag', requireHR, form, (req, res) => {
+    const me = viewer(req);
+    const request = hrRequest(req, res, me);
+    if (!request) return;
+    if (request.email.toLowerCase() === me.email.toLowerCase()) return hrPage(req, res, me, request);
+    saveFlag(req, res, me, request, hrPage, `/hr/leave/${request.ref}`);
   });
 
   app.post('/hr/leave/:ref', requireHR, form, (req, res) => {

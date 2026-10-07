@@ -33,7 +33,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | HR queue | 2026-10-08 05:23 → 05:31 | 8 min |
 | HR queue rows | 2026-10-08 05:35 → 05:42 | 7 min |
 | Leave apply | 2026-10-08 05:42 → 05:45 | 3 min |
-| **Worked** | | **22 h 57 min** |
+| Week grid and Jev flag | 2026-10-08 05:48 → 05:54 | 6 min |
+| **Worked** | | **23 h 3 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -589,3 +590,9 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 - `scripts/leave-apply` reads the JSON download. Dry-run prints the new balance. `--apply` writes that number and marks the Rostr row exported, so the same file cannot be applied twice.
 - REQ-0010: LV-0002, Priya Shah, annual 2 → 0. `hr-sync` then printed `no changes`. The export page names the command.
 - Rostr tests 74 passed. leave-apply tests 3 passed. Container rebuilt for the export sentence, which drops in-memory sessions. Record: [docs/leave/09-apply.md](../leave/09-apply.md).
+
+### Week grid and Jev flag — 05:48 to 05:54, 6 min
+
+- The decision page, for a manager and for HR, shows Monday to Friday for the active people in that department. Open leave is hatched, approved leave is gray, a rostered day is light blue. A second week appears only when the request crosses into it.
+- Flag Jev's suggestion stores approve, deny, or needs review, and a note, on `jev_flags`. The request stays where it was. Staff do not see the flag. You cannot flag your own request.
+- Rostr tests 75 passed. Checked the grid and the open flag form in a local browser. Stylesheets are `?v=8`. Container rebuilt, which drops in-memory sessions. Record: [docs/leave/10-grid.md](../leave/10-grid.md).

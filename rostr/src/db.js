@@ -79,6 +79,14 @@ const CREATE_LEAVE = `
     days INTEGER NOT NULL,
     exported INTEGER NOT NULL DEFAULT 0
   );
+  CREATE TABLE IF NOT EXISTS jev_flags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id INTEGER NOT NULL,
+    at TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    suggested TEXT NOT NULL,
+    note TEXT
+  );
 `;
 
 function openDatabase(file) {
@@ -258,6 +266,32 @@ function insertShift(db, shift) {
 
 function listShiftsByEmail(db, email) {
   return db.prepare('SELECT * FROM shifts WHERE email = ? COLLATE NOCASE ORDER BY day, start').all(email);
+}
+
+function listShiftsInRange(db, { start, end }) {
+  return db.prepare('SELECT * FROM shifts WHERE day >= ? AND day <= ? ORDER BY day, email').all(start, end);
+}
+
+function listLeaveInRange(db, { department, start, end }) {
+  if (!department || !start || !end) return [];
+  return db.prepare(`
+    SELECT * FROM leave_requests
+    WHERE department = @department COLLATE NOCASE
+      AND status IN ('submitted', 'with_admin', 'with_hr', 'approved')
+      AND start_day <= @end AND end_day >= @start
+    ORDER BY start_day, id
+  `).all({ department, start, end });
+}
+
+function insertJevFlag(db, flag) {
+  db.prepare(`
+    INSERT INTO jev_flags (request_id, at, actor, suggested, note)
+    VALUES (@request_id, @at, @actor, @suggested, @note)
+  `).run({ note: null, ...flag });
+}
+
+function latestJevFlag(db, requestId) {
+  return db.prepare('SELECT * FROM jev_flags WHERE request_id = ? ORDER BY id DESC LIMIT 1').get(requestId);
 }
 
 function nextLeaveRef(db) {
@@ -443,6 +477,10 @@ module.exports = {
   findShift,
   insertShift,
   listShiftsByEmail,
+  listShiftsInRange,
+  listLeaveInRange,
+  insertJevFlag,
+  latestJevFlag,
   nextLeaveRef,
   insertLeaveRequest,
   findLeaveRequestByRef,

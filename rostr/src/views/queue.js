@@ -104,7 +104,71 @@ function agreement(review) {
   return `<p class="disagree">${icon('alert-triangle')} Jev and the policy check disagree. Check before deciding.</p>`;
 }
 
-function decisionBody({ request, review, facts, own, error }) {
+const CELL = {
+  requested: 'requested leave',
+  leave: 'on leave',
+  rostered: 'rostered',
+  '': 'nothing scheduled',
+};
+
+function weekdayName(day, style) {
+  return new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', weekday: style }).format(new Date(`${day}T00:00:00Z`));
+}
+
+function weekGrid(weeks) {
+  if (!weeks || !weeks.length) return '';
+  const tables = weeks.map((week) => {
+    const head = week.days.map((day) => `<th scope="col">${escapeHtml(weekdayName(day, 'short'))}</th>`).join('');
+    const body = week.rows.map((row) => `<tr>
+      <th scope="row">${escapeHtml(row.name)}</th>
+      ${row.cells.map((state, index) => {
+        const day = week.days[index];
+        const label = `${row.name}, ${weekdayName(day, 'long')}, ${CELL[state] || CELL['']}`;
+        return `<td class="cell-${state || 'empty'}" aria-label="${escapeHtml(label)}"></td>`;
+      }).join('')}
+    </tr>`).join('');
+    return `<div class="table-wrap"><table class="week">
+      <caption class="visually-hidden">Team that week</caption>
+      <thead><tr><th scope="col">Person</th>${head}</tr></thead>
+      <tbody>${body}</tbody>
+    </table></div>`;
+  }).join('');
+  return `<h2 class="panel-title">Team that week</h2>
+    ${tables}
+    <ul class="week-legend">
+      <li><span class="swatch cell-requested"></span> Requested</li>
+      <li><span class="swatch cell-leave"></span> On leave</li>
+      <li><span class="swatch cell-rostered"></span> Rostered</li>
+    </ul>`;
+}
+
+function flagBlock({ action, flag, own, error }) {
+  if (own) return '';
+  const saved = flag
+    ? `<p class="flag-saved">${icon('flag')} Flagged. You said Jev should have suggested ${escapeHtml(outcomeText(flag.suggested))}. The suggestion itself is unchanged.</p>`
+    : '';
+  const choices = [
+    ['approve', 'Approve'],
+    ['deny', 'Deny'],
+    ['needs_review', 'Needs review'],
+  ].map(([value, label]) => `<label><input type="radio" name="suggested" value="${value}"> ${label}</label>`).join('');
+  return `${saved}
+    <details class="flag"${error ? ' open' : ''}>
+      <summary>Flag Jev's suggestion</summary>
+      <form method="post" action="${escapeHtml(action)}">
+        <fieldset>
+          <legend>What should Jev have suggested?</legend>
+          <div class="flag-options">${choices}</div>
+        </fieldset>
+        <label for="flag-note">Note</label>
+        <textarea id="flag-note" name="note" rows="3" maxlength="500"></textarea>
+        ${error ? `<p class="field-error">${icon('alert-triangle')}${escapeHtml(error)}</p>` : ''}
+        <button type="submit" class="btn secondary">Save flag</button>
+      </form>
+    </details>`;
+}
+
+function decisionBody({ request, review, facts, own, error, week, flag, flagError }) {
   const form = own || request.status !== 'with_admin'
     ? ''
     : `<form method="post" action="/admin/leave/${escapeHtml(request.ref)}" class="decide">
@@ -131,6 +195,7 @@ function decisionBody({ request, review, facts, own, error }) {
         <div><dt>Notice</dt><dd>${facts.noticeDays} days</dd></div>
         <div><dt>Length</dt><dd>${plural(request.days, 'working day')}</dd></div>
       </dl>
+      ${weekGrid(week)}
     </section>
     <section class="panel decision-side">
       ${ownNote}
@@ -139,8 +204,9 @@ function decisionBody({ request, review, facts, own, error }) {
       ${policyWell(review)}
       ${form}
       ${closed}
+      ${flagBlock({ action: `/admin/leave/${request.ref}/flag`, flag, own, error: flagError })}
     </section>
   </div>`;
 }
 
-module.exports = { queueBody, decisionBody, jevWell, policyWell, agreement };
+module.exports = { queueBody, decisionBody, jevWell, policyWell, agreement, weekGrid, flagBlock };
