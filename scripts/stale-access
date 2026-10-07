@@ -1,0 +1,245 @@
+#!/usr/bin/env node
+// Stale-Access findings. Reads Rostr sqlite and hr/employees.json.
+// Does not change the HR file and does not deactivate anyone.
+// A Workflows daily schedule would call this; the five-flow budget still has a
+// Stale-Access slot, but the task allows a script and this org already spent
+// four flows on JML plus Access Request.
+
+const fs = require('fs');
+const path = require('path');
+const { sydneyToday } = require('./hr-sync');
+
+const STALE_DAYS = 30;
+const PLANT_DAYS = 45;
+const PLANT_LOGIN = 'jonah.hale@lanternfieldgoods.co.uk';
+const ORPHAN_LOGIN = 'orphan.roster@example.invalid';
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+function parseArgs(argv) {
+  if (argv[0] === 'plant') {
+    if (argv.length > 1) throw new Error(`Unknown argument ${argv[1]}`);
+    return { command: 'plant' };
+  }
+  let out = null;
+  for (let index = 0; index < argv.length; index += 1) {
+    if (argv[index] === '--out') {
+      out = argv[index + 1];
+      index += 1;
+    } else {
+      throw new Error(`Unknown argument ${argv[index]}`);
+    }
+  }
+  if (!out) throw new Error('Pass --out <file> or plant');
+  return { command: 'report', out };
+}
+
+function shiftIso(iso, days) {
+  const ms = Date.parse(iso);
+  if (Number.isNaN(ms)) throw new Error(`Cannot parse lastLogin ${iso}`);
+  return new Date(ms + days * MS_PER_DAY).toISOString();
+}
+
+function isStale(lastLogin, now, days = STALE_DAYS) {
+  if (!lastLogin) return false;
+  const ms = Date.parse(lastLogin);
+  if (Number.isNaN(ms)) return false;
+  return ms <= now.getTime() - days * MS_PER_DAY;
+}
+
+function isHrActive(employee, today) {
+  if (!employee) return false;
+  if (String(employee.status || '').trim().toLowerCase() === 'terminated') return false;
+  return !(employee.endDate && employee.endDate <= today);
+}
+
+function indexHr(employees) {
+  const byEmail = new Map();
+  for (const employee of employees) {
+    if (employee.email) byEmail.set(String(employee.email).toLowerCase(), employee);
+  }
+  return byEmail;
+}
+
+function recommendation({ stale, licensed, hrActive, never, active }) {
+  if (licensed && (stale || !hrActive)) return 'reclaim';
+  if (!active) return 'reclaim';
+  if (never && !hrActive) return 'reclaim';
+  if (stale || never) return 'confirm with manager';
+  return 'keep';
+}
+
+function classifyUser(user, hrByEmail, now, today) {
+  const login = String(user.email || user.userName || '').trim();
+  const hr = hrByEmail.get(login.toLowerCase());
+  const lastLogin = user.lastLogin || '';
+  const licensed = Number(user.licensed) === 1;
+  const active = Number(user.active) === 1;
+  const never = !lastLogin;
+  const stale = isStale(lastLogin, now);
+  const hrActive = isHrActive(hr, today);
+  return {
+    user: login,
+    lastSignIn: lastLogin || '(never)',
+    licenceHeld: licensed,
+    rostrActive: active,
+    inHrActive: hrActive,
+    stale,
+    never,
+    recommendation: recommendation({ stale, licensed, hrActive, never, active }),
+  };
+}
+
+function findingsFrom(users, employees, now, today) {
+  const hrByEmail = indexHr(employees);
+  const rows = users
+    .map((user) => classifyUser(user, hrByEmail, now, today))
+    .sort((a, b) => a.user.localeCompare(b.user));
+  const hrActive = employees.filter((employee) => isHrActive(employee, today));
+  const licensed = rows.filter((row) => row.licenceHeld);
+  const stale = rows.filter((row) => row.stale);
+  const unusedLicences = licensed.filter((row) => row.stale || !row.inHrActive);
+  return {
+    rows,
+    stale,
+    unusedLicences,
+    licensedCount: licensed.length,
+    hrActiveCount: hrActive.length,
+    rostrActiveCount: rows.filter((row) => row.rostrActive).length,
+  };
+}
+
+function toMarkdown(report, meta) {
+  const lines = [];
+  lines.push('# Stale access and unused licences');
+  lines.push('');
+  lines.push(`Generated ${meta.generated}. Rostr ` + '`lastLogin`' + ` older than ${STALE_DAYS} days is stale.`);
+  lines.push('This script does not change `hr/employees.json` and does not deactivate anyone.');
+  lines.push('');
+  if (meta.plant) {
+    lines.push('## Plant');
+    lines.push('');
+    lines.push(`${PLANT_LOGIN} \`lastLogin\` was \`${meta.plant.originalLastLogin}\`.`);
+    lines.push(`Shifted by −${PLANT_DAYS} days to \`${meta.plant.newLastLogin}\`. \`licensed\` set to 1 on that row and on ${ORPHAN_LOGIN}.`);
+    lines.push('Rostr never sets `licensed` itself. Sign-in does not grant a seat. The two seats were marked so the licence comparison is not vacuously zero.');
+    lines.push('');
+  }
+  lines.push('## Counts');
+  lines.push('');
+  lines.push('| Measure | Count |');
+  lines.push('| --- | --- |');
+  lines.push(`| HR active staff | ${report.hrActiveCount} |`);
+  lines.push(`| Rostr active rows | ${report.rostrActiveCount} |`);
+  lines.push(`| Rostr licensed seats | ${report.licensedCount} |`);
+  lines.push(`| Stale lastLogin (≥ ${STALE_DAYS} days) | ${report.stale.length} |`);
+  lines.push(`| Licensed and unused (stale or not in HR) | ${report.unusedLicences.length} |`);
+  lines.push('');
+  lines.push('HR active is 7. Licensed seats are the two planted rows. The extra Rostr active row is Orphan Roster, who is not in the HR file.');
+  lines.push('');
+  lines.push('## Findings');
+  lines.push('');
+  lines.push('| user | last sign-in | licence held | recommendation | why |');
+  lines.push('| --- | --- | --- | --- | --- |');
+  for (const row of report.rows) {
+    if (row.recommendation === 'keep') continue;
+    const why = [
+      row.stale ? 'stale lastLogin' : '',
+      row.never ? 'never signed in' : '',
+      row.licenceHeld ? 'licensed' : 'no licence',
+      row.inHrActive ? 'in HR' : 'not in HR active',
+      row.rostrActive ? 'rostr active' : 'rostr inactive',
+    ].filter(Boolean).join('; ');
+    lines.push(`| ${row.user} | ${row.lastSignIn} | ${row.licenceHeld ? 'yes' : 'no'} | ${row.recommendation} | ${why} |`);
+  }
+  lines.push('');
+  lines.push('Jonah Hale is the planted stale account. Recommendation: **reclaim**.');
+  lines.push('');
+  return `${lines.join('\n')}\n`;
+}
+
+function defaultUsers(root) {
+  const dbPath = path.join(root, 'rostr', 'data', 'rostr.sqlite');
+  if (!fs.existsSync(dbPath)) throw new Error(`Missing ${dbPath}`);
+  const { openDatabase, listUsers } = require(path.join(root, 'rostr', 'src', 'db'));
+  const db = openDatabase(dbPath);
+  return { db, users: listUsers(db), dbPath };
+}
+
+function defaultEmployees(root) {
+  return JSON.parse(fs.readFileSync(path.join(root, 'hr', 'employees.json'), 'utf8'));
+}
+
+function plant(db, now) {
+  const row = db.prepare('SELECT userName, lastLogin, licensed FROM users WHERE userName = ?').get(PLANT_LOGIN);
+  if (!row) throw new Error(`Missing ${PLANT_LOGIN}`);
+  const originalLastLogin = row.lastLogin;
+  if (!originalLastLogin) throw new Error(`${PLANT_LOGIN} has no lastLogin to backdate`);
+  let newLastLogin = originalLastLogin;
+  if (!isStale(originalLastLogin, now)) {
+    newLastLogin = shiftIso(originalLastLogin, -PLANT_DAYS);
+    db.prepare('UPDATE users SET lastLogin = ?, licensed = 1 WHERE userName = ?').run(newLastLogin, PLANT_LOGIN);
+  } else {
+    db.prepare('UPDATE users SET licensed = 1 WHERE userName = ?').run(PLANT_LOGIN);
+  }
+  db.prepare('UPDATE users SET licensed = 1 WHERE userName = ?').run(ORPHAN_LOGIN);
+  return { originalLastLogin, newLastLogin };
+}
+
+async function main(argv, io = {}) {
+  const stdout = io.stdout || ((line) => console.log(line));
+  const cwd = io.cwd || process.cwd();
+  const now = io.now || new Date();
+  const args = parseArgs(argv);
+  const root = path.resolve(cwd);
+  const today = sydneyToday(now);
+  const plantFile = path.join(root, 'evidence', '05-governance', 'stale-plant.json');
+  if (args.command === 'plant') {
+    const opened = io.openRostr ? io.openRostr() : defaultUsers(root);
+    const result = plant(opened.db, now);
+    fs.mkdirSync(path.dirname(plantFile), { recursive: true });
+    fs.writeFileSync(plantFile, `${JSON.stringify(result, null, 2)}\n`);
+    stdout(`${PLANT_LOGIN} lastLogin ${result.originalLastLogin} -> ${result.newLastLogin}; licensed ${PLANT_LOGIN} and ${ORPHAN_LOGIN}`);
+    return 0;
+  }
+  const users = io.listRostrUsers ? io.listRostrUsers() : defaultUsers(root).users;
+  const employees = io.listEmployees ? io.listEmployees() : defaultEmployees(root);
+  const report = findingsFrom(users, employees, now, today);
+  let plantMeta = io.plantMeta || null;
+  if (!plantMeta && fs.existsSync(plantFile)) {
+    plantMeta = JSON.parse(fs.readFileSync(plantFile, 'utf8'));
+  }
+  const md = toMarkdown(report, {
+    generated: now.toISOString(),
+    plant: plantMeta,
+  });
+  const file = path.resolve(root, args.out);
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, md);
+  stdout(`${report.stale.length} stale, ${report.unusedLicences.length} unused licences -> ${path.relative(root, file)}`);
+  return 0;
+}
+
+if (require.main === module) {
+  main(process.argv.slice(2)).then(
+    (code) => process.exit(code),
+    (error) => {
+      console.error(error.message);
+      process.exit(1);
+    },
+  );
+}
+
+module.exports = {
+  STALE_DAYS,
+  PLANT_DAYS,
+  PLANT_LOGIN,
+  parseArgs,
+  shiftIso,
+  isStale,
+  isHrActive,
+  recommendation,
+  classifyUser,
+  findingsFrom,
+  toMarkdown,
+  plant,
+  main,
+};

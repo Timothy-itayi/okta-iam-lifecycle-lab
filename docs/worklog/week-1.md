@@ -12,8 +12,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 20:53 → 23:08 | 2 h 15 min |
 | Night, Phase 4 | 2026-10-06 23:08 → 2026-10-07 02:23 | 3 h 15 min |
 | Break | 02:23 → 11:46 | 9 h 23 min |
-| Morning, Phase 5 osTicket, Access Request, access review | 2026-10-07 11:46 → 13:43 | 1 h 57 min |
-| **Worked** | | **16 h 21 min** |
+| Morning, Phase 5 osTicket, Access Request, access review, stale-access | 2026-10-07 11:46 → 13:49 | 2 h 3 min |
+| **Worked** | | **16 h 27 min** |
 
 ## Phase 0 — Prep
 
@@ -275,7 +275,7 @@ Break until 11:46.
 
 ## Phase 5 — Governance (started)
 
-About 1 h 57 min, 11:46 to 13:43. Staff login through OIDC `/admin/users`. Access review (runbook 5.2) complete, REQ-0002 applied. Access Request Wait For still due around 14:06.
+About 2 h 3 min, 11:46 to 13:49. Staff login through OIDC `/admin/users`. Access review complete. Stale-Access planted Jonah Hale. Access Request Wait For still due around 14:06.
 
 | Task | Clock | Duration |
 | --- | --- | --- |
@@ -285,6 +285,7 @@ About 1 h 57 min, 11:46 to 13:43. Staff login through OIDC `/admin/users`. Acces
 | 5.2 OIDC as Lena | 13:11 → 13:23 | 12 min |
 | 5.2 Rostr Admin group assignment | 13:23 → 13:31 | 8 min |
 | 5.3 Access review | 13:35 → 13:43 | 8 min |
+| 5.4 Stale-Access | 13:46 → 13:49 | 3 min |
 
 Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was still Access denied and MariaDB `root@localhost` looked like the cause.
 
@@ -326,3 +327,7 @@ Phase 5 started after sleep. The first clock we have is 11:46, when `/scp` was s
 - Export 13:42: 10 rows, 5 files in [evidence/5.3](../../evidence/5.3). Jonah last SSO `2026-10-06T06:35:49.117Z`. Lena `2026-10-07T02:19:24.525Z`.
 - Acting as each manager: Keep everyone still employed, including Lena. Revoke Samir Adeyemi and `test.joiner` leftover `APP-Rostr-Users`. Orphan Roster Keep (no Okta user).
 - Dry-run REQ-0002, then `--apply` at `02:43:27Z`, both HTTP 204. [evidence/5.3/revocation.csv](../../evidence/5.3/revocation.csv). Second dry-run: no `APP-Rostr` group on either. Record: [docs/phases/05-governance.md](../phases/05-governance.md).
+
+### 5.4 Stale-Access — 13:46 to 13:49, 3 min
+
+- `scripts/stale-access plant` backdated Jonah Hale `lastLogin` `2026-10-06T05:20:26.829Z` → `2026-08-22T05:20:26.829Z`, `licensed` 1 on Jonah and Orphan Roster. Report: [evidence/05-governance/stale-access.md](../../evidence/05-governance/stale-access.md). Jonah is the stale reclaim. Does not touch HR or deactivate. Access Request Wait For still due around 14:06.

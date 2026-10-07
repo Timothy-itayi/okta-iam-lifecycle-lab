@@ -1,6 +1,6 @@
 # Phase 5 — Governance
 
-osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. The one-hour remove has not fired. Access review REQ-0002 applied at 13:43. Stale-Access is not started.
+osTicket is the ticket, not the provisioner. Staff login, the Access Request help topic, Lena Ortiz's `REQ-0001`, and the manager approval note are in place. The Access Request flow added her to `APP-Rostr-Admins` at 13:06. OIDC `/me` and `/admin/users` as Lena worked at 13:19–13:23. The one-hour remove has not fired. Access review REQ-0002 applied at 13:43. Stale-Access is a script; Jonah Hale is the planted stale finding.
 
 Login pain is [docs/incidents/01-osticket-staff-login.md](../incidents/01-osticket-staff-login.md). osTicket is `rinkp/osticket-dockerized:1.18.4` on `127.0.0.1:8080`, leftover volume from 29 September, not this repo's compose.
 
@@ -107,3 +107,16 @@ Export at 13:42: 10 Rostr rows, 5 files. Last Rostr SSO: Jonah Hale `2026-10-06T
 Lena stayed Keep. Her `APP-Rostr-Admins` grant is the in-flight Access Request.
 
 Apply REQ-0002 at `2026-10-07T02:43:27.024Z` (13:43 +1100). Both deletes HTTP 204. Log: [evidence/5.3/revocation.csv](../../evidence/5.3/revocation.csv). A second dry-run then reported `(no APP-Rostr group)` for both. Rostr sqlite still listed Samir in `APP-Rostr-Users` immediately after; group push is not the review's apply path.
+
+## 5.4 Stale-Access
+
+A script, not a fifth Workflows flow. Design still forbids changing the HR file or deactivating anyone. A daily Workflows schedule would only invoke this.
+
+```
+node scripts/stale-access plant
+node scripts/stale-access --out evidence/05-governance/stale-access.md
+```
+
+Plant backdated Jonah Hale's Rostr `lastLogin` from `2026-10-06T05:20:26.829Z` to `2026-08-22T05:20:26.829Z` (−45 days) and set `licensed` 1 on Jonah and Orphan Roster. Rostr never writes `licensed`; without that mark the unused-licence count is zero.
+
+Findings: [evidence/05-governance/stale-access.md](../../evidence/05-governance/stale-access.md). One stale lastLogin: Jonah Hale, licensed, **reclaim**. Two unused licences: Jonah (stale) and Orphan (not in HR). HR active 7, Rostr active 8, licensed seats 2. Lena's OIDC `/admin/users` did not write `lastLogin`, so she shows as never signed in on this report. That is a Rostr gap, not a missing Okta SSO.
