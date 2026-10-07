@@ -14,8 +14,8 @@ Two working days, then a third sitting on the morning of 7 October. Night of 5�
 | Break | 02:23 → 11:46 | 9 h 23 min |
 | Morning, Phase 5 osTicket through OIG mapping | 2026-10-07 11:46 → 15:02 | 3 h 16 min |
 | Break | 15:02 → 16:59 | 1 h 57 min |
-| Afternoon, drills 6.1 and 6.2 | 2026-10-07 16:59 → 17:18 | 19 min |
-| **Worked** | | **17 h 59 min** |
+| Afternoon, drills 6.1 to 6.3 | 2026-10-07 16:59 → 17:34 | 35 min |
+| **Worked** | | **18 h 15 min** |
 
 ## Phase 0 — Prep
 
@@ -375,7 +375,7 @@ Wait For fired. `group.user_membership.remove` for Lena / `APP-Rostr-Admins` is 
 
 ## Phase 6 — Failure drills (started)
 
-About 19 min, 16:59 to 17:18. Rostr was already up. Local and public `/health` were 200.
+About 35 min, 16:59 to 17:34. Rostr was already up. Local and public `/health` were 200.
 
 ### 6.1 SAML ACS mismatch — 16:59 to 17:12, 13 min
 
@@ -394,3 +394,11 @@ About 19 min, 16:59 to 17:18. Rostr was already up. Local and public `/health` w
 - Put the sign-in URI back. API shows both lists on the real callback. The next open of `/oidc/login` showed the Okta sign-in form instead of the 400. [evidence/6.2-oidc-signin-restored.jpg](../../evidence/6.2-oidc-signin-restored.jpg). Did not finish as Helen Cho. She is not in `APP-Rostr-Admins`.
 - Record: [docs/incidents/03-oidc-redirect.md](../incidents/03-oidc-redirect.md).
 - [e76f762](https://github.com/Timothy-itayi/okta-iam-lifecycle-lab/commit/e76f7622b306b1b6418a556425d4abbf1d41b90b) (`Record the OIDC redirect mismatch drill.`) at 17:19.
+
+### 6.3 Missing groups claim — 17:20 to 17:34, 14 min
+
+- First membership check was empty. Jonah had been removed from the app's People tab, which does not add him to the group. Directory → Groups → `APP-Rostr-Admins` → Assign people. [evidence/6.3-jonah-in-group.png](../../evidence/6.3-jonah-in-group.png).
+- Default authorization server, claim `groups`, filter changed from `APP-Rostr` to `APP-Rostrx`. Still included in the ID token. [evidence/6.3-groups-claim-wrong.png](../../evidence/6.3-groups-claim-wrong.png).
+- Jonah `/oidc/login` reached `/me` with a blank `groups` line. `/admin/users` was not allowed. Auth log `2026-10-07T06:31:17.124Z` was still `outcome` `success`. [evidence/6.3-me-groups-empty.png](../../evidence/6.3-me-groups-empty.png).
+- Filter restored to `APP-Rostr`. New private window. `/me` showed `APP-Rostr-Users, APP-Rostr-Admins`. Auth log `2026-10-07T06:34:02.105Z`. [evidence/6.3-me-groups-restored.png](../../evidence/6.3-me-groups-restored.png).
+- Record: [docs/incidents/04-groups-claim.md](../incidents/04-groups-claim.md). Jonah is still in `APP-Rostr-Admins` until he is removed after this record.
