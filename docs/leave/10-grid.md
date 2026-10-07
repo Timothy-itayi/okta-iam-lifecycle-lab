@@ -13,3 +13,7 @@ A day is hatched when that person has open leave covering it, gray when the leav
 "Flag Jev's suggestion" opens the form on the decision page. The choices are approve, deny, and needs review, plus a note. Save writes a `jev_flags` row. The request status does not change, and Jev's stored recommendation does not change. The staff request page does not show the flag. A person cannot flag their own request.
 
 The decision column stays in view while the week grid is on screen.
+
+The same page lists the activity. The approver sees who sent it, the manager's move, that the policy check ran, and that Jev reviewed it. Staff still see only their own sentences, without the policy or Jev lines.
+
+The page header gives each fact a line under it. Department, title, groups, and role sit on that line, and the group and role borders have the same height and padding.

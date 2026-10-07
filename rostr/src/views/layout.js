@@ -4,7 +4,7 @@ const { icon } = require('./icons');
 const ROLE_CHIP = { staff: 'Staff', admin: 'Manager', hr: 'HR' };
 // Helen's browser cached the /app.css 404 from before public/ was in the image.
 // Cloudflare rewrites the cache header to 4 hours, so the URL has to change.
-const ASSET_VERSION = '10';
+const ASSET_VERSION = '11';
 
 function asset(path) {
   return `${path}?v=${ASSET_VERSION}`;

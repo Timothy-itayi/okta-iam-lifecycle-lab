@@ -327,16 +327,23 @@ function mountHubs(app, { db, hr, signInPath = '/saml/login', today = () => sydn
 
   function decisionPage(req, res, me, request, error, status, flagError) {
     const review = findLeaveReview(db, request.id);
+    const events = listLeaveEvents(db, request.id);
     const facts = factsFor(db, hr, request, { today: today() });
     const own = request.email.toLowerCase() === me.email.toLowerCase();
+    const names = { [request.email]: personNameFor(request.email) };
+    for (const event of events) {
+      if (event.actor && event.actor.includes('@')) names[event.actor] = personNameFor(event.actor);
+    }
     render(req, res, me, {
-      title: `${personNameFor(request.email)} · ${TYPE_LABEL[request.leave_type] || request.leave_type} leave`,
+      title: `${names[request.email]} · ${TYPE_LABEL[request.leave_type] || request.leave_type} leave`,
       context: `${longRange(request.start_day, request.end_day)} · ${request.ref}`,
       current: '/admin/leave',
       body: queue.decisionBody({
         request,
         review,
         facts,
+        events,
+        names,
         own,
         error,
         week: weekFor(request),

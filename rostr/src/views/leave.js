@@ -303,6 +303,33 @@ function activityText(event, request) {
   }
 }
 
+function approverLine(event, request, names) {
+  const who = (names && names[request.email]) || 'They';
+  switch (event.action) {
+    case 'submitted': return `${who} sent this request`;
+    case 'to_admin': return `Sent to ${event.note || 'the manager'}`;
+    case 'to_hr': return event.actor === 'rostr'
+      ? (event.note || 'Sent straight to HR')
+      : `${(names && names[event.actor]) || 'The manager'} approved it and sent it to HR`;
+    case 'approve': return 'HR approved it';
+    case 'deny': return event.note ? `Declined: "${event.note}"` : 'Declined';
+    case 'cancel': return 'Cancelled';
+    case 'policy': return 'Policy check ran';
+    case 'jev': return 'Jev reviewed it';
+    default: return '';
+  }
+}
+
+function activityList(events, lineFor) {
+  const rows = (events || []).map((event) => {
+    const text = lineFor(event);
+    if (!text) return '';
+    return `<li><time class="num" datetime="${escapeHtml(event.at)}">${sydneyStamp(event.at)}</time><span>${escapeHtml(text)}</span></li>`;
+  }).filter(Boolean);
+  if (!rows.length) return '';
+  return `<h2 class="panel-title">Activity</h2><ul class="activity">${rows.join('')}</ul>`;
+}
+
 function detailBody({ request, events, confirm }) {
   const steps = stepsFor(request, events);
   const visible = events.filter((event) => STAFF_ACTIONS.has(event.action));
@@ -372,5 +399,7 @@ module.exports = {
   detailHeader,
   stepsFor,
   progressHtml,
+  approverLine,
+  activityList,
   rosterBody,
 };

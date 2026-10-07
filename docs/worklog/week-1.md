@@ -36,7 +36,8 @@ Three days for the lab, from the night of 5 October through the evening of 7 Oct
 | Week grid and Jev flag | 2026-10-08 05:48 → 05:54 | 6 min |
 | Account menu | 2026-10-08 06:11 → 06:12 | 1 min |
 | Account menu labels | 2026-10-08 06:17 → 06:20 | 3 min |
-| **Worked** | | **23 h 7 min** |
+| Header spacing and decision activity | 2026-10-08 06:24 → 06:27 | 3 min |
+| **Worked** | | **23 h 10 min** |
 | **Lab elapsed** | 2026-10-05 23:56 → 2026-10-07 18:55 | **3 days** |
 
 ## Phase 0 — Prep
@@ -608,3 +609,9 @@ Phase 1 only. No leave screens, no HR-file change, no new Workflow.
 
 - The menu names each field: Department, Title, Groups, Role. A line sits under the name and under each field. Groups are text, not pills. The page header is unchanged.
 - Stylesheets are `?v=10`. Container rebuilt, which drops in-memory sessions.
+
+### Header spacing and decision activity — 06:24 to 06:27, 3 min
+
+- Each fact on the page header has a line under the label. The group and role borders share one height and the same padding, so they sit on the value line instead of crowding the letters.
+- The decision page lists the activity for the approver: who sent it, the manager's move, the policy check, and Jev's review. Staff still do not see the policy or Jev lines.
+- Stylesheets are `?v=11`. Container rebuilt, which drops in-memory sessions.

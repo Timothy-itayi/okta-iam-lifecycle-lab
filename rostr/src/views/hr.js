@@ -2,6 +2,7 @@ const { escapeHtml, shortRange, plural, sydneyShort } = require('./format');
 const { icon } = require('./icons');
 const { TYPE_LABEL } = require('../leave');
 const { jevWell, policyWell, agreement, weekGrid, flagBlock } = require('./queue');
+const { activityList, approverLine } = require('./leave');
 const { progressHtml } = require('./leave');
 
 const VIEWS = [
@@ -125,6 +126,7 @@ function hrDecisionBody({ request, review, facts, events, names, own, error, wee
         <div><dt>Length</dt><dd>${plural(request.days, 'working day')}</dd></div>
       </dl>
       ${weekGrid(week)}
+      ${activityList(events, (event) => approverLine(event, request, names))}
     </section>
     <section class="panel decision-side">
       ${ownNote}

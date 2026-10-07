@@ -1,4 +1,5 @@
 const { escapeHtml, listRange, longRange, plural } = require('./format');
+const { activityList, approverLine } = require('./leave');
 const { icon } = require('./icons');
 const { TYPE_LABEL } = require('../leave');
 const { loadRules } = require('../policy');
@@ -168,7 +169,7 @@ function flagBlock({ action, flag, own, error }) {
     </details>`;
 }
 
-function decisionBody({ request, review, facts, own, error, week, flag, flagError }) {
+function decisionBody({ request, review, facts, events, names, own, error, week, flag, flagError }) {
   const form = own || request.status !== 'with_admin'
     ? ''
     : `<form method="post" action="/admin/leave/${escapeHtml(request.ref)}" class="decide">
@@ -196,6 +197,7 @@ function decisionBody({ request, review, facts, own, error, week, flag, flagErro
         <div><dt>Length</dt><dd>${plural(request.days, 'working day')}</dd></div>
       </dl>
       ${weekGrid(week)}
+      ${activityList(events, (event) => approverLine(event, request, names))}
     </section>
     <section class="panel decision-side">
       ${ownNote}

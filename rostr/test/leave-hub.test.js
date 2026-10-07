@@ -273,6 +273,8 @@ test('Marcus opens the waiting request, and a deny without a note does not decid
     assert.match(page, /Jonah Hale, Monday, rostered/);
     assert.doesNotMatch(page, /Thomas Okeke/);
     assert.match(page, /Flag Jev's suggestion/);
+    assert.match(page, /Priya Shah sent this request/);
+    assert.match(page, /Policy check ran/);
 
     const flagged = await postForm(base, '/admin/leave/LV-0001/flag', marcus, {});
     assert.equal(flagged.status, 400);
