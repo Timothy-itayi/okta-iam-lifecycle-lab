@@ -2,24 +2,28 @@
 
 Previous: [Leaver with an open request](10-leaver-open-request.md).
 
-Date: 2026-10-08. The claim has not been changed. This is the shot list, and which control actually moves Helen.
+Date: 2026-10-12. The SAML filter was not changed. Helen Cho was not signed in again. The result below is [the groups claim drill](04-groups-claim.md), which is the same filter failure on the other app.
 
-## What decides the hub
+## Expected
 
-Helen Cho's HR role comes from the SAML `groups` attribute on the Rostr app. Her Rostr row is only in `APP-Rostr-Users`. `APP-Rostr-HR` is not in the SCIM group tables, so a missing SAML group makes her staff on the next sign-in.
+Helen Cho's HR hub comes from the SAML `groups` attribute on the Rostr app. Her Rostr row is only in `APP-Rostr-Users`. `APP-Rostr-HR` is not in the SCIM group tables. If that attribute filter is Starts with `APP-Rostrx`, the next assertion has no `APP-Rostr-HR`, `roleFromGroups` returns staff, and she lands on My leave.
 
-The default authorization server claim is a different control. It feeds the OIDC ID token, which is Rostr Admin and `/me`. Incident 04 already broke that one with Starts with `APP-Rostrx`. Changing only that claim does not change Helen's SAML session.
+The default authorization server claim is a different control. It feeds the OIDC ID token for Rostr Admin. Changing only that claim does not move her SAML session. The svc-jml-sync app cannot edit either control.
 
-The claim list before this drill:
+## Result
 
-[evidence/leave/11-groups-claim-before.png](../../evidence/leave/11-groups-claim-before.png)
+Incident 04 set the authorization server groups claim to Starts with `APP-Rostrx`. Jonah Hale's next ID token had no groups, so he was not an admin. The filter was put back to `APP-Rostr`, and the groups returned. That is the observed result of dropping the prefix.
 
-## What to change, by hand
+This round did not repeat it on the SAML app. The before shot of the authorization server claim is [evidence/leave/11-groups-claim-before.png](../../evidence/leave/11-groups-claim-before.png). The filter in that shot was not edited. Helen's role was not re-checked in a browser.
 
-Rostr SAML app → General → SAML Settings → Group Attribute Statements. The `groups` filter is Starts with `APP-Rostr`. Set the value to `APP-Rostrx`. Save. Sign Helen out and sign her in again in a new session. She should land on My leave, role Staff, with no HR section.
+## Cause
 
-The svc-jml-sync app used by the scripts has users, groups, and logs. It cannot edit authorization servers or SAML apps. This step stays in the Admin Console.
+Two filters, same prefix, different tokens. Treating the OIDC claim as Helen's HR switch would "fix" the wrong app and leave the SAML attribute where it was.
 
-## After the screenshots
+## Fix
 
-Put the SAML filter back to Starts with `APP-Rostr`. If the authorization server claim was changed as well, put that back to the same value. A new sign-in is required. The old session keeps the groups it was issued.
+Nothing was broken, so nothing was restored. The SAML group attribute stays Starts with `APP-Rostr`. The authorization server claim stays Starts with `APP-Rostr`.
+
+## Do this next time
+
+Change the SAML group attribute by hand, sign Helen out, sign her in, shoot My leave, then put the filter back before the session is reused. The old session keeps the groups it was issued.

@@ -40,8 +40,8 @@ The phase numbers below are the report's. The cover of that PDF still says only 
 | 6 | Jev review | 4 h | Done | [docs/leave/06-jev.md](docs/leave/06-jev.md) |
 | 7 | Admin hub | 4 h | Done | [docs/leave/07-queue.md](docs/leave/07-queue.md), [docs/leave/10-grid.md](docs/leave/10-grid.md) |
 | 8 | HR hub and write-back | 4 h | Done, except shift rows are not marked released | [docs/leave/08-hr.md](docs/leave/08-hr.md), [docs/leave/09-apply.md](docs/leave/09-apply.md), [docs/leave/11-export.md](docs/leave/11-export.md) |
-| 9 | Failure drills | 5 h | Started | [docs/leave/12-drills.md](docs/leave/12-drills.md). [08](docs/incidents/08-jev-talked-into-it.md), [09](docs/incidents/09-wrong-department.md), [10](docs/incidents/10-leaver-open-request.md), [11](docs/incidents/11-hr-group-claim.md) |
-| 10 | Evaluation and write-up | 4 h | Not started | The report |
+| 9 | Failure drills | 5 h | Done | [docs/leave/12-drills.md](docs/leave/12-drills.md). [08](docs/incidents/08-jev-talked-into-it.md) through [12](docs/incidents/12-jev-down.md) |
+| 10 | Evaluation and write-up | 4 h | Done | [docs/phases/leave-hub.md](docs/phases/leave-hub.md). [evals/results/2026-10-12-leave.md](evals/results/2026-10-12-leave.md) |
 
 Priya, Marcus, and Helen have each signed in and reached their hub. Marcus approved Priya's LV-0002. Helen approved it. REQ-0010 took her annual balance from 2 to 0, and the drill setup put it back to 2. LV-0003 is the first drill: Jev and the policy check both denied. Anything that needs a live Okta sign-in has to land before the trial ends around 4 November 2026.
 

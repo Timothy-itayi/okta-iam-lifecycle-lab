@@ -386,6 +386,39 @@ test('Helen decides the request Marcus sent and records a balance change', async
   }
 });
 
+test('another department sees the queue only while the drill switch is on', async () => {
+  const { app, db } = appWithSession();
+  const { server, base } = listen(app);
+  const ava = {
+    email: 'ava.nguyen@lanternfieldgoods.co.uk',
+    givenName: 'Ava',
+    familyName: 'Nguyen',
+    department: 'Sales',
+    groups: 'APP-Rostr-Users, APP-Rostr-Admins',
+  };
+  try {
+    const priya = await sessionFor(base, PEOPLE.priya);
+    await postForm(base, '/leave', priya, {
+      leave_type: 'annual', start_day: '2026-10-26', end_day: '2026-10-26', reason: 'Family wedding in Ballarat.',
+    });
+    const sales = await sessionFor(base, ava);
+    const hidden = await fetch(`${base}/admin/leave`, { headers: { cookie: sales } });
+    const hiddenHtml = await hidden.text();
+    assert.equal(hidden.status, 200);
+    assert.doesNotMatch(hiddenHtml, /Priya Shah/);
+    assert.equal((await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: sales } })).status, 404);
+
+    process.env.ROSTR_CROSS_DEPARTMENT = '1';
+    const shown = await (await fetch(`${base}/admin/leave`, { headers: { cookie: sales } })).text();
+    assert.match(shown, /Priya Shah/);
+    assert.equal((await fetch(`${base}/admin/leave/LV-0001`, { headers: { cookie: sales } })).status, 200);
+  } finally {
+    delete process.env.ROSTR_CROSS_DEPARTMENT;
+    await close(server);
+    db.close();
+  }
+});
+
 test('My roster lists the person\'s own shifts', async () => {
   const { app, db } = appWithSession();
   insertShift(db, { email: PEOPLE.priya.email, day: '2026-10-12', start: '09:00', end: '17:00' });

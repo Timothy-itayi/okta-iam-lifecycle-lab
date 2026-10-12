@@ -2,18 +2,30 @@
 
 Previous: [Jev was not talked into it](08-jev-talked-into-it.md).
 
-Date: 2026-10-08. The department filter is off on the live container so the broken queue can be shot. The code path is still the filtered one when the switch is empty.
+Date: 2026-10-12. The switch was turned on for a live shot on 8 October. Ava Nguyen did not sign in. The before and after is the test, which is the same check the queue already had.
 
-## What is live
+## Expected
 
-`ROSTR_CROSS_DEPARTMENT=1` in `rostr/.env`. Team requests lists every department, and an admin can open a request that is not theirs. Ava Nguyen is Sales and `APP-Rostr-Admins`. Priya Shah's LV-0003 is Operations, `with_admin`.
+With `ROSTR_CROSS_DEPARTMENT=1`, Ava Nguyen (Sales, `APP-Rostr-Admins`) sees Priya Shah's Operations request on Team requests and can open it.
 
-Sign in as Ava in a new session. Team requests should show LV-0003. Open it. That is the broken state.
+With the variable unset, Team requests lists only her department, and the detail route returns 404, "That request is not in your department."
 
-## Where the filter is
+## Result
 
-`GET /admin/leave` uses `listLeaveByDepartment` unless that variable is `1`, in which case it uses `listAllLeave`. The detail route returns 404 for another department unless the same variable is set. Tests do not set it, so they still expect the 404.
+There is no screenshot of Ava's browser. The live container had the variable set from the 8 October rebuild so that shot could be taken. It was not taken.
 
-## After the screenshots
+The test `another department sees the queue only while the drill switch is on` is written for both sides: Ava's queue does not list Priya while the variable is unset, and the detail is 404; with the variable set to `1`, the queue lists her and the detail is 200. This session's test runner stalled on a file read and did not print a pass. I am not calling that test green.
 
-Set `ROSTR_CROSS_DEPARTMENT` empty and recreate the container from `rostr/`. Do not leave the switch on.
+The variable is empty in `rostr/.env` and in the recreated container. `GET /health` returned 200. Recreating the container drops in-memory sessions.
+
+## Cause
+
+The list and the detail both read the same variable. Forgetting to clear it after a screenshot would leave every admin able to open every department.
+
+## Fix
+
+`ROSTR_CROSS_DEPARTMENT` is empty. The route is `listLeaveByDepartment` again.
+
+## Do this next time
+
+Shoot Ava, then clear the variable in the same sitting. A rebuild drops in-memory sessions.

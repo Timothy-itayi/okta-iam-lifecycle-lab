@@ -2,7 +2,7 @@
 
 Times are Australia/Sydney (+1100). This log is only the stretch in [rostr-leave-jev-report.pdf](../../rostr-leave-jev-report.pdf). The lab through 7 October is [week-1.md](week-1.md).
 
-Clocked stretch work is 3 h 58 min, from 01:38 to 08:00 on 8 October. Gaps between the rows were not entered as breaks.
+Clocked stretch work is 4 h 10 min. 3 h 58 min on 8 October, from 01:38 to 08:00, then 12 min on 12 October. Gaps between the rows were not entered as breaks.
 
 | Session | Clock | Duration |
 | --- | --- | --- |
@@ -32,7 +32,8 @@ Clocked stretch work is 3 h 58 min, from 01:38 to 08:00 on 8 October. Gaps betwe
 | Decision page spacing | 07:27 → 07:30 | 3 min |
 | Phase 9 setup | 07:40 → 07:42 | 2 min |
 | Incidents 08 to 11 | 07:53 → 08:00 | 7 min |
-| **Worked** | | **3 h 58 min** |
+| Phase 9 close and phase 10 eval | 2026-10-12 18:33 → 18:45 | 12 min |
+| **Worked** | | **4 h 10 min** |
 
 ## Record
 
@@ -203,3 +204,9 @@ Clocked stretch work is 3 h 58 min, from 01:38 to 08:00 on 8 October. Gaps betwe
 - SCIM `active` false cancels open leave, actor `scim`. [docs/incidents/10-leaver-open-request.md](../incidents/10-leaver-open-request.md).
 - Helen's HR role is the SAML group attribute, not the authorization server claim. The claim was not changed. [docs/incidents/11-hr-group-claim.md](../incidents/11-hr-group-claim.md).
 - Container rebuilt, which drops in-memory sessions.
+
+### Phase 9 close and phase 10 — 12 October, 18:33 to 18:45, 12 min
+
+- Incident 08 stays the live result: both sides denied LV-0003. Incidents 09 to 12 are the expected result against what this lab already showed. Ava was not shot. The department switch is empty and the container was recreated. `/health` returned 200. That recreate drops in-memory sessions. The leaver cancel stays on the SCIM write. Helen's SAML filter was not changed. The live TypeSafe key was not replaced.
+- The department-filter test and the SCIM cancel test did not print a pass. The runner stalled on a file read. They are not recorded as green.
+- 24 policy cases, baseline 24 of 24. Raising the notice window from 14 days to 30 failed five cases that the written rule still allows. Jev was not called. [evals/results/2026-10-12-leave.md](../../evals/results/2026-10-12-leave.md). [docs/phases/leave-hub.md](../phases/leave-hub.md).

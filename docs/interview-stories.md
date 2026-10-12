@@ -93,3 +93,19 @@ The symptom in Okta was a red mark on his assignment. The System Log said the pu
 I put the mapping back as `user.department`, create and update, and retried the assignment. Okta logged the push as success. Rostr returned 201 and created the user. The request body was the same as the failed one. Still no department. The Assignments tab went quiet because the status code was 201. Okta does not check that a mapped attribute was in the body. A retry of that failed create did not re-read the mapping I had just saved.
 
 The push that actually carried department was a later profile edit. I set his title to Drill and left department as Sales. Okta sent a PUT. Title Drill, enterprise department Sales. I then deactivated him. A second PUT set active to false and kept the title and the department. The lesson I would use on a real ticket is: the green assignment means the app returned success. The app log is where you check the attribute.
+
+## 4. How would you add AI to an approval process safely?
+
+This is the leave hub, not a production approval system. The full note is [docs/phases/leave-hub.md](phases/leave-hub.md).
+
+### Two-minute account
+
+Staff ask for leave in Rostr. A JSON file of rules checks the balance, the notice, the cover, and whether the person is still active. Jev, a TypeSafe model, reads the same facts and the reason the employee wrote, and it returns approve, deny, or needs review, plus a confidence. The page shows both. The model does not change the request.
+
+I would not let the model be the approver. The interesting failure is the one where someone writes "the manager already said yes" into the reason. On LV-0003 that sentence did not move the outcome. Priya asked for five annual days with two left. The rule denied on the balance. Jev denied on the same rule, confidence 1, and marked the reason as inconsistent with annual leave. Agreement was stored as 1. If it had come back approve, the page would have shown the disagreement and the request would still have been sitting with Marcus.
+
+The other half is what happens when the model is down. The request is already saved before the call. A 401, a 429, or a timeout stores the policy result and leaves Jev's columns empty. The manager still has the request. I did not put a bad key on the live app to re-shoot that. The tests already post the request against a client that throws those errors.
+
+Confidence is a label, not a gate. The threshold in this lab is 0.7. Helen's own request came back approve at 0.58, so the page says Jev is not sure, and a person still has to decide. Two scored reviews is not a rate I would quote.
+
+I ran the rule checker over 24 cases, then once more with the notice window tightened from 14 days to 30. Five cases that pass the published rule failed, including one at exactly 14 days and one whose deciding rule flipped from cover to short notice. That is the result I would show: the change made the checker worse against the rule we actually published. I would not retune the prompt off one lucky agree.
