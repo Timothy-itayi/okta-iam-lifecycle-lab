@@ -12,7 +12,9 @@ The domain is `lanternfieldgoods.co.uk`. The org is a 30-day Workforce Identity 
 
 ## Where the project is
 
-The documented lab is done. It took three days, 5 October through 7 October. osTicket ticket `357784` is Closed. The report and the three practice accounts are written for a reader who was not in the lab. The trial org is still up. Teardown was not run.
+The documented lab is done. It took three days, 5 October through 7 October. osTicket ticket `357784` is Closed. The report and the four practice accounts are written for a reader who was not in the lab. The trial org is still up. Teardown was not run.
+
+The second project is the leave hub, inside the same Rostr app. Staff request leave. Jev recommends. A person decides. That path is below. It does not replace joiner, mover, and leaver.
 
 The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Operations. Samir Adeyemi and Thomas Okeke are terminated. Marcus Bell and Ava Nguyen were added to `APP-Rostr-Admins` by hand for the stretch below. An orphan row in Rostr was imported, matched nobody, and ignored. The finished account is [docs/report.md](docs/report.md).
 
@@ -20,7 +22,25 @@ The HR file is ahead of the Phase 4 story. Jonah Hale and Priya Shah are in Oper
 
 A staff member signs in to Rostr and asks for leave. [Jev](docs/decisions/jev-02-decision-model.md) recommends approve, deny, or needs review. It does not decide. Code checks the hard rules. A department admin approves first, then HR.
 
-No new Okta user. No new Workflow. The screens use [Kaizen](https://github.com/cultureamp/kaizen-design-system) tokens. [docs/decisions/jev-03-ui-kaizen.md](docs/decisions/jev-03-ui-kaizen.md). The plan is [rostr-leave-jev-report.pdf](rostr-leave-jev-report.pdf). The clock for this stretch is [docs/worklog/leave-hub.md](docs/worklog/leave-hub.md), not the lab log.
+No new Okta user. No new Workflow. The screens use [Kaizen](https://github.com/cultureamp/kaizen-design-system) tokens. [docs/decisions/jev-03-ui-kaizen.md](docs/decisions/jev-03-ui-kaizen.md). The plan is [rostr-leave-jev-report.pdf](rostr-leave-jev-report.pdf). The write-up is [docs/phases/leave-hub.md](docs/phases/leave-hub.md). The clock for this stretch is [docs/worklog/leave-hub.md](docs/worklog/leave-hub.md), not the lab log.
+
+## How a leave request is decided
+
+The request is saved first. The policy check and Jev then both write a recommendation. Neither of them changes the status. The department admin sees both and decides. HR signs off. `leave-apply` is the only writer of the HR file, and it takes a REQ number. The lab diagram further down is a different path.
+
+```mermaid
+flowchart LR
+  staff["Staff<br/>POST /leave"] --> saved["Request saved<br/>with admin, or HR"]
+  saved --> policy["Policy check<br/>leave-rules.json"]
+  saved --> jev["Jev<br/>recommends only"]
+  policy --> review["leave_reviews<br/>both outcomes, agree"]
+  jev --> review
+  review --> admin["Department admin<br/>decides"]
+  admin --> hr["HR<br/>signs off"]
+  hr --> apply["leave-apply<br/>writes one number"]
+```
+
+![Leave request. Jev recommends. A person decides.](docs/jev-leave.png)
 
 | Group | Who | What they see |
 | --- | --- | --- |
@@ -72,7 +92,7 @@ flowchart LR
 
 ![Diagram of the lab as built](docs/built-so-far.png)
 
-Every node is built. The top row is the path above. `hr/okta-import.csv` was the one-time load. `hr-sync` is a script, not one of the Workflows. Teardown is not on this diagram.
+Every node is built. The top row is the path above. `hr/okta-import.csv` was the one-time load. `hr-sync` is a script, not one of the Workflows. Teardown is not on this diagram. Leave requests are not on it either. That diagram is [above](#how-a-leave-request-is-decided).
 
 ## Run Rostr locally
 
@@ -112,6 +132,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 12. [docs/incidents/00-duplicate-rostr-admin.md](docs/incidents/00-duplicate-rostr-admin.md) through [docs/incidents/08-rostr-sign-on.md](docs/incidents/08-rostr-sign-on.md)
 13. [docs/report.md](docs/report.md)
 14. [docs/interview-stories.md](docs/interview-stories.md)
+15. [docs/phases/leave-hub.md](docs/phases/leave-hub.md)
 
 ## What is in place
 
@@ -125,19 +146,22 @@ Each numbered file links to the one before it. The decisions use this order, inc
 - Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is Closed: [docs/phases/05-governance.md](docs/phases/05-governance.md).
 - Six failure drills: [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md). A later sign-in failure is [docs/incidents/08-rostr-sign-on.md](docs/incidents/08-rostr-sign-on.md).
 - Lab report: [docs/report.md](docs/report.md). The PDF export is [okta-iam-lifecycle-lab-report.pdf](okta-iam-lifecycle-lab-report.pdf).
-- Three practice accounts: [docs/interview-stories.md](docs/interview-stories.md). The PDF export is [okta-iam-interview-stories.pdf](okta-iam-interview-stories.pdf).
+- Four practice accounts: [docs/interview-stories.md](docs/interview-stories.md). The PDF export is [okta-iam-interview-stories.pdf](okta-iam-interview-stories.pdf).
+- Leave hub: staff request, policy check, Jev recommendation, then a person. [docs/phases/leave-hub.md](docs/phases/leave-hub.md). The diagram is [docs/jev-leave.png](docs/jev-leave.png).
 
 ## Repository
 
 | Path | Holds | Now |
 | --- | --- | --- |
 | [docs/decisions](docs/decisions) | Numbered decisions | Domain, org, break-glass, design, service identity, OIG mapping |
-| [docs/phases](docs/phases) | One note per phase | [01](docs/phases/01-foundation.md) through [05](docs/phases/05-governance.md) |
+| [docs/phases](docs/phases) | One note per phase | Lab [01](docs/phases/01-foundation.md) through [05](docs/phases/05-governance.md). Leave hub: [leave-hub.md](docs/phases/leave-hub.md) |
+| [docs/leave](docs/leave) | Leave hub build notes | [01](docs/leave/01-okta.md) through [12](docs/leave/12-drills.md) |
+| [evals](evals) | Policy cases and the scored run | [leave-cases.json](evals/leave-cases.json), [2026-10-12-leave.md](evals/results/2026-10-12-leave.md) |
 | [docs/runbooks](docs/runbooks) | Repeatable admin steps | [mfa-reset.md](docs/runbooks/mfa-reset.md), [saas-onboarding.md](docs/runbooks/saas-onboarding.md), [oauth-review.md](docs/runbooks/oauth-review.md) |
 | [docs/incidents](docs/incidents) | Failure records | [00](docs/incidents/00-duplicate-rostr-admin.md) through [08](docs/incidents/08-rostr-sign-on.md) |
 | [docs/worklog](docs/worklog) | Session logs | Lab: [week-1.md](docs/worklog/week-1.md). Leave hub: [leave-hub.md](docs/worklog/leave-hub.md) |
 | [evidence](evidence) | Screenshots and log extracts | Tasks 0.2 through 6.6, plus the audit pack |
 | [hr](hr) | HR source of truth | [employees.json](hr/employees.json). [okta-import.csv](hr/okta-import.csv) was the one-time load |
-| [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Okta pushes users and the two `APP-Rostr` groups |
-| [scripts](scripts) | Test scripts, `hr-sync`, and review exports | [scim-tests.sh](scripts/scim-tests.sh), [hr-sync](scripts/hr-sync), [entitlements.js](scripts/entitlements.js), [access-review](scripts/access-review), [stale-access](scripts/stale-access), [oauth-review](scripts/oauth-review), [audit-log-export.js](scripts/audit-log-export.js) |
+| [rostr](rostr) | Mock SaaS app | SAML and OIDC sign-in. SCIM Users and Groups. Leave requests, the policy check, and the Jev recommendation |
+| [scripts](scripts) | Test scripts, `hr-sync`, and review exports | [hr-sync](scripts/hr-sync), [leave-apply](scripts/leave-apply), [leave-eval.js](scripts/leave-eval.js), [entitlements.js](scripts/entitlements.js), [access-review](scripts/access-review), [stale-access](scripts/stale-access), [oauth-review](scripts/oauth-review), [audit-log-export.js](scripts/audit-log-export.js) |
 | [.env.example](.env.example) | Placeholder names only | No secrets |

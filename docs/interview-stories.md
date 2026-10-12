@@ -1,8 +1,8 @@
-# Lanternfield Goods — three accounts from the lab
+# Lanternfield Goods — four accounts from the lab
 
 Previous: [Okta IAM lab report](report.md).
 
-Date: 2026-10-07. These are three accounts from a learning lab, written so someone who was not in the lab can follow them. They are not a claim of production Okta administration. The lab report, with the people and the short definitions, is [docs/report.md](report.md). Each "two-minute account" below is the version to read aloud.
+Date: 2026-10-12. The first three were written on 7 October. The fourth is the leave hub. These are four accounts from a learning lab, written so someone who was not in the lab can follow them. They are not a claim of production Okta administration. The lab report, with the people and the short definitions, is [docs/report.md](report.md). Each "two-minute account" below is the version to read aloud.
 
 Rostr is the mock rostering app. Okta is the directory. A SAML sign-in is Okta posting a signed message to Rostr. SCIM is the separate API Okta uses to create and update the account inside Rostr. A mover is a department or job change. A group rule fills a group from the person's profile. A membership added by hand does not move when the department changes.
 
@@ -103,6 +103,10 @@ This is the leave hub, not a production approval system. The full note is [docs/
 Staff ask for leave in Rostr. A JSON file of rules checks the balance, the notice, the cover, and whether the person is still active. Jev, a TypeSafe model, reads the same facts and the reason the employee wrote, and it returns approve, deny, or needs review, plus a confidence. The page shows both. The model does not change the request.
 
 I would not let the model be the approver. The interesting failure is the one where someone writes "the manager already said yes" into the reason. On LV-0003 that sentence did not move the outcome. Priya asked for five annual days with two left. The rule denied on the balance. Jev denied on the same rule, confidence 1, and marked the reason as inconsistent with annual leave. Agreement was stored as 1. If it had come back approve, the page would have shown the disagreement and the request would still have been sitting with Marcus.
+
+![Priya's form for LV-0003, five days against two left](../evidence/leave/08-jev-lv0003-form.png)
+
+![Marcus's decision. Policy and Jev both deny](../evidence/leave/08-jev-lv0003-decision.png)
 
 The other half is what happens when the model is down. The request is already saved before the call. A 401, a 429, or a timeout stores the policy result and leaves Jev's columns empty. The manager still has the request. I did not put a bad key on the live app to re-shoot that. The tests already post the request against a client that throws those errors.
 

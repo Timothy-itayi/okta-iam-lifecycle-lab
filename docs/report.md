@@ -2,7 +2,7 @@
 
 Previous: [Leaver leaves Rostr active](incidents/07-leaver-downstream.md).
 
-Date: 2026-10-07. The work so far took three days, 5 October through 7 October. Clocked time is in [docs/worklog/week-1.md](worklog/week-1.md). This is a learning lab, not production Okta experience. Every claim below points at a file in this repository. The PDF at the repo root is an export of this page. The three practice accounts are [docs/interview-stories.md](interview-stories.md). The CV lines are not written up here, and the org has not been torn down.
+Date: 2026-10-07. The work so far took three days, 5 October through 7 October. Clocked time is in [docs/worklog/week-1.md](worklog/week-1.md). This is a learning lab, not production Okta experience. Every claim below points at a file in this repository. The PDF at the repo root is an export of this page. The four practice accounts are [docs/interview-stories.md](interview-stories.md). The CV lines are not written up here, and the org has not been torn down.
 
 ## Start here
 
