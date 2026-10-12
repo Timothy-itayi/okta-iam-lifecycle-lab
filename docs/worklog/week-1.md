@@ -451,5 +451,5 @@ The CV lines are not written up. Nothing has been torn down. The reports were re
 
 ### 7.3 Practice accounts — 18:45 to 18:55
 
-- Three accounts, each with the record and a two-minute telling: SAML sign-in, Priya's mover, and the department provisioning failure. [docs/interview-stories.md](../interview-stories.md). PDF: [okta-iam-interview-stories.pdf](../../okta-iam-interview-stories.pdf).
+- Three accounts, each with the record and a two-minute telling: SAML sign-in, Priya's mover, and the department provisioning failure. [docs/interview-stories.md](../interview-stories.md).
 - The CV wording from the runbook is not in the repo.

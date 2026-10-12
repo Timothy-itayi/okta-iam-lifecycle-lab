@@ -146,7 +146,7 @@ Each numbered file links to the one before it. The decisions use this order, inc
 - Access Request grant and automatic remove, access review, Stale-Access, OAuth review, audit pack, OIG mapping. Ticket `357784` is Closed: [docs/phases/05-governance.md](docs/phases/05-governance.md).
 - Six failure drills: [docs/incidents/02-saml-acs.md](docs/incidents/02-saml-acs.md) through [docs/incidents/07-leaver-downstream.md](docs/incidents/07-leaver-downstream.md). A later sign-in failure is [docs/incidents/08-rostr-sign-on.md](docs/incidents/08-rostr-sign-on.md).
 - Lab report: [docs/report.md](docs/report.md). The PDF export is [okta-iam-lifecycle-lab-report.pdf](okta-iam-lifecycle-lab-report.pdf).
-- Four practice accounts: [docs/interview-stories.md](docs/interview-stories.md). The PDF export is [okta-iam-interview-stories.pdf](okta-iam-interview-stories.pdf).
+- Four practice accounts: [docs/interview-stories.md](docs/interview-stories.md).
 - Leave hub: staff request, policy check, Jev recommendation, then a person. [docs/phases/leave-hub.md](docs/phases/leave-hub.md). The diagram is [docs/jev-leave.png](docs/jev-leave.png).
 
 ## Repository
